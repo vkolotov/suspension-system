@@ -37,6 +37,7 @@
 								<option id="it.baeyens.avreclipse.compiler.option.incpath.83382774" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
@@ -61,6 +62,7 @@
 								<option id="it.baeyens.avreclipse.cppcompiler.option.incpath.404803734" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.cppcompiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
