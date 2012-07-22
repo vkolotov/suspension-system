@@ -6,12 +6,15 @@
 
 #ifndef AutomaticSuspensionSystem_H_
 #define AutomaticSuspensionSystem_H_
-#include "Arduino.h"
+//#include "Arduino.h"
 //add your includes for the project AutomaticSuspensionSystem here
-#include <WString.h>
-#include <stl_vector.h>
-#include <ThreadListener.h>
+#include <StandardCplusplus.h>
+#include <serstream>
+#include <string>
+#include <vector>
+#include <iterator>
 #include <AutomaticSuspension.h>
+#include <ThreadListener.h>
 
 //end of add your includes here
 #ifdef __cplusplus
@@ -24,9 +27,6 @@ void setup();
 #endif
 
 //add your function definitions for the project AutomaticSuspensionSystem here
-
-
-
 
 //Do not add code below this line
 #endif /* AutomaticSuspensionSystem_H_ */

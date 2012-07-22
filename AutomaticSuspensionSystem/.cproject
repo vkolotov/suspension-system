@@ -3,6 +3,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="it.baeyens.avreclipse.configuration.app.release.980545052">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="it.baeyens.avreclipse.configuration.app.release.980545052" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<macros>
+					<stringMacro name="ARDUINO" type="VALUE_TEXT" value="101"/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -34,7 +37,10 @@
 								<option id="it.baeyens.avreclipse.compiler.option.incpath.83382774" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/stl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AutomaticSuspensionSystem}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.compiler.option.def.1485111403" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.compiler.option.def" valueType="definedSymbols">
@@ -55,7 +61,10 @@
 								<option id="it.baeyens.avreclipse.cppcompiler.option.incpath.404803734" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.cppcompiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/stl}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AutomaticSuspensionSystem}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.def.479432623" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.cppcompiler.option.def" valueType="definedSymbols">

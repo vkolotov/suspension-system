@@ -6,15 +6,13 @@
  */
 
 #include "CalibratableServo.h"
-#include "Arduino.h"
-#include <AutomaticSuspension.h>
 
 static const int CALIBRATION_DELAY = 200;
 static const int CALIBRATION_THRESHOLD = 18;
 static const int CALIBRATION_STEP = 10;
 
 CalibratableServo::CalibratableServo()
-		: Servo(), pin(FRONT_SERVO_PIN), feedbackPin(FRONT_SERVO_FEEDBACK_PIN),
+		: Servo(), pin(FRONT_SUSPENSION_CONTROL_PIN), feedbackPin(FRONT_SUSPENSION_FEADBACK_PIN),
 		  calibrationStep(CALIBRATION_STEP), calibrationThreshold(CALIBRATION_THRESHOLD),
 		  calibrationDelay(CALIBRATION_DELAY), calibrated(false),
 		  minAngle(0), maxAngle(180) {

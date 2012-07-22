@@ -8,7 +8,9 @@
 #ifndef CALIBRATABLESERVO_H_
 #define CALIBRATABLESERVO_H_
 
-#include "Servo.h"
+#include <Arduino.h>
+#include <Servo.h>
+#include <Settings.h>
 
 class CalibratableServo: public Servo {
 public:

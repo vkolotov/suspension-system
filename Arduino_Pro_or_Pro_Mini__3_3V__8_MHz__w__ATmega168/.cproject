@@ -3,7 +3,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="it.baeyens.avreclipse.configuration.lib.release.1167552135">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="it.baeyens.avreclipse.configuration.lib.release.1167552135" moduleId="org.eclipse.cdt.core.settings" name="Release">
-				<externalSettings/>
+				<externalSettings>
+					<externalSetting/>
+				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -18,9 +20,23 @@
 							<option id="it.baeyens.avreclipse.toolchain.options.toolchain.objdump.lib.release.1203374328" name="Generate Extended Listing (Source + generated Assembler)" superClass="it.baeyens.avreclipse.toolchain.options.toolchain.objdump.lib.release"/>
 							<option id="it.baeyens.avreclipse.toolchain.options.toolchain.size.lib.release.764155638" name="Print Size" superClass="it.baeyens.avreclipse.toolchain.options.toolchain.size.lib.release"/>
 							<targetPlatform id="it.baeyens.avreclipse.targetplatform.winavr.lib.release.860928027" name="AVR Cross-Target" superClass="it.baeyens.avreclipse.targetplatform.winavr.lib.release"/>
-							<builder buildPath="${workspace_loc:/arduino core/Release}" id="it.baeyens.avreclipse.target.builder.winavr.lib.release.570228849" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="AVR GNU Make Builder" superClass="it.baeyens.avreclipse.target.builder.winavr.lib.release"/>
+							<builder buildPath="${workspace_loc:/arduino core/Release}" id="it.baeyens.avreclipse.target.builder.winavr.lib.release.570228849" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="AVR GNU Make Builder" superClass="it.baeyens.avreclipse.target.builder.winavr.lib.release">
+								<outputEntries>
+									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
+								</outputEntries>
+							</builder>
 							<tool id="it.baeyens.avreclipse.tool.assembler.winavr.lib.release.778054761" name="AVR Assembler" superClass="it.baeyens.avreclipse.tool.assembler.winavr.lib.release">
 								<option id="it.baeyens.avreclipse.assembler.option.debug.level.7753723" name="Generate Debugging Info" superClass="it.baeyens.avreclipse.assembler.option.debug.level" value="it.baeyens.avreclipse.assembler.option.debug.level.none" valueType="enumerated"/>
+								<option id="it.baeyens.avreclipse.asm.option.include.paths.1630021938" name="#include paths for preprocessor(-I)" superClass="it.baeyens.avreclipse.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire/utility}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Servo}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ADXL345}&quot;"/>
+								</option>
 								<inputType id="it.baeyens.avreclipse.tool.assembler.input.1090202751" superClass="it.baeyens.avreclipse.tool.assembler.input"/>
 							</tool>
 							<tool id="it.baeyens.avreclipse.tool.compiler.winavr.lib.release.1481158029" name="AVR Compiler" superClass="it.baeyens.avreclipse.tool.compiler.winavr.lib.release">
@@ -28,8 +44,17 @@
 								<option id="it.baeyens.avreclipse.compiler.option.optimize.1524250231" name="Optimization Level" superClass="it.baeyens.avreclipse.compiler.option.optimize" value="it.baeyens.avreclipse.compiler.optimize.size" valueType="enumerated"/>
 								<option id="it.baeyens.avreclipse.compiler.option.otherflags.341887353" name="Other flags" superClass="it.baeyens.avreclipse.compiler.option.otherflags" value="-g  -ffunction-sections  -fdata-sections" valueType="string"/>
 								<option id="it.baeyens.avreclipse.compiler.option.incpath.723610173" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.compiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/arduino}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire/utility}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Servo}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ADXL345}&quot;"/>
+								</option>
+								<option id="it.baeyens.avreclipse.compiler.option.def.1739258524" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.compiler.option.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="ARDUINO=101"/>
 								</option>
 								<inputType id="it.baeyens.avreclipse.compiler.winavr.input.695727881" name="C Source Files" superClass="it.baeyens.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -42,8 +67,17 @@
 								<option id="it.baeyens.avreclipse.cppcompiler.option.language.ubitfields.474866444" name="bitfields are unsigned (-funsigned-bitfields)" superClass="it.baeyens.avreclipse.cppcompiler.option.language.ubitfields" value="false" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.otherflags.1791627973" name="Other flags" superClass="it.baeyens.avreclipse.cppcompiler.option.otherflags" value="-g  -ffunction-sections  -fdata-sections" valueType="string"/>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.incpath.577711966" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.cppcompiler.option.incpath" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/arduino}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Wire/utility}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/Servo}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/ADXL345}&quot;"/>
+								</option>
+								<option id="it.baeyens.avreclipse.cppcompiler.option.def.1163624986" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="ARDUINO=101"/>
 								</option>
 								<inputType id="it.baeyens.avreclipse.cppcompiler.input.2064355297" superClass="it.baeyens.avreclipse.cppcompiler.input"/>
 							</tool>
@@ -55,9 +89,14 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="standard|arduino" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="arduino"/>
-						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="standard"/>
+						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="arduino"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="StandardCplusplus"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Servo"/>
+						<entry excluding="utility" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Wire"/>
+						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="standard"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ADXL345"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Wire/utility"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="I2Cdev"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

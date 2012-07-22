@@ -8,8 +8,8 @@
 #ifndef SUSPENSION_H_
 #define SUSPENSION_H_
 
+#include <Servo.h>
 #include <CalibratableServo.h>
-#include <Arduino.h>
 
 class Suspension {
 public:
@@ -20,11 +20,13 @@ public:
 	virtual void attach(int servoPin, int feedbackPin);
 	virtual void lock();
 	virtual void release();
+	virtual void toggle();
 	virtual void calibrate();
 	virtual bool isCalibrated();
 
 protected:
 	CalibratableServo* servo;
+	bool isLocked;
 };
 
 #endif /* SUSPENSION_H_ */

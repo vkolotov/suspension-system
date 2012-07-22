@@ -15,8 +15,8 @@
 class ThreadListener {
 public:
 
-	virtual void update();
-	virtual int getPriority();
+	virtual void update() = 0;
+	virtual int getPriority() = 0;
 };
 
 #endif /* THREADLISTENER_H_ */

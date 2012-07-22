@@ -7,11 +7,11 @@
 
 #include "Suspension.h"
 
-Suspension::Suspension() {
+Suspension::Suspension(): isLocked(false) {
 	servo = new CalibratableServo();
 }
 
-Suspension::Suspension(int servoPin, int feedbackPin) {
+Suspension::Suspension(int servoPin, int feedbackPin) : isLocked(false) {
 	servo = new CalibratableServo();
 	attach(servoPin, feedbackPin);
 }
@@ -28,10 +28,16 @@ void Suspension::attach(int servoPin, int feedbackPin) {
 
 void Suspension::lock() {
 	servo->writeMax();
+	isLocked = true;
 }
 
 void Suspension::release() {
 	servo->writeMin();
+	isLocked = false;
+}
+
+void Suspension::toggle() {
+	isLocked ? release() : lock();
 }
 
 void Suspension::calibrate() {

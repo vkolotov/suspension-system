@@ -1,9 +1,13 @@
 #include "AutomaticSuspensionSystem.h"
 
+using namespace std;
+
 AutomaticSuspension application;
 vector<ThreadListener*> threadListeners;
 
+
 void setup() {
+
 	Serial.begin(9600);
 	application.init();
 	threadListeners = application.getThreadListeners();
@@ -11,6 +15,7 @@ void setup() {
 }
 
 void loop() {
+	//Serial.println(threadListeners.size());
 	int priority;
 	int priorityIndex = 0;
 	for (vector<ThreadListener*>::iterator it = threadListeners.begin(); it < threadListeners.end(); it++) {

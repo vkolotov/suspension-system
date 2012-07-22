@@ -15,14 +15,20 @@ AutomaticSuspension::~AutomaticSuspension() {
 }
 
 void AutomaticSuspension::init() {
-	frontSuspension = new Suspension(FRONT_SERVO_PIN, FRONT_SERVO_FEEDBACK_PIN);
-	rearSuspension = new Suspension(10, 0);
-	cadenceSystem = new CadenceSystem();
+	//frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN);
+	//rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN);
+	//cadenceSystem = new CadenceSystem();
+	forkAccelerometerSystem = new ForkAccelerometerSystem();
 
-	threadListeners.push_back(this);
-	threadListeners.push_back(cadenceSystem);
+	threadListeners.push_back(forkAccelerometerSystem);
+	//threadListeners.push_back(cadenceSystem);
+	//threadListeners.push_back(this);
 
-	pinMode(13, OUTPUT);
+
+	//pinMode(FRONT_BUTTON_PIN, INPUT);
+	//pinMode(MODE_BUTTON_PIN, INPUT);
+	//pinMode(REAR_BUTTON_PIN, INPUT);
+
 }
 
 void AutomaticSuspension::update() {
@@ -32,20 +38,28 @@ void AutomaticSuspension::update() {
 		if (inByte == 'c') {
 			Serial.println("Calibrating... ");
 			frontSuspension->calibrate();
+			rearSuspension->calibrate();
 		} else if (inByte == 'r') {
 			Serial.println("Release... ");
 			frontSuspension->release();
+			rearSuspension->release();
 		} else if (inByte == 'l') {
 			Serial.println("Lock... ");
 			frontSuspension->lock();
+			rearSuspension->lock();
 		}
 	}
 
-	if (cadenceSystem->isPedalling()) {
-		digitalWrite(13, HIGH);
-	} else {
-		digitalWrite(13, LOW);
-	}
+//	if (digitalRead(MODE_BUTTON_PIN) == HIGH) {
+//		Serial.println("Calibrating... ");
+//		frontSuspension->calibrate();
+//		rearSuspension->calibrate();
+//	} else if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
+//		frontSuspension->toggle();
+//	} else if (digitalRead(REAR_BUTTON_PIN) == HIGH) {
+//		rearSuspension->toggle();
+//	}
+
 
 }
 
@@ -56,6 +70,4 @@ int AutomaticSuspension::getPriority() {
 vector<ThreadListener*> AutomaticSuspension::getThreadListeners() {
 	return threadListeners;
 }
-int AutomaticSuspension::getThreadListenersCount() {
-	return 2;
-}
+

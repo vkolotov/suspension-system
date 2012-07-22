@@ -6,12 +6,11 @@
  */
 
 #include <CadenceSystem.h>
-#include <AutomaticSuspension.h>
 
 static const long MINIMUM_REVOLUTION_TIME = (60 / 180) * 1000; // 180 revolutions per second
 
 CadenceSystem::CadenceSystem():
-		pin(CADENCE_SENSOR_PIN), state(LOW),
+		pin(CADENCE_PIN), state(LOW),
 		lastRevolution(0), previousRevolution(0) {
 	pinMode(pin, INPUT);
 }

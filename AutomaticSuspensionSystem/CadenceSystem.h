@@ -9,6 +9,7 @@
 #define CADENCESYSTEM_H_
 #include <ThreadListener.h>
 #include <Arduino.h>
+#include <Settings.h>
 
 
 class CadenceSystem : public ThreadListener {
