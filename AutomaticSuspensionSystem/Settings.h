@@ -11,7 +11,7 @@ static const int SPEED_PIN = 6;
 static const int FRONT_SUSPENSION_CONTROL_PIN = 9;
 static const int FRONT_SUSPENSION_FEADBACK_PIN = 0;
 
-static const int REAR_SUSPENSION_CONTROL_PIN = 3;
+static const int REAR_SUSPENSION_CONTROL_PIN = 12;
 static const int REAR_SUSPENSION_FEADBACK_PIN = 1;
 
 #endif

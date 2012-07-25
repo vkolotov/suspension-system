@@ -18,6 +18,7 @@ public:
 	CalibratableServo(int pin, int feedbackPin);
 	virtual ~CalibratableServo();
 
+	virtual void bind();
 	virtual void calibrate();
 	virtual bool isCalibrated();
 	virtual void writeMax();

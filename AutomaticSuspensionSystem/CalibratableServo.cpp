@@ -8,8 +8,8 @@
 #include "CalibratableServo.h"
 
 static const int CALIBRATION_DELAY = 200;
-static const int CALIBRATION_THRESHOLD = 18;
-static const int CALIBRATION_STEP = 10;
+static const int CALIBRATION_THRESHOLD = 1;
+static const int CALIBRATION_STEP = 5;
 
 CalibratableServo::CalibratableServo()
 		: Servo(), pin(FRONT_SUSPENSION_CONTROL_PIN), feedbackPin(FRONT_SUSPENSION_FEADBACK_PIN),
@@ -30,17 +30,14 @@ CalibratableServo::~CalibratableServo() {
 
 }
 
+void CalibratableServo::bind() {
+	this->attach(pin);
+}
+
 void CalibratableServo::calibrate() {
 
-	if (!attached()) {
-		attach(pin);
-	}
 	int readAngle = read();
 	int feedback = getRawFeedback();
-
-	if (readAngle <= 10) {
-		readAngle = 30;
-	}
 
 	for (int angle = readAngle + calibrationStep; ; ) {
 
@@ -84,7 +81,6 @@ void CalibratableServo::calibrate() {
 		}
 		angle = constrain(angle - calibrationStep, 0, 180);
 	}
-
 	calibrated = true;
 }
 

@@ -17,12 +17,13 @@ public:
 	Suspension(int servoPin, int feedbackPin);
 	virtual ~Suspension();
 
-	virtual void attach(int servoPin, int feedbackPin);
 	virtual void lock();
 	virtual void release();
 	virtual void toggle();
 	virtual void calibrate();
 	virtual bool isCalibrated();
+
+	virtual void set(int angle);
 
 protected:
 	CalibratableServo* servo;

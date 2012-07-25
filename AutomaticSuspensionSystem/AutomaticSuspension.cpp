@@ -7,6 +7,8 @@
 
 #include "AutomaticSuspension.h"
 
+void(* resetArduino) (void) = 0; //declare reset function @ address 0
+
 
 AutomaticSuspension::AutomaticSuspension() {
 }
@@ -15,19 +17,20 @@ AutomaticSuspension::~AutomaticSuspension() {
 }
 
 void AutomaticSuspension::init() {
-	//frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN);
-	//rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN);
+	rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN);
+	frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN);
+
 	//cadenceSystem = new CadenceSystem();
-	forkAccelerometerSystem = new ForkAccelerometerSystem();
+	//forkAccelerometerSystem = new ForkAccelerometerSystem();
 
-	threadListeners.push_back(forkAccelerometerSystem);
+	//threadListeners.push_back(forkAccelerometerSystem);
 	//threadListeners.push_back(cadenceSystem);
-	//threadListeners.push_back(this);
+	threadListeners.push_back(this);
 
 
-	//pinMode(FRONT_BUTTON_PIN, INPUT);
-	//pinMode(MODE_BUTTON_PIN, INPUT);
-	//pinMode(REAR_BUTTON_PIN, INPUT);
+	pinMode(FRONT_BUTTON_PIN, INPUT);
+	pinMode(MODE_BUTTON_PIN, INPUT);
+	pinMode(REAR_BUTTON_PIN, INPUT);
 
 }
 
@@ -47,19 +50,33 @@ void AutomaticSuspension::update() {
 			Serial.println("Lock... ");
 			frontSuspension->lock();
 			rearSuspension->lock();
+		} else if (inByte == 't') {
+			Serial.println("Set 0");
+			frontSuspension->set(10);
+			delay(1000);
+			rearSuspension->set(10);
+			delay(1000);
+			Serial.println("Set 180");
+			frontSuspension->set(170);
+			delay(1000);
+			rearSuspension->set(170);
+		} else if (inByte == 'q') {
+			resetArduino();
 		}
 	}
 
-//	if (digitalRead(MODE_BUTTON_PIN) == HIGH) {
-//		Serial.println("Calibrating... ");
-//		frontSuspension->calibrate();
-//		rearSuspension->calibrate();
-//	} else if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
-//		frontSuspension->toggle();
-//	} else if (digitalRead(REAR_BUTTON_PIN) == HIGH) {
-//		rearSuspension->toggle();
-//	}
-
+	if (digitalRead(MODE_BUTTON_PIN) == HIGH) {
+		if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
+			resetArduino();
+		}
+		Serial.println("Calibrating... ");
+		frontSuspension->calibrate();
+		rearSuspension->calibrate();
+	} else if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
+		frontSuspension->toggle();
+	} else if (digitalRead(REAR_BUTTON_PIN) == HIGH) {
+		rearSuspension->toggle();
+	}
 
 }
 
