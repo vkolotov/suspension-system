@@ -28,9 +28,9 @@ void AutomaticSuspension::init() {
 	threadListeners.push_back(this);
 
 
-	pinMode(FRONT_BUTTON_PIN, INPUT);
-	pinMode(MODE_BUTTON_PIN, INPUT);
-	pinMode(REAR_BUTTON_PIN, INPUT);
+	frontButton = new Button(FRONT_BUTTON_PIN);
+	modeButton = new Button(MODE_BUTTON_PIN);
+	rearButton = new Button(REAR_BUTTON_PIN);
 
 }
 
@@ -65,16 +65,13 @@ void AutomaticSuspension::update() {
 		}
 	}
 
-	if (digitalRead(MODE_BUTTON_PIN) == HIGH) {
-		if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
-			resetArduino();
-		}
+	if (modeButton->isPushed()) {
 		Serial.println("Calibrating... ");
 		frontSuspension->calibrate();
 		rearSuspension->calibrate();
-	} else if (digitalRead(FRONT_BUTTON_PIN) == HIGH) {
+	} else if (frontButton->isPushed()) {
 		frontSuspension->toggle();
-	} else if (digitalRead(REAR_BUTTON_PIN) == HIGH) {
+	} else if (rearButton->isPushed()) {
 		rearSuspension->toggle();
 	}
 

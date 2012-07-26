@@ -18,6 +18,7 @@
 #include <CadenceSystem.h>
 #include <ForkAccelerometerSystem.h>
 #include <Settings.h>
+#include <Button.h>
 
 using namespace std;
 
@@ -39,6 +40,10 @@ private:
 	Suspension* rearSuspension;
 	CadenceSystem* cadenceSystem;
 	ForkAccelerometerSystem* forkAccelerometerSystem;
+
+	Button* frontButton;
+	Button* rearButton;
+	Button* modeButton;
 
 	vector<ThreadListener*> threadListeners;
 

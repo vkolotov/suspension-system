@@ -8,8 +8,8 @@
 #include "CalibratableServo.h"
 
 static const int CALIBRATION_DELAY = 200;
-static const int CALIBRATION_THRESHOLD = 1;
-static const int CALIBRATION_STEP = 5;
+static const int CALIBRATION_THRESHOLD = 5;
+static const int CALIBRATION_STEP = 10;
 
 CalibratableServo::CalibratableServo()
 		: Servo(), pin(FRONT_SUSPENSION_CONTROL_PIN), feedbackPin(FRONT_SUSPENSION_FEADBACK_PIN),
