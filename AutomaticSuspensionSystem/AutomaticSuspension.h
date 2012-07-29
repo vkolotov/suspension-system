@@ -1,4 +1,4 @@
-/*
+	/*
  * AutomaticSuspention.h
  *
  *  Created on: 07.07.2012
@@ -9,16 +9,15 @@
 #define AUTOMATICSUSPENSION_H_
 
 //#include <Arduino.h>
-#include <StandardCplusplus.h>
-#include <serstream>
-#include <string>
-#include <vector>
 #include <ThreadListener.h>
 #include <Suspension.h>
 #include <CadenceSystem.h>
 #include <ForkAccelerometerSystem.h>
 #include <Settings.h>
 #include <Button.h>
+
+#include <StandardCplusplus.h>
+#include <vector>
 
 using namespace std;
 
@@ -27,12 +26,11 @@ public:
 	AutomaticSuspension();
 	virtual ~AutomaticSuspension();
 
-	virtual void init();
+	void init();
 
-	virtual void update();
-	virtual int getPriority();
+	void update();
 
-	virtual vector<ThreadListener*> getThreadListeners();
+	vector<ThreadListener*> getThreadListeners();
 
 private:
 
@@ -46,6 +44,8 @@ private:
 	Button* modeButton;
 
 	vector<ThreadListener*> threadListeners;
+
+	bool mode;
 
 };
 

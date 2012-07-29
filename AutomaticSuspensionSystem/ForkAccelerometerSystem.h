@@ -10,21 +10,20 @@
 
 #include "AccelerometerSystem.h"
 #include <Wire.h>
-#include <ADXL345.h>
+//#include <ADXL345.h>
 
 class ForkAccelerometerSystem: public AccelerometerSystem {
 public:
 	ForkAccelerometerSystem();
 	virtual ~ForkAccelerometerSystem();
 
-	virtual void update();
-	virtual int getPriority();
+	void update();
 
-	virtual bool isActive();
+	bool isActive();
 
 protected:
 
-	ADXL345 accel;
+	//ADXL345 accel;
 
 };
 

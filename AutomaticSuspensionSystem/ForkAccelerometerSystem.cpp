@@ -7,7 +7,7 @@
 
 #include "ForkAccelerometerSystem.h"
 
-ForkAccelerometerSystem::ForkAccelerometerSystem() : accel() {
+ForkAccelerometerSystem::ForkAccelerometerSystem()/* : accel()*/ {
 //	Wire.begin();
 //
 //	    // initialize serial communication
@@ -47,9 +47,6 @@ void ForkAccelerometerSystem::update() {
 
 }
 
-int ForkAccelerometerSystem::getPriority() {
-	return HIGH_PRIORITY;
-}
 
 bool ForkAccelerometerSystem::isActive() {
 	return false;

@@ -15,28 +15,20 @@
 class CalibratableServo: public Servo {
 public:
 	CalibratableServo();
-	CalibratableServo(int pin, int feedbackPin);
+	CalibratableServo(unsigned char pin, unsigned char feedbackPin);
 	virtual ~CalibratableServo();
 
-	virtual void bind();
-	virtual void calibrate();
-	virtual bool isCalibrated();
-	virtual void writeMax();
-	virtual void writeMin();
-	virtual int getMaxAngle();
-	virtual int getMinAngle();
-	virtual int getRawFeedback();
+	void bind();
+	void calibrate();
+	void writeMax();
+	void writeMin();
+	int getRawFeedback();
 protected:
-	int pin;
-	int feedbackPin;
+	unsigned char pin;
+	unsigned char feedbackPin;
 
-	int calibrationStep;
-	int calibrationThreshold;
-	unsigned long calibrationDelay;
-	bool calibrated;
-
-	int minAngle;
-	int maxAngle;
+	unsigned short minAngle;
+	unsigned short maxAngle;
 };
 
 #endif /* CALIBRATABLESERVO_H_ */

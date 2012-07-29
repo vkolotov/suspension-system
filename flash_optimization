@@ -1,0 +1,77 @@
+8846 bytes (54.0% Full)
+8822 bytes (53.8% Full)
+8806 bytes (53.7% Full)
+8782 bytes (53.6% Full)
+8728 bytes (53.3% Full)
+8410 bytes (51.3% Full)
+8384 bytes (51.2% Full)
+8384 bytes (51.2% Full)
+8268 bytes (50.5% Full)
+8264 bytes (50.4% Full)
+8252 bytes (50.4% Full)
+8220 bytes (50.2% Full)
+8122 bytes (49.6% Full)
+8114 bytes (49.5% Full)
+8106 bytes (49.5% Full)
+8078 bytes (49.3% Full)
+
+/*
+ * Vector.h
+ *
+ *  Created on: 29.07.2012
+ *      Author: Vlad
+ */
+
+#ifndef VECTOR_H_
+#define VECTOR_H_
+
+#include <stddef.h>
+#include <stdlib.h>
+
+// Minimal class to replace std::vector
+template<typename Data>
+class Vector {
+   size_t d_size; // Stores no. of actually stored objects
+   size_t d_capacity; // Stores allocated capacity
+   Data *d_data; // Stores data
+   public:
+     Vector() : d_size(0), d_capacity(0), d_data(0) {}; // Default constructor
+     //Vector(Vector const &other) : d_size(other.d_size), d_capacity(other.d_capacity), d_data(0) { d_data = (Data *)malloc(d_capacity*sizeof(Data)); memcpy(d_data, other.d_data, d_size*sizeof(Data)); }; // Copy constuctor
+     ~Vector() { free(d_data); }; // Destructor
+     //Vector &operator=(Vector const &other) { free(d_data); d_size = other.d_size; d_capacity = other.d_capacity; d_data = (Data *)malloc(d_capacity*sizeof(Data)); memcpy(d_data, other.d_data, d_size*sizeof(Data)); return *this; }; // Needed for memory management
+     void push_back(Data const &x) { if (d_capacity == d_size) resize(); d_data[d_size++] = x; }; // Adds new value. If needed, allocates more space
+     size_t size() const { return d_size; }; // Size getter
+     Data const &operator[](size_t idx) const { return d_data[idx]; }; // Const getter
+     Data &operator[](size_t idx) { return d_data[idx]; }; // Changeable getter
+     Data &get(int index) {
+    	 return d_data[index];
+     };
+     void remove(int index) {
+    	 if (index >= d_size) {
+    		 return;
+    	 }
+    	 for (int i = index; i < d_size - 1; i++) {
+    		 d_data[i] = d_data[i + 1];
+    	 }
+    	 //free(d_data[d_size - 1]);
+    	 d_size--;
+     }
+     void clear() {
+    	 d_size = 0;
+     }
+   private:
+     void resize() {
+    	 d_capacity = d_capacity ? d_capacity*2 : 1;
+    	 Data *newdata = (Data *)malloc(d_capacity*sizeof(Data));
+    	 memcpy(newdata, d_data, d_size * sizeof(Data));
+    	 free(d_data);
+    	 d_data = newdata;
+     };// Allocates double the old space
+};
+
+#endif /* VECTOR_H_ */
+
+8752 bytes (53.4% Full)
+8824 bytes (53.9% Full)
+8824 bytes (53.9% Full)
+8282 bytes (50.5% Full)

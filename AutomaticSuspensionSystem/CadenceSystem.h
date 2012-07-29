@@ -10,25 +10,28 @@
 #include <ThreadListener.h>
 #include <Arduino.h>
 #include <Settings.h>
+#include <StandardCplusplus.h>
+#include <vector>
 
+using namespace std;
 
 class CadenceSystem : public ThreadListener {
 public:
-	CadenceSystem();
+	CadenceSystem(unsigned char pin);
 	virtual ~CadenceSystem();
 
-	virtual int getCadence();
-	virtual int getAverageCadence();
-	virtual bool isPedalling();
-	virtual void update();
-	virtual int getPriority();
+	bool isPedalling();
+	void update();
+
+	unsigned short getAverageTime();
 
 protected:
 
-	int pin;
-	int state;
+	unsigned char pin;
+	unsigned char state;
 	long lastRevolution;
-	long previousRevolution;
+	bool pedalling;
+	vector<long> timing;
 };
 
 #endif /* CADENCESYSTEM_H_ */

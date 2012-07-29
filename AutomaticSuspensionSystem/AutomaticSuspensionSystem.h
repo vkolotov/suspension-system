@@ -8,11 +8,7 @@
 #define AutomaticSuspensionSystem_H_
 //#include "Arduino.h"
 //add your includes for the project AutomaticSuspensionSystem here
-#include <StandardCplusplus.h>
-#include <serstream>
-#include <string>
-#include <vector>
-#include <iterator>
+#include <Vector.h>
 #include <AutomaticSuspension.h>
 #include <ThreadListener.h>
 

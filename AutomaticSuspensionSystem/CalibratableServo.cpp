@@ -7,22 +7,19 @@
 
 #include "CalibratableServo.h"
 
-static const int CALIBRATION_DELAY = 200;
-static const int CALIBRATION_THRESHOLD = 5;
-static const int CALIBRATION_STEP = 10;
+static const unsigned char CALIBRATION_DELAY = 200;
+static const unsigned char CALIBRATION_THRESHOLD = 5;
+static const unsigned char CALIBRATION_STEP = 10;
+static const unsigned char MAX_ANGLE = 180;
 
 CalibratableServo::CalibratableServo()
 		: Servo(), pin(FRONT_SUSPENSION_CONTROL_PIN), feedbackPin(FRONT_SUSPENSION_FEADBACK_PIN),
-		  calibrationStep(CALIBRATION_STEP), calibrationThreshold(CALIBRATION_THRESHOLD),
-		  calibrationDelay(CALIBRATION_DELAY), calibrated(false),
-		  minAngle(0), maxAngle(180) {
+		  minAngle(0), maxAngle(MAX_ANGLE) {
 }
 
-CalibratableServo::CalibratableServo(int pin, int feedbackPin)
+CalibratableServo::CalibratableServo(unsigned char pin, unsigned char feedbackPin)
 		: Servo(), pin(pin), feedbackPin(feedbackPin),
-		  calibrationStep(CALIBRATION_STEP), calibrationThreshold(CALIBRATION_THRESHOLD),
-		  calibrationDelay(CALIBRATION_DELAY), calibrated(false),
-		  minAngle(0), maxAngle(180) {
+		  minAngle(0), maxAngle(MAX_ANGLE) {
 	pinMode(feedbackPin, INPUT);
 }
 
@@ -36,41 +33,41 @@ void CalibratableServo::bind() {
 
 void CalibratableServo::calibrate() {
 
-	int readAngle = read();
-	int feedback = getRawFeedback();
+	unsigned short readAngle = read();
+	unsigned short feedback = getRawFeedback();
 
-	for (int angle = readAngle + calibrationStep; ; ) {
+	for (unsigned short angle = readAngle + CALIBRATION_STEP; ; ) {
 
 		write(angle);
-		delay(calibrationDelay);
+		delay(CALIBRATION_DELAY);
 
-		int currentFeedback = getRawFeedback();
+		unsigned short currentFeedback = getRawFeedback();
 
-		if (currentFeedback - feedback < calibrationThreshold) {
-			maxAngle = angle - calibrationStep;
-			write(angle - calibrationStep * 2);
+		if (currentFeedback - feedback < CALIBRATION_THRESHOLD) {
+			maxAngle = angle - CALIBRATION_STEP;
+			write(angle - CALIBRATION_STEP * 2);
 			break;
 		}
 		feedback = currentFeedback;
 
-		if (angle == 180) {
-			maxAngle = 180;
+		if (angle == MAX_ANGLE) {
+			maxAngle = MAX_ANGLE;
 			break;
 		}
-		angle = constrain(angle + calibrationStep, 0, 180);
+		angle = constrain(angle + CALIBRATION_STEP, 0, MAX_ANGLE);
 	}
 
 	feedback = getRawFeedback();
 	readAngle = read();
-	for (int angle = readAngle - calibrationStep; ; ) {
+	for (unsigned short angle = readAngle - CALIBRATION_STEP; ; ) {
 
 		write(angle);
-		delay(calibrationDelay);
+		delay(CALIBRATION_DELAY);
 
 		int currentFeedback = getRawFeedback();
-		if (feedback - currentFeedback < calibrationThreshold) {
-			minAngle = angle + calibrationStep;
-			write(angle + calibrationStep * 2);
+		if (feedback - currentFeedback < CALIBRATION_THRESHOLD) {
+			minAngle = angle + CALIBRATION_STEP;
+			write(angle + CALIBRATION_STEP * 2);
 			break;
 		}
 		feedback = currentFeedback;
@@ -79,27 +76,15 @@ void CalibratableServo::calibrate() {
 			minAngle = 0;
 			break;
 		}
-		angle = constrain(angle - calibrationStep, 0, 180);
+		angle = constrain(angle - CALIBRATION_STEP, 0, MAX_ANGLE);
 	}
-	calibrated = true;
-}
-
-bool CalibratableServo::isCalibrated() {
-	return calibrated;
 }
 
 void CalibratableServo::writeMax() {
-	write(getMaxAngle());
+	write(maxAngle);
 }
 void CalibratableServo::writeMin() {
-	write(getMinAngle());
-}
-
-int CalibratableServo::getMaxAngle() {
-	return maxAngle;
-}
-int CalibratableServo::getMinAngle() {
-	return minAngle;
+	write(minAngle);
 }
 
 int CalibratableServo::getRawFeedback() {

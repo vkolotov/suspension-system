@@ -11,9 +11,8 @@ Suspension::Suspension(): isLocked(false) {
 	servo = new CalibratableServo();
 }
 
-Suspension::Suspension(int servoPin, int feedbackPin) : isLocked(false) {
+Suspension::Suspension(unsigned char servoPin, unsigned char feedbackPin) : isLocked(false) {
 	servo = new CalibratableServo(servoPin, feedbackPin);
-	//servo->bind();
 }
 
 Suspension::~Suspension() {
@@ -21,17 +20,25 @@ Suspension::~Suspension() {
 }
 
 void Suspension::lock() {
+	if (isLocked) {
+		return;
+	}
 	servo->bind();
 	delay(500);
 	servo->writeMin();
+	delay(500);
 	servo->detach();
 	isLocked = true;
 }
 
 void Suspension::release() {
+	if (!isLocked) {
+		return;
+	}
 	servo->bind();
 	delay(500);
 	servo->writeMax();
+	delay(500);
 	servo->detach();
 	isLocked = false;
 }
@@ -40,22 +47,15 @@ void Suspension::toggle() {
 	isLocked ? release() : lock();
 }
 
-void Suspension::set(int angle) {
-	servo->write(angle);
-}
 
 void Suspension::calibrate() {
-	Serial.println("Suspension: calibrating... ");
 	servo->bind();
 	delay(500);
 	servo->calibrate();
+	delay(500);
 	servo->detach();
-	Serial.print("Calibrated. Min =  ");
-	Serial.print(servo->getMinAngle());
-	Serial.print(". Max = ");
-	Serial.println(servo->getMaxAngle());
 }
 
-bool Suspension::isCalibrated() {
-	return servo->isCalibrated();
+bool Suspension::locked() {
+	return isLocked;
 }

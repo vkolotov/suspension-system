@@ -14,16 +14,15 @@
 class Suspension {
 public:
 	Suspension();
-	Suspension(int servoPin, int feedbackPin);
+	Suspension(unsigned char servoPin, unsigned char feedbackPin);
 	virtual ~Suspension();
 
-	virtual void lock();
-	virtual void release();
-	virtual void toggle();
-	virtual void calibrate();
-	virtual bool isCalibrated();
+	void lock();
+	void release();
+	void toggle();
+	void calibrate();
 
-	virtual void set(int angle);
+	bool locked();
 
 protected:
 	CalibratableServo* servo;

@@ -7,11 +7,14 @@
 
 #include <CadenceSystem.h>
 
-static const long MINIMUM_REVOLUTION_TIME = (60 / 180) * 1000; // 180 revolutions per second
 
-CadenceSystem::CadenceSystem():
-		pin(CADENCE_PIN), state(LOW),
-		lastRevolution(0), previousRevolution(0) {
+static const unsigned short MINIMUM_REVOLUTION_TIME = (60.0f / 180.0f) * 1000; // 180 revolutions per second
+static const unsigned short MAXIMUM_REVOLUTION_TIME = (60.0f / 40.0f) * 1000; // 40 revolutions per second
+static const unsigned short AVERAGE_REVOLUTION_TIME = (60.0f / 70.0f) * 1000; // 70 revolutions per second
+
+CadenceSystem::CadenceSystem(unsigned char pin):
+		pin(pin), state(LOW),
+		lastRevolution(0), pedalling(false) {
 	pinMode(pin, INPUT);
 }
 
@@ -21,33 +24,49 @@ CadenceSystem::~CadenceSystem() {
 
 void CadenceSystem::update() {
 
-	int value = digitalRead(4);
+	unsigned short value = digitalRead(pin);
 	long currentTime = millis();
-
 	long diff = currentTime - lastRevolution;
 
-	if (state != value && value == HIGH
-			&& diff > MINIMUM_REVOLUTION_TIME) {
-		previousRevolution = lastRevolution;
-		lastRevolution = currentTime;
+	if (diff < MINIMUM_REVOLUTION_TIME) {
+		//noise
+		pedalling = true;
+	} else {
+		if (state != value && value == HIGH) {
+			pedalling = true;
+
+			if (currentTime - timing[timing.size() - 1] > MAXIMUM_REVOLUTION_TIME) {
+				timing.clear();
+			}
+			if (timing.size() == 0) {
+				timing.push_back(currentTime - AVERAGE_REVOLUTION_TIME);
+			}
+			timing.push_back(currentTime);
+			if (timing.size() > 10) {
+				timing.erase(timing.begin());
+			}
+		} else {
+			if (timing.size() < 2) {
+				pedalling = false;
+			} else {
+				pedalling = currentTime - timing[timing.size() - 1] <= getAverageTime() + 500;
+			}
+		}
 	}
 	state = value;
 }
 
-int CadenceSystem::getPriority() {
-	return HIGH_PRIORITY;
-}
-
-int CadenceSystem::getCadence() {
-	return 0;
-}
-
-int CadenceSystem::getAverageCadence() {
-	return 0;
+unsigned short CadenceSystem::getAverageTime() {
+	if (timing.size() < 2) {
+		return 0;
+	}
+	int sum = 0;
+	for(int i = 0; i < timing.size() - 1; i++)	{
+		sum += timing[i + 1] - timing[i];
+	}
+	return sum / (timing.size() - 1);
 }
 
 bool CadenceSystem::isPedalling() {
-	long currentTime = millis();
-	long diff = currentTime - lastRevolution;
-	return diff < previousRevolution - lastRevolution + 1000;
+	return pedalling;
 }

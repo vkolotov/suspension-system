@@ -14,8 +14,7 @@ public:
 	AccelerometerSystem();
 	virtual ~AccelerometerSystem();
 
-	virtual void update() = 0;
-	virtual int getPriority() = 0;
+	void update() = 0;
 
 	virtual bool isActive() = 0;
 };

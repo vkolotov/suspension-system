@@ -37,23 +37,23 @@
 								<option id="it.baeyens.avreclipse.compiler.option.incpath.83382774" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire/utility}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AutomaticSuspensionSystem}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.compiler.option.def.1485111403" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.compiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__IN_ECLIPSE__=1"/>
 									<listOptionValue builtIn="false" value="ARDUINO=${ARDUINO_IDE_VERSION}"/>
 								</option>
-								<option id="it.baeyens.avreclipse.compiler.option.optimize.packstruct.566164028" name="Pack structs (-fpack-struct)" superClass="it.baeyens.avreclipse.compiler.option.optimize.packstruct" value="false" valueType="boolean"/>
-								<option id="it.baeyens.avreclipse.compiler.option.optimize.shortenums.651991132" name="Short enums (-fshort-enums)" superClass="it.baeyens.avreclipse.compiler.option.optimize.shortenums" value="false" valueType="boolean"/>
+								<option id="it.baeyens.avreclipse.compiler.option.optimize.packstruct.566164028" name="Pack structs (-fpack-struct)" superClass="it.baeyens.avreclipse.compiler.option.optimize.packstruct" value="true" valueType="boolean"/>
+								<option id="it.baeyens.avreclipse.compiler.option.optimize.shortenums.651991132" name="Short enums (-fshort-enums)" superClass="it.baeyens.avreclipse.compiler.option.optimize.shortenums" value="true" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.compiler.option.language.uchar.1812587876" name="char is unsigned (-funsigned-char)" superClass="it.baeyens.avreclipse.compiler.option.language.uchar" value="false" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.compiler.option.language.ubitfields.10704290" name="bitfields are unsigned (-funsigned-bitfields)" superClass="it.baeyens.avreclipse.compiler.option.language.ubitfields" value="false" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.compiler.option.std.683877028" name="Language Standard" superClass="it.baeyens.avreclipse.compiler.option.std" value="it.baeyens.avreclipse.compiler.option.std.default" valueType="enumerated"/>
 								<option id="it.baeyens.avreclipse.compiler.option.otherflags.138599099" name="Other flags" superClass="it.baeyens.avreclipse.compiler.option.otherflags" value="-g" valueType="string"/>
+								<option id="it.baeyens.avreclipse.compiler.option.optimize.other.1687714470" name="Other Optimization Flags" superClass="it.baeyens.avreclipse.compiler.option.optimize.other" value="-ffunction-sections -fdata-sections" valueType="string"/>
 								<inputType id="it.baeyens.avreclipse.compiler.winavr.input.472891441" name="C Source Files" superClass="it.baeyens.avreclipse.compiler.winavr.input"/>
 							</tool>
 							<tool command="avr-g++" commandLinePattern="${COMMAND} ${FLAGS} ${ARDUINO_CPP_COMPILE_OPTIONS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} -x c++ ${INPUTS}" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="it.baeyens.avreclipse.tool.cppcompiler.app.release.265767624" name="AVR C++ Compiler" superClass="it.baeyens.avreclipse.tool.cppcompiler.app.release">
@@ -62,11 +62,10 @@
 								<option id="it.baeyens.avreclipse.cppcompiler.option.incpath.404803734" name="Include Paths (-I)" superClass="it.baeyens.avreclipse.cppcompiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINO_CORE_FOLDER}}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}/${ARDUINOBOARDVARIANT}}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire/utility}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/StandardCplusplus}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AutomaticSuspensionSystem}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.def.479432623" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
@@ -74,8 +73,8 @@
 									<listOptionValue builtIn="false" value="ARDUINO=${ARDUINO_IDE_VERSION}"/>
 								</option>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.optimize.other.1963624562" name="Other Optimization Flags" superClass="it.baeyens.avreclipse.cppcompiler.option.optimize.other" value="-ffunction-sections -fdata-sections " valueType="string"/>
-								<option id="it.baeyens.avreclipse.cppcompiler.option.optimize.packstruct.144452329" name="Pack structs (-fpack-struct)" superClass="it.baeyens.avreclipse.cppcompiler.option.optimize.packstruct" value="false" valueType="boolean"/>
-								<option id="it.baeyens.avreclipse.cppcompiler.option.optimize.shortenums.342320419" name="Short enums (-fshort-enums)" superClass="it.baeyens.avreclipse.cppcompiler.option.optimize.shortenums" value="false" valueType="boolean"/>
+								<option id="it.baeyens.avreclipse.cppcompiler.option.optimize.packstruct.144452329" name="Pack structs (-fpack-struct)" superClass="it.baeyens.avreclipse.cppcompiler.option.optimize.packstruct" value="true" valueType="boolean"/>
+								<option id="it.baeyens.avreclipse.cppcompiler.option.optimize.shortenums.342320419" name="Short enums (-fshort-enums)" superClass="it.baeyens.avreclipse.cppcompiler.option.optimize.shortenums" value="true" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.language.uchar.1159028291" name="char is unsigned (-funsigned-char)" superClass="it.baeyens.avreclipse.cppcompiler.option.language.uchar" value="false" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.language.ubitfields.1912413953" name="bitfields are unsigned (-funsigned-bitfields)" superClass="it.baeyens.avreclipse.cppcompiler.option.language.ubitfields" value="false" valueType="boolean"/>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.otherflags.840937360" name="Other flags" superClass="it.baeyens.avreclipse.cppcompiler.option.otherflags" value="-g" valueType="string"/>
@@ -90,6 +89,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ARDUINOBOARDNAME}}/${ConfigName}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.cpplinker.option.genmap.1519069921" name="Map Filename" superClass="it.baeyens.avreclipse.cpplinker.option.genmap" value="" valueType="string"/>
+								<option id="it.baeyens.avreclipse.cpplinker.option.otherlinkargs.824491790" name="Other Arguments" superClass="it.baeyens.avreclipse.cpplinker.option.otherlinkargs" value="-Wl,--gc-sections" valueType="string"/>
 								<inputType id="it.baeyens.avreclipse.tool.cpplinker.input.306845630" name="OBJ Files" superClass="it.baeyens.avreclipse.tool.cpplinker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

@@ -9,18 +9,26 @@
 #define BUTTON_H_
 
 #include <Arduino.h>
+#include <ThreadListener.h>
 
-class Button {
+class Button : public ThreadListener {
 public:
 	Button();
-	Button(int pin);
+	Button(unsigned char pin, bool isToggle);
 	virtual ~Button();
+
+	void update();
+
+	bool checkNoise();
 
 	bool isPushed();
 
 protected:
-	int pin;
+	unsigned char pin;
 	long lastTime;
+
+	bool pushed;
+	bool isToggle;
 };
 
 #endif /* BUTTON_H_ */
