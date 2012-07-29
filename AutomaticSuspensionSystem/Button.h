@@ -9,24 +9,35 @@
 #define BUTTON_H_
 
 #include <Arduino.h>
-#include <ThreadListener.h>
+#include <DebounceActivity.h>
 
-class Button : public ThreadListener {
+class Button : public DebounceActivity {
 public:
-	Button();
-	Button(unsigned char pin, bool isToggle);
-	virtual ~Button();
+	Button() : DebounceActivity(500), pin(0), pushed(false), isToggle(false) {};
+	Button(unsigned char pin, bool isToggle) : DebounceActivity(500),
+			pin(pin), pushed(false), isToggle(isToggle) {
+		pinMode(pin, INPUT);
+	}
 
-	void update();
+	void debounce(bool event) {
+		if (event) {
+			isToggle ? pushed = !pushed : pushed = true;
+		} else if (!isToggle) {
+			pushed = false;
+		}
+	};
 
-	bool checkNoise();
+	bool event() {
+		return digitalRead(pin) == HIGH;
+	}
 
-	bool isPushed();
+	inline bool isPushed() {
+		return pushed;
+	}
+
 
 protected:
 	unsigned char pin;
-	long lastTime;
-
 	bool pushed;
 	bool isToggle;
 };

@@ -3,7 +3,7 @@
 
 static const unsigned char FRONT_BUTTON_PIN = 7;
 static const unsigned char MODE_BUTTON_PIN = 4;
-static const unsigned char REAR_BUTTON_PIN = 5;
+static const unsigned char REAR_BUTTON_PIN = 13;
 
 static const unsigned char CADENCE_PIN = 6;
 static const unsigned char SPEED_PIN = 10;

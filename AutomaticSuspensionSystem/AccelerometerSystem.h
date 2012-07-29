@@ -7,9 +7,9 @@
 
 #ifndef ACCELEROMETERSYSTEM_H_
 #define ACCELEROMETERSYSTEM_H_
-#include <ThreadListener.h>
+#include <Activity.h>
 
-class AccelerometerSystem : public ThreadListener {
+class AccelerometerSystem : public Activity {
 public:
 	AccelerometerSystem();
 	virtual ~AccelerometerSystem();

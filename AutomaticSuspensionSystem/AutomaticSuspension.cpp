@@ -7,10 +7,10 @@
 
 #include "AutomaticSuspension.h"
 
-void(* resetArduino) (void) = 0; //declare reset function @ address 0
+void (*resetArduino)(void) = 0; //declare reset function @ address 0
 
-
-AutomaticSuspension::AutomaticSuspension(): threadListeners(), mode(true) {
+AutomaticSuspension::AutomaticSuspension() :
+		threadListeners() {
 }
 
 AutomaticSuspension::~AutomaticSuspension() {
@@ -18,14 +18,17 @@ AutomaticSuspension::~AutomaticSuspension() {
 
 void AutomaticSuspension::init() {
 
-	frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN);
-	rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN);
+	frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN,
+			FRONT_SUSPENSION_FEADBACK_PIN, true);
+	threadListeners.push_back(frontSuspension);
+	rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN,
+			REAR_SUSPENSION_FEADBACK_PIN, false);
+	threadListeners.push_back(rearSuspension);
 
 	cadenceSystem = new CadenceSystem(CADENCE_PIN);
 	threadListeners.push_back(cadenceSystem);
 
 	//forkAccelerometerSystem = new ForkAccelerometerSystem();
-
 	//threadListeners.push_back(forkAccelerometerSystem);
 
 	frontButton = new Button(FRONT_BUTTON_PIN, false);
@@ -36,7 +39,7 @@ void AutomaticSuspension::init() {
 	threadListeners.push_back(rearButton);
 
 	threadListeners.push_back(this);
-	Serial.println("DI");
+	//Serial.println("DI");
 
 }
 
@@ -46,35 +49,24 @@ void AutomaticSuspension::update() {
 
 	if (modeButton->isPushed()) {
 		frontSuspension->calibrate();
+		frontSuspension->lock();
 		rearSuspension->calibrate();
+		rearSuspension->lock();
 	} else if (frontButton->isPushed()) {
-		if (frontSuspension->locked()) {
-			frontSuspension->release();
-			rearSuspension->lock();
-		} else {
-			frontSuspension->lock();
-			rearSuspension->release();
-		}
+		frontSuspension->toggle();
+		rearSuspension->toggle();
 	} else if (rearButton->isPushed()) {
-		mode = !mode;
-	} else {
-		if (mode) {
-			lock = cadenceSystem->isPedalling();
-
-			if (lock) {
-				Serial.println("L");
-//				rearSuspension->lock();
-//				frontSuspension->release();
-			} else {
-//				rearSuspension->release();
-//				frontSuspension->lock();
-			}
+		lock = cadenceSystem->isPedalling();
+		if (lock) {
+			rearSuspension->lock();
+			frontSuspension->lock();
+		} else {
+			rearSuspension->release();
+			frontSuspension->release();
 		}
 	}
 }
 
-
-vector<ThreadListener*> AutomaticSuspension::getThreadListeners() {
+vector<Activity*> AutomaticSuspension::getThreadListeners() {
 	return threadListeners;
 }
-

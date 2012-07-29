@@ -10,23 +10,29 @@
 
 #include <Servo.h>
 #include <CalibratableServo.h>
+#include <Activity.h>
 
-class Suspension {
+class Suspension : public Activity {
 public:
 	Suspension();
-	Suspension(unsigned char servoPin, unsigned char feedbackPin);
+	Suspension(unsigned char servoPin, unsigned char feedbackPin, bool isReverse);
 	virtual ~Suspension();
 
 	void lock();
 	void release();
 	void toggle();
 	void calibrate();
-
+	void update();
 	bool locked();
+	void attach();
+	void detach();
 
 protected:
 	CalibratableServo* servo;
 	bool isLocked;
+	bool isReverse;
+
+	long lastTime;
 };
 
 #endif /* SUSPENSION_H_ */

@@ -14,12 +14,12 @@ static const unsigned char MAX_ANGLE = 180;
 
 CalibratableServo::CalibratableServo()
 		: Servo(), pin(FRONT_SUSPENSION_CONTROL_PIN), feedbackPin(FRONT_SUSPENSION_FEADBACK_PIN),
-		  minAngle(0), maxAngle(MAX_ANGLE) {
+		  minAngle(0), maxAngle(MAX_ANGLE), calibrating(false) {
 }
 
 CalibratableServo::CalibratableServo(unsigned char pin, unsigned char feedbackPin)
 		: Servo(), pin(pin), feedbackPin(feedbackPin),
-		  minAngle(0), maxAngle(MAX_ANGLE) {
+		  minAngle(0), maxAngle(MAX_ANGLE), calibrating(false) {
 	pinMode(feedbackPin, INPUT);
 }
 
@@ -32,7 +32,7 @@ void CalibratableServo::bind() {
 }
 
 void CalibratableServo::calibrate() {
-
+	calibrating = true;
 	unsigned short readAngle = read();
 	unsigned short feedback = getRawFeedback();
 
@@ -78,6 +78,7 @@ void CalibratableServo::calibrate() {
 		}
 		angle = constrain(angle - CALIBRATION_STEP, 0, MAX_ANGLE);
 	}
+	calibrating = false;
 }
 
 void CalibratableServo::writeMax() {
@@ -91,3 +92,6 @@ int CalibratableServo::getRawFeedback() {
 	return analogRead(feedbackPin);
 }
 
+bool CalibratableServo::isCalibrating() {
+	return calibrating;
+}

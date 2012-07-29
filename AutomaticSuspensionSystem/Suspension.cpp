@@ -7,11 +7,14 @@
 
 #include "Suspension.h"
 
+static const unsigned short POWER_SAVE_THRESHOLD = 500;
+
 Suspension::Suspension(): isLocked(false) {
 	servo = new CalibratableServo();
 }
 
-Suspension::Suspension(unsigned char servoPin, unsigned char feedbackPin) : isLocked(false) {
+Suspension::Suspension(unsigned char servoPin, unsigned char feedbackPin, bool isReverse)
+		: isLocked(false), isReverse(isReverse), lastTime(0) {
 	servo = new CalibratableServo(servoPin, feedbackPin);
 }
 
@@ -23,23 +26,18 @@ void Suspension::lock() {
 	if (isLocked) {
 		return;
 	}
-	servo->bind();
-	delay(500);
-	servo->writeMin();
-	delay(500);
-	servo->detach();
+	attach();
+	isReverse ? servo->writeMin() : servo->writeMax();
 	isLocked = true;
+
 }
 
 void Suspension::release() {
 	if (!isLocked) {
 		return;
 	}
-	servo->bind();
-	delay(500);
-	servo->writeMax();
-	delay(500);
-	servo->detach();
+	attach();
+	isReverse ? servo->writeMax() : servo->writeMin();
 	isLocked = false;
 }
 
@@ -49,13 +47,32 @@ void Suspension::toggle() {
 
 
 void Suspension::calibrate() {
-	servo->bind();
-	delay(500);
+	attach();
 	servo->calibrate();
-	delay(500);
-	servo->detach();
 }
 
 bool Suspension::locked() {
 	return isLocked;
+}
+
+void Suspension::attach() {
+	if (!servo->attached()) {
+		servo->bind();
+	}
+	lastTime = millis();
+}
+
+void Suspension::detach() {
+	servo->detach();
+}
+
+void Suspension::update() {
+	if (servo->isCalibrating() || !servo->attached()) {
+		return;
+	}
+	long currentTime = millis();
+	if (currentTime - lastTime > POWER_SAVE_THRESHOLD) {
+		lastTime = currentTime;
+		servo->detach();
+	}
 }

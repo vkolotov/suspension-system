@@ -8,8 +8,7 @@
 #ifndef AUTOMATICSUSPENSION_H_
 #define AUTOMATICSUSPENSION_H_
 
-//#include <Arduino.h>
-#include <ThreadListener.h>
+#include <Activity.h>
 #include <Suspension.h>
 #include <CadenceSystem.h>
 #include <ForkAccelerometerSystem.h>
@@ -21,7 +20,7 @@
 
 using namespace std;
 
-class AutomaticSuspension : public ThreadListener {
+class AutomaticSuspension : public Activity {
 public:
 	AutomaticSuspension();
 	virtual ~AutomaticSuspension();
@@ -30,7 +29,7 @@ public:
 
 	void update();
 
-	vector<ThreadListener*> getThreadListeners();
+	vector<Activity*> getThreadListeners();
 
 private:
 
@@ -43,9 +42,7 @@ private:
 	Button* rearButton;
 	Button* modeButton;
 
-	vector<ThreadListener*> threadListeners;
-
-	bool mode;
+	vector<Activity*> threadListeners;
 
 };
 

@@ -6,7 +6,7 @@
 using namespace std;
 
 AutomaticSuspension application;
-vector<ThreadListener*> threadListeners;
+vector<Activity*> threadListeners;
 unsigned long last;
 
 void setup() {
@@ -23,10 +23,10 @@ void loop() {
 	for (int i = 0; i < threadListeners.size(); i++) {
 		threadListeners[i]->update();
 	}
-	long currentTime = millis();
-	if (currentTime - last > 5000) {
-		last = currentTime;
-		Serial.println("w");
-	}
+//	long currentTime = millis();
+//	if (currentTime - last > 5000) {
+//		last = currentTime;
+//		Serial.println("w");
+//	}
 
 }

@@ -20,6 +20,7 @@ public:
 
 	void bind();
 	void calibrate();
+	bool isCalibrating();
 	void writeMax();
 	void writeMin();
 	int getRawFeedback();
@@ -29,6 +30,7 @@ protected:
 
 	unsigned short minAngle;
 	unsigned short maxAngle;
+	bool calibrating;
 };
 
 #endif /* CALIBRATABLESERVO_H_ */
