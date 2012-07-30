@@ -33,9 +33,9 @@ void AutomaticSuspension::init() {
 
 	frontButton = new Button(FRONT_BUTTON_PIN, false);
 	threadListeners.push_back(frontButton);
-	modeButton = new Button(MODE_BUTTON_PIN, false);
+	modeButton = new Button(MODE_BUTTON_PIN, true);
 	threadListeners.push_back(modeButton);
-	rearButton = new Button(REAR_BUTTON_PIN, true);
+	rearButton = new Button(REAR_BUTTON_PIN, false);
 	threadListeners.push_back(rearButton);
 
 	threadListeners.push_back(this);
@@ -45,24 +45,39 @@ void AutomaticSuspension::init() {
 
 void AutomaticSuspension::update() {
 
-	bool lock = false;
-
-	if (modeButton->isPushed()) {
+	if (modeButton->isPushed(3000)) {
+		resetArduino();
+		return;
+	}
+	if (frontButton->isPushed(3000)) {
 		frontSuspension->calibrate();
 		frontSuspension->lock();
 		rearSuspension->calibrate();
 		rearSuspension->lock();
-	} else if (frontButton->isPushed()) {
-		frontSuspension->toggle();
-		rearSuspension->toggle();
-	} else if (rearButton->isPushed()) {
-		lock = cadenceSystem->isPedalling();
-		if (lock) {
+		return;
+	}
+	if (rearButton->isPushed(3000)) {
+		return;
+	}
+	if (modeButton->isPushed()) {
+		if (frontButton->isPushed()) {
+
+		} else if (rearButton->isPushed()) {
+
+		}
+		if (cadenceSystem->isPedalling()) {
 			rearSuspension->lock();
 			frontSuspension->lock();
 		} else {
 			rearSuspension->release();
 			frontSuspension->release();
+		}
+	} else {
+		if (frontButton->isPushed()) {
+			frontSuspension->toggle();
+		}
+		if (rearButton->isPushed()) {
+			rearSuspension->toggle();
 		}
 	}
 }

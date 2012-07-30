@@ -11,34 +11,41 @@
 #include <Arduino.h>
 #include <DebounceActivity.h>
 
+static const unsigned short DEBOUNCE_DURATION = 200;
+
 class Button : public DebounceActivity {
 public:
-	Button() : DebounceActivity(500), pin(0), pushed(false), isToggle(false) {};
-	Button(unsigned char pin, bool isToggle) : DebounceActivity(500),
-			pin(pin), pushed(false), isToggle(isToggle) {
+	Button() : DebounceActivity(DEBOUNCE_DURATION), pin(0), pushDuration(0), isToggle(false) {}
+	Button(unsigned char pin, bool isToggle) : DebounceActivity(DEBOUNCE_DURATION),
+			pin(pin), pushDuration(0), isToggle(isToggle) {
 		pinMode(pin, INPUT);
 	}
 
-	void debounce(bool event) {
-		if (event) {
-			isToggle ? pushed = !pushed : pushed = true;
-		} else if (!isToggle) {
-			pushed = false;
-		}
-	};
+	void initActivity() {
+		pushDuration = isToggle ? (pushDuration > 0 ? 1 : -1) : 0;
+	}
 
-	bool event() {
+	void startActivity() {}
+
+	void stopActivity(unsigned long duration) {
+		pushDuration = isToggle ? (pushDuration > 0 ? -duration : duration) : duration;
+	}
+
+	bool qualifier() {
 		return digitalRead(pin) == HIGH;
 	}
 
-	inline bool isPushed() {
-		return pushed;
+	inline bool isPushed(unsigned short duration) {
+		return labs(pushDuration) >= duration;
 	}
 
+	inline bool isPushed() {
+		return pushDuration > 0;
+	}
 
 protected:
 	unsigned char pin;
-	bool pushed;
+	long pushDuration;
 	bool isToggle;
 };
 

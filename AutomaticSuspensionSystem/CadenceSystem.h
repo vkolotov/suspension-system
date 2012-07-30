@@ -26,6 +26,36 @@ public:
 		pinMode(pin, INPUT);
 	};
 
+	bool qualifier() {
+		return digitalRead(pin) == HIGH;
+	}
+
+	void initActivity() {
+		if (timing.size() < 2) {
+			pedalling = false;
+		} else if (pedalling) {
+			pedalling = millis() - timing[timing.size() - 1]
+					<= getAverageTime() + 300;
+		}
+	}
+
+	void startActivity() {
+		pedalling = true;
+		long currentTime = millis();
+		if (currentTime - timing[timing.size() - 1] > MAXIMUM_REVOLUTION_TIME) {
+			timing.clear();
+		}
+		if (timing.size() == 0) {
+			timing.push_back(currentTime - AVERAGE_REVOLUTION_TIME);
+		}
+		timing.push_back(currentTime);
+		if (timing.size() > 10) {
+			timing.erase(timing.begin());
+		}
+	}
+
+	void stopActivity(unsigned long duration) {}
+
 	inline bool isPedalling() {
 		return pedalling;
 	}
@@ -39,34 +69,6 @@ public:
 			sum += timing[i + 1] - timing[i];
 		}
 		return sum / (timing.size() - 1);
-	}
-
-	void debounce(bool event) {
-		long currentTime = millis();
-		if (event) {
-			pedalling = true;
-			if (currentTime - timing[timing.size() - 1] > MAXIMUM_REVOLUTION_TIME) {
-				timing.clear();
-			}
-			if (timing.size() == 0) {
-				timing.push_back(currentTime - AVERAGE_REVOLUTION_TIME);
-			}
-			timing.push_back(currentTime);
-			if (timing.size() > 10) {
-				timing.erase(timing.begin());
-			}
-		} else {
-			if (timing.size() < 2) {
-				pedalling = false;
-			} else {
-				pedalling = currentTime - timing[timing.size() - 1]
-						<= getAverageTime() + 300;
-			}
-		}
-	};
-
-	bool event() {
-		return digitalRead(pin) == HIGH;
 	}
 
 protected:
