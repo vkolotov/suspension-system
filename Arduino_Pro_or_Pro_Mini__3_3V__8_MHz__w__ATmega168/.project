@@ -87,14 +87,19 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>ADXL345</name>
+			<type>2</type>
+			<location>F:/projects/arduino/i2cdevlib/Arduino/ADXL345</location>
+		</link>
+		<link>
+			<name>I2Cdev</name>
+			<type>2</type>
+			<location>F:/projects/arduino/i2cdevlib/Arduino/I2Cdev</location>
+		</link>
+		<link>
 			<name>Servo</name>
 			<type>2</type>
 			<location>C:/arduino-1.0.1/libraries/Servo</location>
-		</link>
-		<link>
-			<name>StandardCplusplus</name>
-			<type>2</type>
-			<location>F:/projects/arduino/StandardCplusplus</location>
 		</link>
 		<link>
 			<name>Wire</name>

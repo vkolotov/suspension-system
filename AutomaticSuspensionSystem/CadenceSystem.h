@@ -10,48 +10,49 @@
 #include <DebounceActivity.h>
 #include <Arduino.h>
 #include <Settings.h>
-#include <StandardCplusplus.h>
-#include <vector>
 
 static const unsigned short MINIMUM_REVOLUTION_TIME = (60.0f / 180.0f) * 1000; // 180 revolutions per second
 static const unsigned short MAXIMUM_REVOLUTION_TIME = (60.0f / 40.0f) * 1000; // 40 revolutions per second
 static const unsigned short AVERAGE_REVOLUTION_TIME = (60.0f / 70.0f) * 1000; // 70 revolutions per second
 
-using namespace std;
-
 class CadenceSystem: public DebounceActivity {
 public:
 	CadenceSystem(unsigned char pin) :
-			DebounceActivity(MINIMUM_REVOLUTION_TIME), pin(pin), pedalling(false), timing() {
+			DebounceActivity(MINIMUM_REVOLUTION_TIME), pin(pin), pedalling(false),
+			cursor(0), length(0), sum(0), last(0) {
 		pinMode(pin, INPUT);
 	};
 
-	bool qualifier() {
+	bool qualifier(unsigned long currentTime) {
 		return digitalRead(pin) == HIGH;
 	}
 
-	void initActivity() {
-		if (timing.size() < 2) {
+	void initActivity(unsigned long currentTime) {
+		if (length < 1) {
 			pedalling = false;
 		} else if (pedalling) {
-			pedalling = millis() - timing[timing.size() - 1]
-					<= getAverageTime() + 300;
+			pedalling = currentTime - last <= getAverageTime() + 300;
 		}
 	}
 
-	void startActivity() {
+	void startActivity(unsigned long currentTime) {
 		pedalling = true;
-		long currentTime = millis();
-		if (currentTime - timing[timing.size() - 1] > MAXIMUM_REVOLUTION_TIME) {
-			timing.clear();
+		if (currentTime - last > MAXIMUM_REVOLUTION_TIME) {
+			cursor = 0;
+			timing[cursor] = AVERAGE_REVOLUTION_TIME;
+			length = 1;
+		} else {
+			if (cursor >= 4) {
+				cursor = 0;
+			} else {
+				cursor++;
+			}
+			if (length < 5) {
+				length++;
+			}
+			timing[cursor] = currentTime - last;
 		}
-		if (timing.size() == 0) {
-			timing.push_back(currentTime - AVERAGE_REVOLUTION_TIME);
-		}
-		timing.push_back(currentTime);
-		if (timing.size() > 10) {
-			timing.erase(timing.begin());
-		}
+		last = currentTime;
 	}
 
 	void stopActivity(unsigned long duration) {}
@@ -61,20 +62,31 @@ public:
 	}
 
 	unsigned short getAverageTime() {
-		if (timing.size() < 2) {
+		if (length < 1) {
 			return 0;
 		}
-		int sum = 0;
-		for (int i = 0; i < timing.size() - 1; i++) {
-			sum += timing[i + 1] - timing[i];
+		sum = 0;
+		for (i = cursor, j = 0; j < length; j++) {
+			sum += timing[i];
+			if (i == length - 1) {
+				i = 0;
+			} else {
+				i++;
+			}
 		}
-		return sum / (timing.size() - 1);
+		return sum / length ;
 	}
 
 protected:
 	unsigned char pin;
 	bool pedalling;
-	vector<long> timing;
+	unsigned char cursor;
+	unsigned char length;
+	unsigned long timing[5];
+	unsigned long last;
+private:
+	unsigned long sum;
+	unsigned char i, j;
 };
 
 #endif /* CADENCESYSTEM_H_ */

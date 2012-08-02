@@ -12,7 +12,7 @@
 class Activity {
 public:
 
-	virtual void update() = 0;
+	virtual void update(unsigned long currentTime) = 0;
 };
 
 #endif /* THREADLISTENER_H_ */

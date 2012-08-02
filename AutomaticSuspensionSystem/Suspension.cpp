@@ -9,8 +9,8 @@
 
 static const unsigned short POWER_SAVE_THRESHOLD = 500;
 
-Suspension::Suspension(): isLocked(false) {
-	servo = new CalibratableServo();
+Suspension::Suspension() : servo(), isLocked(false), isReverse(isReverse), lastTime(0) {
+
 }
 
 Suspension::Suspension(unsigned char servoPin, unsigned char feedbackPin, bool isReverse)
@@ -19,7 +19,6 @@ Suspension::Suspension(unsigned char servoPin, unsigned char feedbackPin, bool i
 }
 
 Suspension::~Suspension() {
-
 }
 
 void Suspension::lock() {
@@ -66,11 +65,10 @@ void Suspension::detach() {
 	servo->detach();
 }
 
-void Suspension::update() {
+void Suspension::update(unsigned long currentTime) {
 	if (servo->isCalibrating() || !servo->attached()) {
 		return;
 	}
-	long currentTime = millis();
 	if (currentTime - lastTime > POWER_SAVE_THRESHOLD) {
 		lastTime = currentTime;
 		servo->detach();

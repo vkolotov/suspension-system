@@ -9,8 +9,7 @@
 
 void (*resetArduino)(void) = 0; //declare reset function @ address 0
 
-AutomaticSuspension::AutomaticSuspension() :
-		threadListeners() {
+AutomaticSuspension::AutomaticSuspension() {
 }
 
 AutomaticSuspension::~AutomaticSuspension() {
@@ -20,36 +19,30 @@ void AutomaticSuspension::init() {
 
 	frontSuspension = new Suspension(FRONT_SUSPENSION_CONTROL_PIN,
 			FRONT_SUSPENSION_FEADBACK_PIN, true);
-	threadListeners.push_back(frontSuspension);
+
 	rearSuspension = new Suspension(REAR_SUSPENSION_CONTROL_PIN,
 			REAR_SUSPENSION_FEADBACK_PIN, false);
-	threadListeners.push_back(rearSuspension);
 
 	cadenceSystem = new CadenceSystem(CADENCE_PIN);
-	threadListeners.push_back(cadenceSystem);
 
-	//forkAccelerometerSystem = new ForkAccelerometerSystem();
-	//threadListeners.push_back(forkAccelerometerSystem);
+	forkAccelerometerSystem = new ForkAccelerometerSystem();
 
 	frontButton = new Button(FRONT_BUTTON_PIN, false);
-	threadListeners.push_back(frontButton);
-	modeButton = new Button(MODE_BUTTON_PIN, true);
-	threadListeners.push_back(modeButton);
-	rearButton = new Button(REAR_BUTTON_PIN, false);
-	threadListeners.push_back(rearButton);
 
-	threadListeners.push_back(this);
-	//Serial.println("DI");
+	modeButton = new Button(MODE_BUTTON_PIN, true);
+
+	rearButton = new Button(REAR_BUTTON_PIN, false);
 
 }
 
-void AutomaticSuspension::update() {
+void AutomaticSuspension::update(unsigned long currentTime) {
 
 	if (modeButton->isPushed(3000)) {
 		resetArduino();
 		return;
 	}
 	if (frontButton->isPushed(3000)) {
+		forkAccelerometerSystem->calibrate();
 		frontSuspension->calibrate();
 		frontSuspension->lock();
 		rearSuspension->calibrate();
@@ -61,18 +54,29 @@ void AutomaticSuspension::update() {
 	}
 	if (modeButton->isPushed()) {
 		if (frontButton->isPushed()) {
+			forkAccelerometerSystem->threshold += 50;
+			if (forkAccelerometerSystem->threshold > 600) {
+				forkAccelerometerSystem->threshold = 600;
+			}
 
 		} else if (rearButton->isPushed()) {
+			forkAccelerometerSystem->threshold -= 50;
+			if (forkAccelerometerSystem->threshold < 0) {
+				forkAccelerometerSystem->threshold = 0;
+			}
 
 		}
-		if (cadenceSystem->isPedalling()) {
+
+		if (cadenceSystem->isPedalling() && !forkAccelerometerSystem->isActive()) {
 			rearSuspension->lock();
 			frontSuspension->lock();
+			return;
 		} else {
 			rearSuspension->release();
 			frontSuspension->release();
 		}
 	} else {
+
 		if (frontButton->isPushed()) {
 			frontSuspension->toggle();
 		}
@@ -80,8 +84,4 @@ void AutomaticSuspension::update() {
 			rearSuspension->toggle();
 		}
 	}
-}
-
-vector<Activity*> AutomaticSuspension::getThreadListeners() {
-	return threadListeners;
 }

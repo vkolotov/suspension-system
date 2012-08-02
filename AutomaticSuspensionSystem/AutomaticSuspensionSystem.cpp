@@ -1,32 +1,24 @@
 #include "AutomaticSuspensionSystem.h"
 
-#include <StandardCplusplus.h>
-#include <vector>
-
-using namespace std;
-
 AutomaticSuspension application;
-vector<Activity*> threadListeners;
-unsigned long last;
+unsigned long time = 0;
 
 void setup() {
 
 	Serial.begin(9600);
-	last = millis();
 	application.init();
-	threadListeners = application.getThreadListeners();
 
 }
 
 void loop() {
-
-	for (int i = 0; i < threadListeners.size(); i++) {
-		threadListeners[i]->update();
-	}
-//	long currentTime = millis();
-//	if (currentTime - last > 5000) {
-//		last = currentTime;
-//		Serial.println("w");
-//	}
+	time = millis();
+	application.frontSuspension->update(time);
+	application.rearSuspension->update(time);
+	application.cadenceSystem->update(time);
+	application.forkAccelerometerSystem->update(time);
+	application.frontButton->update(time);
+	application.modeButton->update(time);
+	application.rearButton->update(time);
+	application.update(time);
 
 }

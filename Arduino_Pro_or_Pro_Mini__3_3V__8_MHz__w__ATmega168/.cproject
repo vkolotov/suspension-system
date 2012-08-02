@@ -31,7 +31,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire/utility}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
 								</option>
 								<inputType id="it.baeyens.avreclipse.tool.assembler.input.1090202751" superClass="it.baeyens.avreclipse.tool.assembler.input"/>
 							</tool>
@@ -45,7 +46,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire/utility}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.compiler.option.def.1739258524" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.compiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ARDUINO=101"/>
@@ -67,7 +69,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Wire/utility}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/Servo}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/StandardCplusplus}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/I2Cdev}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino_Pro_or_Pro_Mini__3_3V__8_MHz__w__ATmega168/ADXL345}&quot;"/>
 								</option>
 								<option id="it.baeyens.avreclipse.cppcompiler.option.def.1163624986" name="Define Syms (-D)" superClass="it.baeyens.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ARDUINO=101"/>
@@ -82,12 +85,13 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Wire/utility"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="ADXL345"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Servo"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="I2Cdev"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Wire/utility"/>
 						<entry excluding="utility" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Wire"/>
 						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="standard"/>
 						<entry excluding="?xamples/*" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="arduino"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="StandardCplusplus"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

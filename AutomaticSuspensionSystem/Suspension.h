@@ -22,7 +22,7 @@ public:
 	void release();
 	void toggle();
 	void calibrate();
-	void update();
+	void update(unsigned long currentTime);
 	bool locked();
 	void attach();
 	void detach();

@@ -21,17 +21,17 @@ public:
 		pinMode(pin, INPUT);
 	}
 
-	void initActivity() {
+	void initActivity(unsigned long currentTime) {
 		pushDuration = isToggle ? (pushDuration > 0 ? 1 : -1) : 0;
 	}
 
-	void startActivity() {}
+	void startActivity(unsigned long currentTime) {}
 
 	void stopActivity(unsigned long duration) {
 		pushDuration = isToggle ? (pushDuration > 0 ? -duration : duration) : duration;
 	}
 
-	bool qualifier() {
+	bool qualifier(unsigned long currentTime) {
 		return digitalRead(pin) == HIGH;
 	}
 

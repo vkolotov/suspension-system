@@ -14,28 +14,26 @@ class DebounceActivity : public Activity {
 public:
 	DebounceActivity(unsigned short threshold) : threshold(threshold), last(0), processEvent(false) {};
 
-	void update() {
-		initActivity();
-		long current = millis();
-		long duration = current - last;
-		if (duration > threshold) {
-			if (qualifier()) {
+	void update(unsigned long current) {
+		initActivity(current);
+		if (current - last > threshold) {
+			if (qualifier(current)) {
 				if (!processEvent) {
 					last = current;
 					processEvent = true;
-					startActivity();
+					startActivity(current);
 				}
 			} else {
 				if (processEvent) {
 					processEvent = false;
-					stopActivity(duration);
+					stopActivity(current - last);
 				}
 			}
 		}
 	}
-	virtual bool qualifier() = 0;
-	virtual void initActivity();
-	virtual void startActivity();
+	virtual bool qualifier(unsigned long currentTime) = 0;
+	virtual void initActivity(unsigned long currentTime);
+	virtual void startActivity(unsigned long currentTime);
 	virtual void stopActivity(unsigned long duration);
 protected:
 	unsigned short threshold;

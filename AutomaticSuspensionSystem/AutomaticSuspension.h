@@ -15,11 +15,6 @@
 #include <Settings.h>
 #include <Button.h>
 
-#include <StandardCplusplus.h>
-#include <vector>
-
-using namespace std;
-
 class AutomaticSuspension : public Activity {
 public:
 	AutomaticSuspension();
@@ -27,11 +22,7 @@ public:
 
 	void init();
 
-	void update();
-
-	vector<Activity*> getThreadListeners();
-
-private:
+	void update(unsigned long currentTime);
 
 	Suspension* frontSuspension;
 	Suspension* rearSuspension;
@@ -41,8 +32,6 @@ private:
 	Button* frontButton;
 	Button* rearButton;
 	Button* modeButton;
-
-	vector<Activity*> threadListeners;
 
 };
 
