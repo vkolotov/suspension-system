@@ -8,21 +8,27 @@
 #define AutomaticSuspensionSystem_H_
 //#include "Arduino.h"
 //add your includes for the project AutomaticSuspensionSystem here
-#include <Vector.h>
-#include <AutomaticSuspension.h>
-#include <ThreadListener.h>
+//#include <AutomaticSuspension.h>
+#include <Suspension.h>
+#include <FrequencySystem.h>
+#include <ForkAccelerometerSystem.h>
+#include <Settings.h>
+#include <Button.h>
 
 //end of add your includes here
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 void loop();
 void setup();
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 //add your function definitions for the project AutomaticSuspensionSystem here
-
+void updateMudules();
+void updateApplication();
 //Do not add code below this line
 #endif /* AutomaticSuspensionSystem_H_ */

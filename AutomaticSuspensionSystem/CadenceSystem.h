@@ -11,15 +11,11 @@
 #include <Arduino.h>
 #include <Settings.h>
 
-static const unsigned short MINIMUM_REVOLUTION_TIME = (60.0f / 180.0f) * 1000; // 180 revolutions per second
-static const unsigned short MAXIMUM_REVOLUTION_TIME = (60.0f / 40.0f) * 1000; // 40 revolutions per second
-static const unsigned short AVERAGE_REVOLUTION_TIME = (60.0f / 70.0f) * 1000; // 70 revolutions per second
-
 class CadenceSystem: public DebounceActivity {
 public:
 	CadenceSystem(unsigned char pin) :
-			DebounceActivity(MINIMUM_REVOLUTION_TIME), pin(pin), pedalling(false),
-			cursor(0), length(0), sum(0), last(0) {
+			DebounceActivity(MINIMUM_CADENCE_TIME), pin(pin), pedalling(false),
+			cursor(0), length(0) {
 		pinMode(pin, INPUT);
 	};
 
@@ -27,15 +23,16 @@ public:
 		return digitalRead(pin) == HIGH;
 	}
 
-	void initActivity(unsigned long currentTime) {
+	void idle(unsigned long currentTime) {
 		if (length < 1) {
 			pedalling = false;
 		} else if (pedalling) {
+			//TODO introduce setting variable
 			pedalling = currentTime - last <= getAverageTime() + 300;
 		}
 	}
 
-	void startActivity(unsigned long currentTime) {
+	void start(unsigned long currentTime) {
 		pedalling = true;
 		if (currentTime - last > MAXIMUM_REVOLUTION_TIME) {
 			cursor = 0;
@@ -52,10 +49,9 @@ public:
 			}
 			timing[cursor] = currentTime - last;
 		}
-		last = currentTime;
 	}
 
-	void stopActivity(unsigned long duration) {}
+	void stop(unsigned long duration) {}
 
 	inline bool isPedalling() {
 		return pedalling;
@@ -65,8 +61,8 @@ public:
 		if (length < 1) {
 			return 0;
 		}
-		sum = 0;
-		for (i = cursor, j = 0; j < length; j++) {
+		unsigned long sum = 0;
+		for (unsigned char i = cursor, j = 0; j < length; j++) {
 			sum += timing[i];
 			if (i == length - 1) {
 				i = 0;
@@ -83,10 +79,6 @@ protected:
 	unsigned char cursor;
 	unsigned char length;
 	unsigned long timing[5];
-	unsigned long last;
-private:
-	unsigned long sum;
-	unsigned char i, j;
 };
 
 #endif /* CADENCESYSTEM_H_ */
