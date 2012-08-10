@@ -8,11 +8,10 @@
 #ifndef FORKACCELEROMETERSYSTEM_H_
 #define FORKACCELEROMETERSYSTEM_H_
 
-#include <Activity.h>
 #include <Wire.h>
 #include <ADXL345.h>
 
-class ForkAccelerometerSystem: public Activity {
+class ForkAccelerometerSystem {
 public:
 	ForkAccelerometerSystem() : threshold(400), active(false), balance(255),
 			current(0), accel(), lastActivity(0) {

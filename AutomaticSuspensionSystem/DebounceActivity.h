@@ -8,33 +8,33 @@
 #ifndef DEBOUNCEACTIVITY_H_
 #define DEBOUNCEACTIVITY_H_
 
-#include <Activity.h>
-
-class DebounceActivity : public Activity {
+class DebounceActivity {
 public:
 	DebounceActivity(unsigned short threshold) : threshold(threshold), last(0), processEvent(false) {};
 
 	void update(unsigned long current) {
-		initActivity(current);
 		if (current - last > threshold) {
 			if (qualifier(current)) {
 				if (!processEvent) {
-					last = current;
 					processEvent = true;
-					startActivity(current);
+					start(current);
+					last = current;
+					return;
 				}
 			} else {
 				if (processEvent) {
 					processEvent = false;
-					stopActivity(current - last);
+					stop(current - last);
+					return;
 				}
 			}
+			idle(current);
 		}
 	}
 	virtual bool qualifier(unsigned long currentTime) = 0;
-	virtual void initActivity(unsigned long currentTime);
-	virtual void startActivity(unsigned long currentTime);
-	virtual void stopActivity(unsigned long duration);
+	virtual void idle(unsigned long currentTime);
+	virtual void start(unsigned long currentTime);
+	virtual void stop(unsigned long duration);
 protected:
 	unsigned short threshold;
 	unsigned long last;

@@ -11,23 +11,21 @@
 #include <Arduino.h>
 #include <DebounceActivity.h>
 
-static const unsigned short DEBOUNCE_DURATION = 200;
-
 class Button : public DebounceActivity {
 public:
-	Button() : DebounceActivity(DEBOUNCE_DURATION), pin(0), pushDuration(0), isToggle(false) {}
-	Button(unsigned char pin, bool isToggle) : DebounceActivity(DEBOUNCE_DURATION),
+
+	Button(unsigned char pin, bool isToggle) : DebounceActivity(BUTTON_DEBOUNCE_DURATION),
 			pin(pin), pushDuration(0), isToggle(isToggle) {
 		pinMode(pin, INPUT);
 	}
 
-	void initActivity(unsigned long currentTime) {
+	void idle(unsigned long currentTime) {
 		pushDuration = isToggle ? (pushDuration > 0 ? 1 : -1) : 0;
 	}
 
-	void startActivity(unsigned long currentTime) {}
+	void start(unsigned long currentTime) {}
 
-	void stopActivity(unsigned long duration) {
+	void stop(unsigned long duration) {
 		pushDuration = isToggle ? (pushDuration > 0 ? -duration : duration) : duration;
 	}
 
