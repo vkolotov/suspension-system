@@ -75,7 +75,7 @@ void updateApplication() {
 //			}
 		}
 
-		if (cadenceSystem.isPedalling()/* && !forkAccelerometerSystem.isActive()*/) {
+		if (cadenceSystem.isProcessing()/* && !forkAccelerometerSystem.isActive()*/) {
 			rearSuspension.lock();
 			//frontSuspension.lock();
 			return;
