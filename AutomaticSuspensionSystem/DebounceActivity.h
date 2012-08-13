@@ -10,34 +10,35 @@
 
 class DebounceActivity {
 public:
-	DebounceActivity(unsigned short threshold) : threshold(threshold), last(0), processEvent(false) {};
+	DebounceActivity(unsigned short threshold) : threshold(threshold), lastEvent(0), processEvent(false) {};
 
 	void update(unsigned long current) {
-		if (current - last > threshold) {
-			if (qualifier(current)) {
-				if (!processEvent) {
-					processEvent = true;
-					start(current);
-					last = current;
-					return;
-				}
-			} else {
-				if (processEvent) {
-					processEvent = false;
-					stop(current - last);
-					return;
-				}
+		reset(current);
+		if (current - lastEvent < threshold) {
+			return;
+		}
+		if (qualifier(current)) {
+			if (!processEvent) {
+				processEvent = true;
+				start(current);
+				lastEvent = current;
+				return;
 			}
-			idle(current);
+		} else {
+			if (processEvent) {
+				processEvent = false;
+				stop(current - lastEvent);
+				return;
+			}
 		}
 	}
 	virtual bool qualifier(unsigned long currentTime) = 0;
-	virtual void idle(unsigned long currentTime);
+	virtual void reset(unsigned long currentTime);
 	virtual void start(unsigned long currentTime);
 	virtual void stop(unsigned long duration);
 protected:
 	unsigned short threshold;
-	unsigned long last;
+	unsigned long lastEvent;
 	bool processEvent;
 };
 

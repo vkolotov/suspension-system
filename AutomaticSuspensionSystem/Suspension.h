@@ -21,6 +21,7 @@ public:
 			: Servo(), isLocked(false), isReverse(isReverse), lastTime(0),
 			  pin(sPin), feedbackPin(fPin),
 			  minAngle(30), maxAngle(160), calibrating(false) {
+		pinMode(feedbackPin, INPUT);
 	}
 
 	void lock() {
@@ -49,16 +50,15 @@ public:
 		}
 		if (currentTime - lastTime > POWER_SAVE_THRESHOLD) {
 			lastTime = currentTime;
-			//detach();
+			detach();
 		}
 	}
 
 	void calibrate() {
-		//pinMode(feedbackPin, INPUT);
-
 		bind();
 		calibrating = true;
 		write(MAX_ANGLE / 2);
+		delay(500);
 		maxAngle = _calibrate(CALIBRATION_STEP);
 		minAngle = _calibrate(-CALIBRATION_STEP);
 		calibrating = false;
@@ -93,22 +93,14 @@ protected:
 		short currentFeedback = 0;
 
 		for (unsigned short angle = read() + calibrationStep; ; ) {
-			//Serial.println(angle);
 			write(angle);
 			delay(CALIBRATION_DELAY);
-
 			currentFeedback = getRawFeedback();
-			Serial.print(currentFeedback);
-			Serial.print(" ");
-			Serial.println(abs(currentFeedback - feedback));
-
 			if (abs(currentFeedback - feedback) < CALIBRATION_THRESHOLD) {
-				Serial.println("Thresh");
 				write(angle - calibrationStep);
 				return angle - calibrationStep;
 			}
 			feedback = currentFeedback;
-
 			angle = angle + calibrationStep;
 			if (angle <= MIN_ANGLE) {
 				return MIN_ANGLE;

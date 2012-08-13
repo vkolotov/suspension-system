@@ -6,13 +6,16 @@
 
 #ifndef AutomaticSuspensionSystem_H_
 #define AutomaticSuspensionSystem_H_
-//#include "Arduino.h"
+#include "Arduino.h"
 //add your includes for the project AutomaticSuspensionSystem here
+#include <Settings.h>
 //#include <AutomaticSuspension.h>
 #include <Suspension.h>
 #include <FrequencySystem.h>
+#include <SpeedSystem.h>
+#include <CadenceSystem.h>
 #include <ForkAccelerometerSystem.h>
-#include <Settings.h>
+
 #include <Button.h>
 
 //end of add your includes here

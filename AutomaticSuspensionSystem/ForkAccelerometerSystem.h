@@ -13,38 +13,40 @@
 
 class ForkAccelerometerSystem {
 public:
-	ForkAccelerometerSystem() : threshold(400), active(false), balance(255),
+	ForkAccelerometerSystem() : threshold(400), active(false), balance(65),
 			current(0), accel(), lastActivity(0) {
+	}
+
+	void init() {
 		Wire.begin();
 		accel.initialize();
-		accel.setRange(0x2);
+		if (accel.testConnection()) {
+			accel.setRange(0x2);
+		}
 	}
 
 	void update(unsigned long currentTime) {
-		current = accel.getAccelerationX();
-		if (current - balance > threshold) {
-			active = true;
-			lastActivity = currentTime;
-//			Serial.print(current);
-//			Serial.print(" ");
-//			Serial.print(balance);
-//			Serial.print(" ");
-//			Serial.print(threshold);
-//			Serial.print(" ");
-//			Serial.print(current - balance);
-//			Serial.print(" ");
-//			Serial.println(active);
-		} else if (currentTime - lastActivity < 3000) {
-			//Serial.println("time");
-			active = true;
+		if (accel.testConnection()) {
+			current = accel.getAccelerationX();
+
+			if (current - balance > threshold || current < 10) {
+				active = true;
+				lastActivity = currentTime;
+			} else if (currentTime - lastActivity < 3000) {
+				active = true;
+			} else {
+				active = false;
+			}
 		} else {
-			//Serial.println("inactive");
 			active = false;
+			//Serial.println("Accel is not connected");
 		}
 	}
 
 	void calibrate() {
-		balance = accel.getAccelerationX();
+		if (accel.testConnection()) {
+			balance = accel.getAccelerationX();
+		}
 	}
 
 	inline bool isActive() {

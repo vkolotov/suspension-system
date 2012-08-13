@@ -8,10 +8,12 @@
 #ifndef BASICQUEUE_H_
 #define BASICQUEUE_H_
 
-template <typename Data> class BasicQueue {
+template <int capacity, typename Data> class BasicQueue {
 public:
-	BasicQueue(unsigned char capacity) : cursor(0), length(0), capacity(capacity), data(capacity), iterator(0) {
+	BasicQueue() : cursor(0), length(0), iterator(0), iteratorIndex(0) {
+
 	}
+	~BasicQueue() {}
 
 	void push(Data entry) {
 		if (cursor >= capacity - 1) {
@@ -19,7 +21,7 @@ public:
 		} else {
 			cursor++;
 		}
-		if (length < 5) {
+		if (length < capacity) {
 			length++;
 		}
 		data[cursor] = entry;
@@ -30,31 +32,45 @@ public:
 		length = 0;
 	}
 
-	Data current() {
+	Data last() {
 		return data[cursor];
 	}
 
+	unsigned char size() {
+		return length;
+	}
+
 	void iteratorReset() {
-		iterator = 0;
+		iterator = cursor - length + 1;
+		if (iterator < 0) {
+			iterator = cursor + 1;
+		}
+		iteratorIndex = 0;
 	}
 
 	Data iteratorNext() {
-		return data[iterator++];
+		Data tmp = data[iterator];
+		if (iterator == capacity - 1) {
+			iterator = 0;
+		} else {
+			iterator++;
+		}
+		iteratorIndex++;
+		return tmp;
 	}
 
 	bool iteratorHasNext() {
-		return iterator < length;
+		return iteratorIndex < length;
 	}
 
-	virtual ~BasicQueue();
 
 protected:
 	unsigned char cursor;
 	unsigned char length;
-	unsigned char capacity;
-	Data data[];
 
-	unsigned char iterator;
+	short iterator;
+	unsigned char iteratorIndex;
+	Data data[capacity];
 };
 
 #endif /* BASICQUEUE_H_ */

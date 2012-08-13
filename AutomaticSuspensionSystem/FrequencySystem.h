@@ -11,13 +11,13 @@
 #include <DebounceActivity.h>
 #include <Arduino.h>
 #include <Settings.h>
+#include <BasicQueue.h>
 
 class FrequencySystem: public DebounceActivity {
 public:
-	FrequencySystem(unsigned char pin, unsigned short minimumTime,
-			unsigned short averageTime, unsigned short maximumTime) :
+	FrequencySystem(unsigned char pin, unsigned short minimumTime, unsigned short maximumTime) :
 			DebounceActivity(minimumTime), pin(pin), processing(false),
-			cursor(0), length(0), averageTime(averageTime), maximumTime(maximumTime) {
+			timing(), maximumTime(maximumTime) {
 		pinMode(pin, INPUT);
 	};
 
@@ -25,64 +25,33 @@ public:
 		return digitalRead(pin) == HIGH;
 	}
 
-	void idle(unsigned long currentTime) {
-		if (length < 1) {
-			processing = false;
-		} else if (processing) {
-			//TODO introduce setting variable
-			processing = currentTime - last <= getAverageTime() + 300;
-		}
-	}
+	virtual void reset(unsigned long currentTime) = 0;
 
-	void start(unsigned long currentTime) {
-		processing = true;
-		if (currentTime - last > maximumTime) {
-			cursor = 0;
-			timing[cursor] = averageTime;
-			length = 1;
-		} else {
-			if (cursor >= 4) {
-				cursor = 0;
-			} else {
-				cursor++;
-			}
-			if (length < 5) {
-				length++;
-			}
-			timing[cursor] = currentTime - last;
-		}
-	}
+	virtual void start(unsigned long currentTime) = 0;
 
 	void stop(unsigned long duration) {}
 
-	inline bool isProcessing() {
+	virtual bool isProcessing() {
 		return processing;
 	}
 
 	unsigned short getAverageTime() {
-		if (length < 1) {
+		if (timing.size() < 1) {
 			return 0;
 		}
 		unsigned long sum = 0;
-		for (unsigned char i = cursor, j = 0; j < length; j++) {
-			sum += timing[i];
-			if (i == length - 1) {
-				i = 0;
-			} else {
-				i++;
-			}
+		timing.iteratorReset();
+		while (timing.iteratorHasNext()) {
+			sum += timing.iteratorNext();
 		}
-		return sum / length ;
+		return sum / timing.size();
 	}
 
 protected:
 	unsigned char pin;
 	bool processing;
-	unsigned char cursor;
-	unsigned char length;
-	unsigned long timing[5];
+	BasicQueue<3, unsigned long> timing;
 
-	unsigned short averageTime;
 	unsigned short maximumTime;
 };
 

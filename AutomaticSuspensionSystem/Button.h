@@ -19,7 +19,7 @@ public:
 		pinMode(pin, INPUT);
 	}
 
-	void idle(unsigned long currentTime) {
+	void reset(unsigned long currentTime) {
 		pushDuration = isToggle ? (pushDuration > 0 ? 1 : -1) : 0;
 	}
 
