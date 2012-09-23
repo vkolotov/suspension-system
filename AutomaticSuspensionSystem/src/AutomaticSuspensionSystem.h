@@ -7,16 +7,49 @@
 #ifndef AutomaticSuspensionSystem_H_
 #define AutomaticSuspensionSystem_H_
 #include "Arduino.h"
+#include <math.h>
+#include <avr/eeprom.h>
 //add your includes for the project AutomaticSuspensionSystem here
+
+#include <Wire.h>
+#include <ADXL345.h>
+
+#include <Activity.h>
+
 #include <Settings.h>
-//#include <AutomaticSuspension.h>
 #include <Suspension.h>
 #include <FrequencySystem.h>
 #include <SpeedSystem.h>
 #include <CadenceSystem.h>
-#include <ForkAccelerometerSystem.h>
-
+#include <SprungAccelerometerSystem.h>
+#include <UnsprungAccelerometerSystem.h>
 #include <Button.h>
+#include <Messages.h>
+
+#include <avr/sleep.h>
+
+
+#include <State.h>
+#include <Automaton.h>
+#include <Application.h>
+
+#include <BluetoothSystem.h>
+
+#include <CalibrationState.h>
+#include <SleepState.h>
+#include <CommonState.h>
+#include <ManualState.h>
+#include <CDTState.h>
+#include <AutomaticState.h>
+#include <DescentState.h>
+#include <TrailState.h>
+#include <ClimbState.h>
+
+//#include <State.h>
+
+
+
+
 
 //end of add your includes here
 #ifdef __cplusplus

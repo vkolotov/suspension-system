@@ -8,7 +8,7 @@
 #ifndef BASICQUEUE_H_
 #define BASICQUEUE_H_
 
-template <int capacity, typename Data> class BasicQueue {
+template <unsigned int capacity, typename Data> class BasicQueue {
 public:
 	BasicQueue() : cursor(0), length(0), iterator(0), iteratorIndex(0) {
 

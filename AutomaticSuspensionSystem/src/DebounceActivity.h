@@ -10,7 +10,10 @@
 
 class DebounceActivity {
 public:
-	DebounceActivity(unsigned short threshold) : threshold(threshold), lastEvent(0), processEvent(false) {};
+	DebounceActivity(unsigned short threshold) : threshold(threshold),
+			lastEvent(0), processEvent(false) {
+
+	};
 
 	void update(unsigned long current) {
 		reset(current);
@@ -21,11 +24,15 @@ public:
 			if (!processEvent) {
 				processEvent = true;
 				start(current);
+				Serial.println("Activity!!! : ");
+				//Serial.println();
+				digitalWrite(9, HIGH);
 				lastEvent = current;
 				return;
 			}
 		} else {
 			if (processEvent) {
+				digitalWrite(9, LOW);
 				processEvent = false;
 				stop(current - lastEvent);
 				return;
@@ -36,7 +43,11 @@ public:
 	virtual void reset(unsigned long currentTime);
 	virtual void start(unsigned long currentTime);
 	virtual void stop(unsigned long duration);
-protected:
+
+	unsigned long getLastActivity() {
+		return lastEvent;
+	}
+//protected:
 	unsigned short threshold;
 	unsigned long lastEvent;
 	bool processEvent;

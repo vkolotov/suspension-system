@@ -11,30 +11,32 @@
 
 class SpeedSystem : public FrequencySystem {
 public:
-	SpeedSystem(unsigned char pin, unsigned short minimumTime, unsigned short maximumTime)
-			: FrequencySystem(pin, minimumTime, maximumTime) {
+	SpeedSystem(SpeedSystemConfig speedSystemConfig)
+		: FrequencySystem(speedSystemConfig.frequencySystemConfig), speedSystemConfig(speedSystemConfig) {
 	}
 
 	void reset(unsigned long currentTime) {
-		if (currentTime - lastEvent >= maximumTime) {
+		if (currentTime - lastEvent >= frequencySystemConfig.maxTime) {
 			timing.clear();
 			return;
 		}
 	}
 
 	void start(unsigned long currentTime) {
-		if (currentTime - lastEvent < maximumTime) {
+		if (currentTime - lastEvent < frequencySystemConfig.maxTime) {
 			timing.push(currentTime - lastEvent);
 		}
 	}
 
 	bool isProcessing() {
-		return (int(getAverageSpeed() * 3.6f)) >= 3;
+		return (int(getAverageSpeed() * 3.6f)) >= 4;
 	}
 
 	float getAverageSpeed() {
-		return ((float)WHEEL_LENGTH) / ((float)getAverageTime());
+		return ((float)(speedSystemConfig.wheelLength)) / ((float)getAverageTime());
 	}
+protected:
+	SpeedSystemConfig speedSystemConfig;
 };
 
 #endif /* SPEEDSYSTEM_H_ */

@@ -14,8 +14,9 @@
 class Button : public DebounceActivity {
 public:
 
-	Button(unsigned char pin, bool isToggle) : DebounceActivity(BUTTON_DEBOUNCE_DURATION),
-			pin(pin), pushDuration(0), isToggle(isToggle) {
+	Button(unsigned char pin, bool isToggle, unsigned short pinReference = HIGH) :
+			DebounceActivity(BUTTON_DEBOUNCE_DURATION),	pin(pin), pushDuration(0),
+			isToggle(isToggle), pinReference(pinReference) {
 		pinMode(pin, INPUT);
 	}
 
@@ -45,6 +46,7 @@ protected:
 	unsigned char pin;
 	long pushDuration;
 	bool isToggle;
+	unsigned short pinReference;
 };
 
 #endif /* BUTTON_H_ */

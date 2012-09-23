@@ -13,14 +13,14 @@
 
 class CadenceSystem: public FrequencySystem {
 public:
-	CadenceSystem(unsigned char pin, unsigned short minimumTime, unsigned short maximumTime)
-			: FrequencySystem(pin, minimumTime, maximumTime) {
+	CadenceSystem(CadenceSystemConfig cadenceSystemConfig)
+			: FrequencySystem(cadenceSystemConfig.frequencySystemConfig) {
 	}
 
 	void reset(unsigned long currentTime) {
 		if (processing) {
 			if (timing.size() == 0) {
-				processing = currentTime - lastEvent <= maximumTime;
+				processing = currentTime - lastEvent <= frequencySystemConfig.maxTime;
 			} else {
 				processing = currentTime - lastEvent <= getAverageTime() + 300;
 			}
@@ -35,6 +35,14 @@ public:
 			timing.push(currentTime - lastEvent);
 		}
 		processing = true;
+	}
+
+	uint16_t getCadence() {
+		unsigned short time = getAverageTime();
+		if (time == 0) {
+			return 0;
+		}
+		return 60000 / time;
 	}
 };
 
