@@ -5,3 +5,8 @@ Release
 .cproject
 .settings
 SparkFun_Pro_Micro_3_3V_8MHz
+velocomp/android/out
+velocomp/android/bin
+velocomp/android/gen
+velocomp/android/.idea
+*.iml

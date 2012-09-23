@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
+
+    <include layout="@layout/speed_cadence_indicator_areas"/>
+
+    <RelativeLayout
+            android:id="@+id/gradientGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/indicatorAreaHeight"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_below="@+id/speedGroup"
+            >
+        <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gradient"
+                android:layout_alignParentBottom="true"
+                android:textSize="@dimen/indicatorLabelFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+        />
+        <TextView
+                android:id="@+id/gradient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15"
+                android:textSize="@dimen/indicatorValueFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/indicatorAreaHeight"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_below="@+id/gradientGroup"
+            >
+        <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode"
+                android:layout_alignParentBottom="true"
+                android:textSize="@dimen/indicatorLabelFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+        />
+        <TextView
+                android:id="@+id/cdtMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Climb"
+                android:textSize="@dimen/indicatorValueFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_above="@+id/descendGradientGroup"
+            android:baselineAligned="false">
+        <TextView
+                android:id="@+id/climbGradientLabel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Climb gradient"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+
+        <TextView
+                android:id="@+id/climbGradient"
+                android:layout_width="30dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="15"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/climbGradientLabel"
+                android:layout_alignParentLeft="true"/>
+
+        <SeekBar android:id="@+id/climbGradientSeekBar"
+                 android:layout_below="@id/climbGradientLabel"
+                 android:layout_alignParentRight="true"
+                 android:layout_toRightOf="@+id/climbGradient"
+                 android:paddingLeft="5dp"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:max="50"
+                 android:progress="25"
+                 android:progressDrawable="@drawable/seekbar_bg"
+                 android:secondaryProgress="30" />
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/descendGradientGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_alignParentBottom="true"
+            android:baselineAligned="false"
+            android:paddingBottom="10dp">
+        <TextView
+                android:id="@+id/descendGradientLabel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Descend gradient"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+
+        <TextView
+                android:id="@+id/descendGradient"
+                android:layout_width="30dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="-20"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/descendGradientLabel"
+                android:layout_alignParentLeft="true"/>
+
+        <SeekBar android:id="@+id/descendGradientSeekBar"
+                 android:layout_below="@id/descendGradientLabel"
+                 android:layout_alignParentRight="true"
+                 android:layout_toRightOf="@+id/descendGradient"
+                 android:paddingLeft="5dp"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:max="50"
+                 android:progress="25"
+                 android:progressDrawable="@drawable/seekbar_bg"
+                 android:secondaryProgress="30" />
+    </RelativeLayout>
+
+</RelativeLayout>

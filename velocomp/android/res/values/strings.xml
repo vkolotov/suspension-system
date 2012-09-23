@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">velocomp</string>
+    <string name="app_url"></string>
+
+    <string name="manualMode">Manual</string>
+    <string name="semiautomaticMode">CTD</string>
+    <string name="automaticMode">Automatic</string>
+</resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
+
+    <include layout="@layout/speed_cadence_indicator_areas"/>
+
+
+    <LinearLayout
+            android:id="@+id/toggleButtons"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:baselineAligned="false"
+            android:paddingBottom="10dp">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0">
+            <ToggleButton
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:textOn="Climb"
+                    android:textOff="Climb"
+                    android:onClick="climbSuspensionToggle"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0">
+            <ToggleButton
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:textOn="Trail"
+                    android:textOff="Trail"
+                    android:onClick="trailSuspensionToggle"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0">
+            <ToggleButton
+                    android:layout_height="fill_parent"
+                    android:layout_width="fill_parent"
+                    android:textOn="Descend"
+                    android:textOff="Descend"
+                    android:onClick="descendSuspensionToggle"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</RelativeLayout>
