@@ -13,14 +13,14 @@
 
 class CadenceSystem: public FrequencySystem {
 public:
-	CadenceSystem(CadenceSystemConfig cadenceSystemConfig)
-			: FrequencySystem(cadenceSystemConfig.frequencySystemConfig) {
+	CadenceSystem(CadenceSystemConfig* cadenceSystemConfig)
+			: FrequencySystem(&(cadenceSystemConfig->frequencySystemConfig)) {
 	}
 
 	void reset(unsigned long currentTime) {
 		if (processing) {
 			if (timing.size() == 0) {
-				processing = currentTime - lastEvent <= frequencySystemConfig.maxTime;
+				processing = currentTime - lastEvent <= frequencySystemConfig->maxTime;
 			} else {
 				processing = currentTime - lastEvent <= getAverageTime() + 300;
 			}

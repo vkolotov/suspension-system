@@ -25,9 +25,9 @@ public:
 
 		if (tmp != current) {
 			previous = tmp;
-			Serial.print("Previous: ");
+			Serial.print("Prev: ");
 			Serial.print(tmp->getName());
-			Serial.print(" Current: ");
+			Serial.print(" Curr: ");
 			Serial.println(current->getName());
 		}
 	}
@@ -46,24 +46,5 @@ public:
 	State* current;
 	State* previous;
 };
-
-
-//	void updateAutomaticMode() {
-//		if (speedSystem.isProcessing() && cadenceSystem.isProcessing()) {
-//			if (unsprungAccelerometerSystem.isActive()) {
-//				rearSuspension.release();
-//			} else {
-//				rearSuspension.lock();
-//			}
-//			if (sprungAccelerometerSystem.isActive()) {
-//				frontSuspension.release();
-//			} else {
-//				frontSuspension.lock();
-//			}
-//		} else {
-//			rearSuspension.release();
-//			frontSuspension.release();
-//		}
-//	}
 
 #endif /* AUTOMATON_H_ */

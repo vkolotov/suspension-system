@@ -47,7 +47,11 @@ public:
 	unsigned long getLastActivity() {
 		return lastEvent;
 	}
-//protected:
+
+	void setLastActivity(unsigned long time) {
+		lastEvent = time;
+	}
+protected:
 	unsigned short threshold;
 	unsigned long lastEvent;
 	bool processEvent;

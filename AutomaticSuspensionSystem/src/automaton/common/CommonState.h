@@ -20,7 +20,7 @@ public:
 	}
 
 	State* transit(Application* app) {
-		if (app->modeButton.isPushed(5000)) {
+		if (app->modeButton.isPushed(10000)) {
 			resetArduino();
 		}
 
@@ -28,7 +28,7 @@ public:
 			return app->automaton->calibrationState;
 		}
 
-		if (app->rearButton.isPushed(5000)) {
+		if (app->rearButton.isPushed(10000)) {
 			app->setSerialPower(!app->config->powerSave.isSerialPowerOn);
 		}
 
@@ -45,24 +45,6 @@ public:
 		if (app->automaton->automaticState->transitable(app)) {
 			app->config->system.mode = MODE_AUTOMATIC;
 			return app->automaton->automaticState;
-		}
-
-
-
-
-
-		if (app->config->system.mode == MODE_AUTOMATIC) {
-			if (app->frontButton.isPushed()) {
-				app->unsprungAccelerometerSystem.increaseThreshold(25);
-			} else if (app->rearButton.isPushed()) {
-				app->unsprungAccelerometerSystem.increaseThreshold(-25);
-			}
-		} else if (app->config->system.mode == MODE_SEMIAUTOMATIC) {
-			if (app->frontButton.isPushed()) {
-				app->frontSuspension.increaseMediumAngle(5);
-			} else if (app->rearButton.isPushed()) {
-				app->frontSuspension.increaseMediumAngle(-5);
-			}
 		}
 
 		if (app->automaton->sleepState->transitable(app)) {

@@ -14,10 +14,13 @@
 class Button : public DebounceActivity {
 public:
 
-	Button(unsigned char pin, bool isToggle, unsigned short pinReference = HIGH) :
-			DebounceActivity(BUTTON_DEBOUNCE_DURATION),	pin(pin), pushDuration(0),
+	Button(unsigned char pin, bool isToggle, uint16_t debonceDuration, unsigned short pinReference = HIGH) :
+			DebounceActivity(debonceDuration),	pin(pin), pushDuration(0),
 			isToggle(isToggle), pinReference(pinReference) {
-		pinMode(pin, INPUT);
+		pinMode(pin, pinReference == HIGH ? INPUT : INPUT_PULLUP);
+		if (pinReference == LOW) {
+			digitalWrite(pin, HIGH);
+		}
 	}
 
 	void reset(unsigned long currentTime) {
@@ -31,11 +34,15 @@ public:
 	}
 
 	bool qualifier(unsigned long currentTime) {
-		return digitalRead(pin) == HIGH;
+		return digitalRead(pin) == pinReference;
 	}
 
 	inline bool isPushed(unsigned short duration) {
-		return labs(pushDuration) >= duration;
+		bool result = labs(pushDuration) >= duration;
+		if (result) {
+			reset(millis());
+		}
+		return result;
 	}
 
 	inline bool isPushed() {

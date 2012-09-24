@@ -15,14 +15,17 @@
 
 class FrequencySystem: public DebounceActivity {
 public:
-	FrequencySystem(FrequencySystemConfig frequencySystemConfig) :
-			DebounceActivity(frequencySystemConfig.minTime),
+	FrequencySystem(FrequencySystemConfig* frequencySystemConfig) :
+			DebounceActivity(frequencySystemConfig->minTime),
 			frequencySystemConfig(frequencySystemConfig), processing(false), timing() {
-		pinMode(frequencySystemConfig.pin, INPUT);
+		pinMode(frequencySystemConfig->pin, frequencySystemConfig->referenceValue == HIGH ? INPUT : INPUT_PULLUP);
+		if (frequencySystemConfig->referenceValue == LOW) {
+			digitalWrite(frequencySystemConfig->pin, HIGH);
+		}
 	};
 
 	bool qualifier(unsigned long currentTime) {
-		return digitalRead(frequencySystemConfig.pin) == frequencySystemConfig.referenceValue;
+		return digitalRead(frequencySystemConfig->pin) == frequencySystemConfig->referenceValue;
 	}
 
 	virtual void reset(unsigned long currentTime) = 0;
@@ -48,7 +51,7 @@ public:
 	}
 
 protected:
-	FrequencySystemConfig frequencySystemConfig;
+	FrequencySystemConfig* frequencySystemConfig;
 
 	bool processing;
 	BasicQueue<3, unsigned long> timing;

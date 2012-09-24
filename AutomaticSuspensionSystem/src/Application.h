@@ -13,15 +13,15 @@ class BluetoothSystem;
 class Application {
 public:
 	Application(Configuration* config, Automaton* automaton) : config(config), automaton(automaton),
-			frontSuspension(*config, config->frontSuspension),
-			rearSuspension(*config, config->rearSuspension),
-			cadenceSystem(config->cadence),
-			speedSystem(config->speed),
-			unsprungAccelerometerSystem(*config, config->unsprungAccelerometerSystem),
-			sprungAccelerometerSystem(*config, config->sprungAccelerometerSystem),
-			frontButton(config->buttons.frontPin, false),
-			rearButton(config->buttons.rearPin, false),
-			modeButton(config->buttons.modePin, false),
+			frontSuspension(config, &(config->frontSuspension)),
+			rearSuspension(config, &(config->rearSuspension)),
+			cadenceSystem(&(config->cadence)),
+			speedSystem(&(config->speed)),
+			unsprungAccelerometerSystem(config, &(config->unsprungAccelerometerSystem)),
+			sprungAccelerometerSystem(config, &(config->sprungAccelerometerSystem)),
+			frontButton(config->buttons.frontPin, false, config->buttons.debounceDuration, config->buttons.frontPinReferenceValue),
+			rearButton(config->buttons.rearPin, false, config->buttons.debounceDuration, config->buttons.rearPinReferenceValue),
+			modeButton(config->buttons.modePin, false, config->buttons.debounceDuration, config->buttons.modePinReferenceValue),
 			bluetoothSystem(),
 			time(0), lastTime(0), startTime(0) {
 
@@ -31,26 +31,30 @@ public:
 	void setup() {
 		startTime = millis();
 
-		// pullup resistor
-		// TODO check what is INPUT_PULLUP
-		digitalWrite(config->cadence.frequencySystemConfig.pin, HIGH);
-
-//		pinMode(FRONT_BUTTON_PIN, INPUT);
-//		digitalWrite(FRONT_BUTTON_PIN, LOW);
-//		digitalWrite(MODE_BUTTON_PIN, LOW);
-//		digitalWrite(REAR_BUTTON_PIN, LOW);
-//
-
 		pinMode(config->powerSave.servoRelayPin, OUTPUT);
 		pinMode(config->powerSave.serialRelayPin, OUTPUT);
 		pinMode(config->powerSave.i2cRelayPin, OUTPUT);
 
+		// activating pullups
+		digitalWrite(config->buttons.frontPin, HIGH);
+		digitalWrite(config->buttons.modePin, HIGH);
+		digitalWrite(config->buttons.rearPin, HIGH);
 		digitalWrite(config->cadence.frequencySystemConfig.pin, HIGH);
+		digitalWrite(config->speed.frequencySystemConfig.pin, HIGH);
+
+		//digitalWrite(HEART_RATE_PIN, LOW);
+		//digitalWrite(4, HIGH);
+		//digitalWrite(5, HIGH);
+		digitalWrite(SERVO_RELAY_PIN, HIGH);
+		digitalWrite(SERIAL_RELAY_PIN, HIGH);
+		digitalWrite(I2C_RELAY_PIN, HIGH);
+//
+
+
 
 		digitalWrite(config->powerSave.servoRelayPin, HIGH);
 		digitalWrite(config->powerSave.i2cRelayPin, HIGH);
 
-		Serial.print("Setup bluetooth ");
 		Serial.println(config->powerSave.isSerialPowerOn);
 
 		setSerialPower(config->powerSave.isSerialPowerOn);

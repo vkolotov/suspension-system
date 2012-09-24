@@ -11,7 +11,7 @@ static const unsigned char CADENCE_PIN = 2;
 static const unsigned char SPEED_PIN = 10;
 static const unsigned char FRONT_SUSPENSION_CONTROL_PIN = 8;
 static const unsigned char FRONT_SUSPENSION_FEADBACK_PIN = 1;
-static const unsigned char REAR_SUSPENSION_CONTROL_PIN = 20;
+static const unsigned char REAR_SUSPENSION_CONTROL_PIN = A2;
 static const unsigned char REAR_SUSPENSION_FEADBACK_PIN = 0;
 static const unsigned char HEART_RATE_PIN = 9;
 
@@ -55,6 +55,10 @@ struct ButtonsSystem {
 	uint8_t modePin;
 	uint8_t rearPin;
 	uint8_t debounceDuration;
+
+	uint8_t frontPinReferenceValue;
+	uint8_t modePinReferenceValue;
+	uint8_t rearPinReferenceValue;
 };
 
 struct FrequencySystemConfig {
@@ -75,6 +79,7 @@ struct SpeedSystemConfig {
 
 struct SystemConfig {
 	uint8_t mode;
+	float headTubeGradient;
 };
 
 struct AccelerometerSystemConfig {
@@ -111,8 +116,8 @@ struct PowerSaveSystemConfig {
 
 struct SemiautomaticStateConfig {
 
-	float climbAngle;
-	float descentAngle;
+	float climbGradient;
+	float descentGradient;
 	float transitionGap;
 	uint16_t averageDegreeMeasuringPeriod;
 };
@@ -134,11 +139,11 @@ struct Configuration {
 
 Configuration EEMEM cfg = {
 		// SystemConfig
-		{MODE_AUTOMATIC},
+		{MODE_AUTOMATIC, 0.164},
 		// ButtonsSystem
-		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION},
+		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION, LOW, LOW, LOW},
 		// SpeedSystemConfig
-		{{SPEED_PIN, MINIMUM_SPEED_TIME, MAXIMUM_SPEED_TIME, HIGH}, WHEEL_LENGTH},
+		{{SPEED_PIN, MINIMUM_SPEED_TIME, MAXIMUM_SPEED_TIME, LOW}, WHEEL_LENGTH},
 		// CadenceSystemConfig
 		{{CADENCE_PIN, MINIMUM_CADENCE_TIME, MAXIMUM_CADENCE_TIME, LOW}},
 		// SuspensionSystemConfig frontSuspension
@@ -150,9 +155,9 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15},
 		// PowerSaveSystemConfig powerSave
-		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, true, true, true},
+		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, /*servo*/true, /*serial*/false, /*i2c*/true},
 		// SemiautomaticStateConfig
-		{/*22 degrees*/0.20 + /*18 degrees*/0.314, /*-22 degrees*/-0.20 + /*18 degrees*/0.314, /*3 degrees*/0.052f, 2000}
+		{/*11 degrees*/0.20, /*-11 degrees*/-0.20, /*3 degrees*/0.052f, 2000}
 };
 
 Configuration* loadConfiguration() {

@@ -11,19 +11,19 @@
 
 class SpeedSystem : public FrequencySystem {
 public:
-	SpeedSystem(SpeedSystemConfig speedSystemConfig)
-		: FrequencySystem(speedSystemConfig.frequencySystemConfig), speedSystemConfig(speedSystemConfig) {
+	SpeedSystem(SpeedSystemConfig* speedSystemConfig)
+		: FrequencySystem(&(speedSystemConfig->frequencySystemConfig)), speedSystemConfig(speedSystemConfig) {
 	}
 
 	void reset(unsigned long currentTime) {
-		if (currentTime - lastEvent >= frequencySystemConfig.maxTime) {
+		if (currentTime - lastEvent >= frequencySystemConfig->maxTime) {
 			timing.clear();
 			return;
 		}
 	}
 
 	void start(unsigned long currentTime) {
-		if (currentTime - lastEvent < frequencySystemConfig.maxTime) {
+		if (currentTime - lastEvent < frequencySystemConfig->maxTime) {
 			timing.push(currentTime - lastEvent);
 		}
 	}
@@ -33,10 +33,10 @@ public:
 	}
 
 	float getAverageSpeed() {
-		return ((float)(speedSystemConfig.wheelLength)) / ((float)getAverageTime());
+		return ((float)(speedSystemConfig->wheelLength)) / ((float)getAverageTime());
 	}
 protected:
-	SpeedSystemConfig speedSystemConfig;
+	SpeedSystemConfig* speedSystemConfig;
 };
 
 #endif /* SPEEDSYSTEM_H_ */

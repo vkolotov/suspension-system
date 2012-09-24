@@ -11,9 +11,9 @@
 
 class SprungAccelerometerSystem {
 public:
-	SprungAccelerometerSystem(Configuration config, AccelerometerSystemConfig accelerometerSystemConfig)
+	SprungAccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
 		: config(config), accelerometerSystemConfig(accelerometerSystemConfig),
-		  accel(accelerometerSystemConfig.address),
+		  accel(accelerometerSystemConfig->address),
 		  currentX(0), currentY(0), currentZ(0),
 		  lastMeasurement(0), averageGradient(0), gradients() {
 	}
@@ -21,7 +21,7 @@ public:
 	void init() {
 		Wire.begin();
 		accel.initialize();
-		accel.setRange(accelerometerSystemConfig.range);
+		accel.setRange(accelerometerSystemConfig->range);
 	}
 
 	void update(unsigned long currentTime) {
@@ -29,23 +29,31 @@ public:
 		accel.getAcceleration(&currentX, &currentY, &currentZ);
 
 		if (currentTime - lastMeasurement >=
-						config.semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
+						config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
 			double current = getGradient();
+			Serial.print(current);
+			Serial.print(" ");
+			Serial.print(getDegreeGradient());
+			Serial.print(" ");
+			Serial.println(config->system.headTubeGradient);
+
 			lastMeasurement = currentTime;
 			gradients.push(current);
 			// TODO optimize by calculating sum
 			averageGradient = _getAverageGradient();
 		}
-
-
 	}
 
 	int16_t getDegreeGradient() {
-		return -atan((float)currentZ / (float)currentX) * 180.0f / PI;
+		return getGradient() * 180.0f / PI;
 	}
 
 	double getGradient() {
-		return -atan((float)currentZ / (float)currentX);
+		return getRawGradient() - config->system.headTubeGradient;
+	}
+
+	double getRawGradient() {
+		return atan((float)currentZ / (float)currentX);
 	}
 
 	double _getAverageGradient() {
@@ -66,8 +74,8 @@ public:
 
 protected:
 
-	Configuration config;
-	AccelerometerSystemConfig accelerometerSystemConfig;
+	Configuration* config;
+	AccelerometerSystemConfig* accelerometerSystemConfig;
 	ADXL345 accel;
 
 	int16_t currentX;

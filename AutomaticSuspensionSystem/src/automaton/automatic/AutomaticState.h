@@ -14,7 +14,7 @@ public:
 	~AutomaticState() {};
 
 	bool transitable(Application* app) {
-		return app->rearButton.isPushed(2000);
+		return app->rearButton.isPushed(1000);
 	}
 
 	State* transit(Application* app) {
@@ -35,6 +35,12 @@ public:
 		} else {
 			app->rearSuspension.release();
 			app->frontSuspension.release();
+		}
+
+		if (app->frontButton.isPushed()) {
+			app->unsprungAccelerometerSystem.increaseThreshold(25);
+		} else if (app->rearButton.isPushed()) {
+			app->unsprungAccelerometerSystem.increaseThreshold(-25);
 		}
 
 		return this;

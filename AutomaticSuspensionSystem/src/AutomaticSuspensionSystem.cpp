@@ -6,6 +6,10 @@ Application app(config, &automaton);
 
 void setup() {
 
+	Serial.begin(38400);
+	delay(1000);
+	Serial.println("Starting...");
+
 	app.bluetoothSystem = new BluetoothSystem(&app);
 
 	automaton.calibrationState = new CalibrationState();
@@ -18,13 +22,6 @@ void setup() {
 	automaton.climbState = new ClimbState();
 
 	automaton.automaticState = new AutomaticState();
-
-	while(!Serial) {
-		;
-	}
-
-	Serial.begin(57600);
-	Serial.println("Starting...");
 
 	app.setup();
 }

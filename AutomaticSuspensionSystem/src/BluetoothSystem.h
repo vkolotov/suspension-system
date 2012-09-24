@@ -24,13 +24,14 @@ public:
 	void init() {
 
 		String result = "";
-		Serial.begin(38400);
+		//Serial.begin(38400);
 
 		delay(3000);
 		for (int i = 0; i < 6; i++) {
 		  result = sendBlueToothCommand(COMMANDS[i]);
 		  if (result.indexOf("OK") < 0) {
-
+			  Serial.print("Bluetooth error ");
+			  Serial.println(result);
 			  return;
 		  }
 		  delay(1000);

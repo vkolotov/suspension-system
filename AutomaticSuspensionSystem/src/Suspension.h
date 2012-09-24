@@ -17,10 +17,10 @@ class Suspension : public Servo {
 
 public:
 
-	Suspension(Configuration systemConfig, SuspensionSystemConfig suspensionConfig)
+	Suspension(Configuration* systemConfig, SuspensionSystemConfig* suspensionConfig)
 			: Servo(), systemConfig(systemConfig), suspensionConfig(suspensionConfig),
-			  lastTime(0), calibrating(false), currentMode(0) {
-		pinMode(suspensionConfig.feedbackPin, INPUT);
+			  lastTime(0), calibrating(false), currentMode(-1) {
+		pinMode(suspensionConfig->feedbackPin, INPUT);
 	}
 
 	void lock() {
@@ -28,29 +28,29 @@ public:
 	}
 
 	void release() {
-		setMode(suspensionConfig.modes - 1);
+		setMode(suspensionConfig->modes - 1);
 	}
 
 	void medium() {
-		if (suspensionConfig.modes == 2) {
+		if (suspensionConfig->modes == 2) {
 			lock();
 		} else {
-			setMode(suspensionConfig.modes / 2);
+			setMode(suspensionConfig->modes / 2);
 		}
 	}
 
 	void setMode(uint8_t mode) {
-		if (currentMode == mode || mode < 0 || mode >= suspensionConfig.modes) {
+		if (currentMode == mode || mode < 0 || mode >= suspensionConfig->modes) {
 			return;
 		}
 		bind();
-		write(suspensionConfig.angles[mode]);
+		write(suspensionConfig->angles[mode]);
 		currentMode = mode;
 	}
 
 	void toggle() {
 		uint8_t nextMode = currentMode + 1;
-		if (nextMode == suspensionConfig.modes) {
+		if (nextMode == suspensionConfig->modes) {
 			nextMode = 0;
 		}
 		setMode(nextMode);
@@ -60,7 +60,7 @@ public:
 		if (calibrating || !attached()) {
 			return;
 		}
-		if (currentTime - lastTime > systemConfig.powerSave.servoStandByTimeout) {
+		if (currentTime - lastTime > systemConfig->powerSave.servoStandByTimeout) {
 			lastTime = currentTime;
 			detach();
 		}
@@ -69,33 +69,36 @@ public:
 	void calibrate() {
 		bind();
 		calibrating = true;
-		write(suspensionConfig.angles[suspensionConfig.modes - 1]);
+		write(suspensionConfig->angles[suspensionConfig->modes - 1]);
 		delay(500);
-		suspensionConfig.angles[suspensionConfig.modes - 1] = _calibrate(suspensionConfig.calibrationStep);
-		suspensionConfig.angles[0] = _calibrate(-suspensionConfig.calibrationStep);
+		suspensionConfig->angles[suspensionConfig->modes - 1] = _calibrate(suspensionConfig->calibrationStep);
+		suspensionConfig->angles[0] = _calibrate(-suspensionConfig->calibrationStep);
 		calibrating = false;
 	}
 
+
 	int getRawFeedback() {
-		return analogRead(suspensionConfig.feedbackPin);
+		return analogRead(suspensionConfig->feedbackPin);
 	}
 
-	void increaseMediumAngle(int8_t angle) {
-		uint8_t mediumMode = suspensionConfig.modes / 2;
-		suspensionConfig.angles[mediumMode] =
-				constrain(suspensionConfig.angles[mediumMode] + angle,
-						suspensionConfig.angles[0], suspensionConfig.angles[suspensionConfig.modes - 1]);
-		bind();
-		write(suspensionConfig.angles[mediumMode]);
+	SuspensionSystemConfig* getConfig() {
+		return suspensionConfig;
+	}
+
+	void bind() {
+		if (!attached()) {
+			attach(suspensionConfig->controlPin, suspensionConfig->minAngle, suspensionConfig->maxAngle);
+		}
+		lastTime = millis();
 	}
 
 protected:
 
-	Configuration systemConfig;
-	SuspensionSystemConfig suspensionConfig;
+	Configuration* systemConfig;
+	SuspensionSystemConfig* suspensionConfig;
 	unsigned long lastTime;
 	bool calibrating;
-	uint8_t currentMode;
+	int8_t currentMode;
 
 	unsigned short _calibrate(char calibrationStep) {
 		short feedback = getRawFeedback();
@@ -103,9 +106,9 @@ protected:
 
 		for (unsigned short angle = read() + calibrationStep; ; ) {
 			write(angle);
-			delay(suspensionConfig.calibrationDelay);
+			delay(suspensionConfig->calibrationDelay);
 			currentFeedback = getRawFeedback();
-			if (abs(currentFeedback - feedback) < suspensionConfig.calibrationDelay) {
+			if (abs(currentFeedback - feedback) < suspensionConfig->calibrationDelay) {
 				write(angle - calibrationStep);
 				return angle - calibrationStep;
 			}
@@ -121,12 +124,6 @@ protected:
 		return 0;
 	}
 
-	void bind() {
-		if (!attached()) {
-			attach(suspensionConfig.controlPin);
-		}
-		lastTime = millis();
-	}
 };
 
 #endif /* SUSPENSION_H_ */

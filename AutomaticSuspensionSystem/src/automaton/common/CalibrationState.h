@@ -15,7 +15,7 @@ public:
 	~CalibrationState() {};
 
 	bool transitable(Application* app) {
-		return app->frontButton.isPushed(5000);
+		return false;//app->frontButton.isPushed(5000);
 	}
 
 	State* transit(Application* app) {

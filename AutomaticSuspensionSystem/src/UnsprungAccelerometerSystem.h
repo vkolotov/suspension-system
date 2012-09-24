@@ -18,9 +18,9 @@ struct AccelerationEvent {
 
 class UnsprungAccelerometerSystem {
 public:
-	UnsprungAccelerometerSystem(Configuration systemConfig, AccelerometerSystemConfig accelerometerSystemConfig)
+	UnsprungAccelerometerSystem(Configuration* systemConfig, AccelerometerSystemConfig* accelerometerSystemConfig)
 			: systemConfig(systemConfig), accelerometerSystemConfig(accelerometerSystemConfig),
-			  active(false), balance(65), current(0), direction(false), accel(accelerometerSystemConfig.address),
+			  active(false), balance(65), current(0), direction(false), accel(accelerometerSystemConfig->address),
 			  lastActivity(0), timing(), lastMeasureTime(0) {
 	}
 
@@ -33,8 +33,8 @@ public:
 	}
 
 	uint8_t getSeverityLavel() {
-		if (systemConfig.system.mode == MODE_MANUAL) {
-			return active ? systemConfig.rearSuspension.modes : 0;
+		if (systemConfig->system.mode == MODE_MANUAL) {
+			return active ? systemConfig->rearSuspension.modes : 0;
 		} else {
 			return 0;
 		}
@@ -47,7 +47,7 @@ public:
 
 			uint16_t next = accel.getAccelerationX();
 
-			if (next - balance < accelerometerSystemConfig.noiseThreshold) {
+			if (next - balance < accelerometerSystemConfig->noiseThreshold) {
 				return;
 			}
 
@@ -63,7 +63,7 @@ public:
 
 	void updatePerformanceMode(unsigned long currentTime, uint16_t next) {
 		current = next;
-		if (current - balance > accelerometerSystemConfig.severityThreshold) {
+		if (current - balance > accelerometerSystemConfig->severityThreshold) {
 			active = true;
 			timing.push(currentTime - lastActivity);
 			lastActivity = currentTime;
@@ -109,13 +109,13 @@ public:
 	}
 
 	void increaseThreshold(short threshold) {
-		accelerometerSystemConfig.severityThreshold = constrain(accelerometerSystemConfig.severityThreshold + threshold, 0, 600);
+		accelerometerSystemConfig->severityThreshold = constrain(accelerometerSystemConfig->severityThreshold + threshold, 0, 600);
 	}
 
 
 //protected:
-	Configuration systemConfig;
-	AccelerometerSystemConfig accelerometerSystemConfig;
+	Configuration* systemConfig;
+	AccelerometerSystemConfig* accelerometerSystemConfig;
 	bool active;
 	int16_t balance;
 	int16_t current;

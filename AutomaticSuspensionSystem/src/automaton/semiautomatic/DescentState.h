@@ -15,7 +15,7 @@ public:
 
 	bool transitable(Application* app) {
 		return app->sprungAccelerometerSystem.getAverageGradient() <=
-				app->config->semiautomaticStateConfig.descentAngle
+				app->config->semiautomaticStateConfig.descentGradient
 						- app->config->semiautomaticStateConfig.transitionGap;
 	}
 

@@ -46,7 +46,7 @@ public:
 		detachInterrupt(SLEEP_INTERRUPTION_NUMBER);
 
 		app->wakeup();
-		app->cadenceSystem.lastEvent = millis();
+		app->cadenceSystem.setLastActivity(millis());
 
 		return app->automaton->previous;
 	}
