@@ -21,8 +21,10 @@
 #include <FrequencySystem.h>
 #include <SpeedSystem.h>
 #include <CadenceSystem.h>
-#include <SprungAccelerometerSystem.h>
+#include <AccelerometerSystem.h>
 #include <UnsprungAccelerometerSystem.h>
+#include <SprungAccelerometerSystem.h>
+
 #include <Button.h>
 #include <Messages.h>
 
@@ -45,11 +47,12 @@
 #include <TrailState.h>
 #include <ClimbState.h>
 
-//#include <State.h>
-
-
-
-
+#include <ActiveState.h>
+#include <AbsorbState.h>
+#include <BurnOutState.h>
+#include <IdleState.h>
+#include <PedalState.h>
+#include <StandOverState.h>
 
 //end of add your includes here
 #ifdef __cplusplus

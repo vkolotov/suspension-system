@@ -21,7 +21,15 @@ void setup() {
 	automaton.trailState = new TrailState();
 	automaton.climbState = new ClimbState();
 
-	automaton.automaticState = new AutomaticState();
+
+	AutomaticState* automaticState = new AutomaticState();
+//	automaticState->activeStates = new State*[4];
+	automaton.automaticState = automaticState;
+//	automaticState->activeStates[0] = automaton.absorbState = new AbsorbState();
+//	automaticState->activeStates[1] = automaton.burnOutState = new BurnOutState();
+//	automaticState->activeStates[2] = automaton.pedalState = new PedalState();
+//	automaticState->activeStates[3] = automaton.standOverState = new StandOverState();
+	automaton.idleState = new IdleState();
 
 	app.setup();
 }

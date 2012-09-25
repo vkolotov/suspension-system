@@ -1,5 +1,5 @@
 /*
- * ForkAccelerometerSystem.h
+ * SprungAccelerometerSystem.h
  *
  *  Created on: 19.07.2012
  *      Author: Vlad
@@ -9,27 +9,28 @@
 #define SPUNGACCELEROMETERSYSTEM_H_
 
 
-class SprungAccelerometerSystem {
+class SprungAccelerometerSystem: public AccelerometerSystem {
 public:
 	SprungAccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
-		: config(config), accelerometerSystemConfig(accelerometerSystemConfig),
-		  accel(accelerometerSystemConfig->address),
-		  currentX(0), currentY(0), currentZ(0),
+		: AccelerometerSystem(config, accelerometerSystemConfig),
 		  lastMeasurement(0), averageGradient(0), gradients() {
 	}
 
-	void init() {
-		Wire.begin();
-		accel.initialize();
-		accel.setRange(accelerometerSystemConfig->range);
+	bool detectActivity() {
+		return currentX - idleValue <= accelerometerSystemConfig->severityThreshold;
+	}
+
+	unsigned long getTimeout() {
+		// TODO return cadence / 2
+		return 500;
 	}
 
 	void update(unsigned long currentTime) {
-
-		accel.getAcceleration(&currentX, &currentY, &currentZ);
+		AccelerometerSystem::update(currentTime);
 
 		if (currentTime - lastMeasurement >=
 						config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
+
 			double current = getGradient();
 			Serial.print(current);
 			Serial.print(" ");
@@ -72,20 +73,14 @@ public:
 		return averageGradient;
 	}
 
+	bool isActive() {
+		return false;
+	}
+
 protected:
-
-	Configuration* config;
-	AccelerometerSystemConfig* accelerometerSystemConfig;
-	ADXL345 accel;
-
-	int16_t currentX;
-	int16_t currentY;
-	int16_t currentZ;
-
 	unsigned long lastMeasurement;
 	double averageGradient;
 	BasicQueue<5, double> gradients;
-
 
 };
 

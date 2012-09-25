@@ -29,12 +29,17 @@ public:
 	}
 
 	bool isProcessing() {
-		return (int(getAverageSpeed() * 3.6f)) >= 4;
+		return int (getAverageSpeedKmH()) >= 4;
 	}
 
 	float getAverageSpeed() {
 		return ((float)(speedSystemConfig->wheelLength)) / ((float)getAverageTime());
 	}
+
+	float getAverageSpeedKmH() {
+		return getAverageSpeed() * 3.6f;
+	}
+
 protected:
 	SpeedSystemConfig* speedSystemConfig;
 };

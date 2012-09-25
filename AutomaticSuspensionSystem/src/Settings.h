@@ -85,7 +85,7 @@ struct SystemConfig {
 struct AccelerometerSystemConfig {
 	uint8_t address;
 	uint8_t range;
-	uint16_t severityThreshold;
+	int16_t severityThreshold;
 	uint16_t noiseThreshold;
 };
 
@@ -151,7 +151,7 @@ Configuration EEMEM cfg = {
 		// SuspensionSystemConfig rearSuspension
 		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}},
 		// AccelerometerSystemConfig sprungAccelerometerSystem
-		{ADXL345_ADDRESS_ALT_LOW, 0x2, 60, 15},
+		{ADXL345_ADDRESS_ALT_LOW, 0x2, -20, 15},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15},
 		// PowerSaveSystemConfig powerSave

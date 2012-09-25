@@ -42,6 +42,11 @@ public:
 	State* climbState;
 
 	State* automaticState;
+	State* idleState;
+	State* absorbState;
+	State* burnOutState;
+	State* pedalState;
+	State* standOverState;
 
 	State* current;
 	State* previous;

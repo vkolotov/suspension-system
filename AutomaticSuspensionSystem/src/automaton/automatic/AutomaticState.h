@@ -23,31 +23,17 @@ public:
 			return result;
 		}
 
-		if (app->speedSystem.isProcessing() && app->cadenceSystem.isProcessing()) {
-
-			if (app->unsprungAccelerometerSystem.isActive()) {
-				app->frontSuspension.release();
-				app->rearSuspension.release();
-			} else {
-				app->frontSuspension.lock();
-				app->rearSuspension.lock();
-			}
-		} else {
-			app->rearSuspension.release();
-			app->frontSuspension.release();
-		}
-
-		if (app->frontButton.isPushed()) {
-			app->unsprungAccelerometerSystem.increaseThreshold(25);
-		} else if (app->rearButton.isPushed()) {
-			app->unsprungAccelerometerSystem.increaseThreshold(-25);
-		}
-
-		return this;
+		return app->automaton->idleState;
 	}
 	String getName() {
 		return "Automatic";
 	}
+
+	static float getIdleSpeed(float gradient) {
+		return 5 - map(constrain(gradient, -5, 30), -5, 30, 0, 4);
+	}
+
+//	State** activeStates;
 
 
 };
