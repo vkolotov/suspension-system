@@ -12,7 +12,8 @@
 class SpeedSystem : public FrequencySystem {
 public:
 	SpeedSystem(SpeedSystemConfig* speedSystemConfig)
-		: FrequencySystem(&(speedSystemConfig->frequencySystemConfig)), speedSystemConfig(speedSystemConfig) {
+		: FrequencySystem(&(speedSystemConfig->frequencySystemConfig)),
+		  speedSystemConfig(speedSystemConfig) {
 	}
 
 	void reset(unsigned long currentTime) {
@@ -28,10 +29,7 @@ public:
 		}
 	}
 
-	bool isProcessing() {
-		return int (getAverageSpeedKmH()) >= 4;
-	}
-
+	// meters per hour or mm per msec
 	float getAverageSpeed() {
 		return ((float)(speedSystemConfig->wheelLength)) / ((float)getAverageTime());
 	}

@@ -11,12 +11,12 @@
 
 class AccelerometerSystem {
 public:
-	AccelerometerSystem(Configuration* systemConfig, AccelerometerSystemConfig* accelerometerSystemConfig)
-			: systemConfig(systemConfig), accelerometerSystemConfig(accelerometerSystemConfig),
+	AccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
+			: config(config), accelerometerSystemConfig(accelerometerSystemConfig),
 			  accel(accelerometerSystemConfig->address),
 			  active(false), idleValue(65),
 			  currentX(0), currentY(0), currentZ(0),
-			  lastActivity(0), timing(), last(0) {
+			  lastActivity(0), timeout(0) {
 	}
 
 	virtual ~AccelerometerSystem() {};
@@ -29,21 +29,20 @@ public:
 
 	void update(unsigned long currentTime) {
 		accel.getAcceleration(&currentX, &currentY, &currentZ);
+
 		if (detectActivity()) {
 			if (!active) {
-				timing.push(currentTime - lastActivity);
+				activity(currentTime);
 				lastActivity = currentTime;
+				timeout = getTimeout();
 			}
 			active = true;
-		} else if (currentTime - lastActivity < getTimeout()) {
+		} else if (currentTime - lastActivity >= timeout) {
 			active = true;
 		} else {
 			active = false;
 		}
-		last = currentX;
 	}
-
-
 
 	void calibrate() {
 		idleValue = accel.getAccelerationX();
@@ -53,25 +52,15 @@ public:
 		return active;
 	}
 
-	unsigned long getAverageActivityTime() {
-		if (timing.size() < 1) {
-			return 0;
-		}
-		unsigned long sum = 0;
-		timing.iteratorReset();
-		while (timing.iteratorHasNext()) {
-			sum += timing.iteratorNext();
-		}
-		return sum / timing.size();
-	}
-
 	virtual unsigned long getTimeout() = 0;
 
 	virtual bool detectActivity() = 0;
 
+	virtual void activity(unsigned long currentTime) = 0;
+
 
 protected:
-	Configuration* systemConfig;
+	Configuration* config;
 	AccelerometerSystemConfig* accelerometerSystemConfig;
 	ADXL345 accel;
 	bool active;
@@ -82,9 +71,7 @@ protected:
 	int16_t currentZ;
 
 	unsigned long lastActivity;
-	BasicQueue<5, unsigned long> timing;
-
-	int16_t last;
+	uint16_t timeout;
 
 };
 

@@ -39,22 +39,14 @@ public:
 	}
 
 	unsigned short getAverageTime() {
-		if (timing.size() < 1) {
-			return 0;
-		}
-		unsigned long sum = 0;
-		timing.iteratorReset();
-		while (timing.iteratorHasNext()) {
-			sum += timing.iteratorNext();
-		}
-		return sum / timing.size();
+		return timing.getAverage();
 	}
 
 protected:
 	FrequencySystemConfig* frequencySystemConfig;
 
 	bool processing;
-	BasicQueue<3, unsigned long> timing;
+	NumericQueue<3> timing;
 };
 
 #endif /* FREQUENCYSYSTEM_H_ */

@@ -25,14 +25,11 @@ public:
 				processEvent = true;
 				start(current);
 				Serial.println("Activity!!! : ");
-				//Serial.println();
-				digitalWrite(9, HIGH);
 				lastEvent = current;
 				return;
 			}
 		} else {
 			if (processEvent) {
-				digitalWrite(9, LOW);
 				processEvent = false;
 				stop(current - lastEvent);
 				return;

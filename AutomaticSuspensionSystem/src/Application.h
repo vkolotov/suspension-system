@@ -17,7 +17,7 @@ public:
 			rearSuspension(config, &(config->rearSuspension)),
 			cadenceSystem(&(config->cadence)),
 			speedSystem(&(config->speed)),
-			unsprungAccelerometerSystem(config, &(config->unsprungAccelerometerSystem)),
+			unsprungAccelerometerSystem(config, &(config->unsprungAccelerometerSystem), &speedSystem),
 			sprungAccelerometerSystem(config, &(config->sprungAccelerometerSystem)),
 			frontButton(config->buttons.frontPin, false, config->buttons.debounceDuration, config->buttons.frontPinReferenceValue),
 			rearButton(config->buttons.rearPin, false, config->buttons.debounceDuration, config->buttons.rearPinReferenceValue),

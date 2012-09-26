@@ -14,7 +14,8 @@
 class CadenceSystem: public FrequencySystem {
 public:
 	CadenceSystem(CadenceSystemConfig* cadenceSystemConfig)
-			: FrequencySystem(&(cadenceSystemConfig->frequencySystemConfig)) {
+			: FrequencySystem(&(cadenceSystemConfig->frequencySystemConfig)),
+			  cadenceSystemConfig(cadenceSystemConfig), timeout(0) {
 	}
 
 	void reset(unsigned long currentTime) {
@@ -22,7 +23,7 @@ public:
 			if (timing.size() == 0) {
 				processing = currentTime - lastEvent <= frequencySystemConfig->maxTime;
 			} else {
-				processing = currentTime - lastEvent <= getAverageTime() + 300;
+				processing = currentTime - lastEvent <= timeout;
 			}
 			if (!processing) {
 				timing.clear();
@@ -33,6 +34,7 @@ public:
 	void start(unsigned long currentTime) {
 		if (processing) {
 			timing.push(currentTime - lastEvent);
+			timeout = getAverageTime() + cadenceSystemConfig->timeoutCorrection;
 		}
 		processing = true;
 	}
@@ -44,6 +46,9 @@ public:
 		}
 		return 60000 / time;
 	}
+protected:
+	CadenceSystemConfig* cadenceSystemConfig;
+	uint16_t timeout;
 };
 
 #endif /* CADENCESYSTEM_H_ */

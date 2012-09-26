@@ -70,6 +70,7 @@ struct FrequencySystemConfig {
 
 struct CadenceSystemConfig {
 	FrequencySystemConfig frequencySystemConfig;
+	uint16_t timeoutCorrection;
 };
 
 struct SpeedSystemConfig {
@@ -80,6 +81,9 @@ struct SpeedSystemConfig {
 struct SystemConfig {
 	uint8_t mode;
 	float headTubeGradient;
+	float wheelBase;
+	float maxBumpsPerMeter;
+	uint8_t maxUnlockTimeout;
 };
 
 struct AccelerometerSystemConfig {
@@ -87,6 +91,11 @@ struct AccelerometerSystemConfig {
 	uint8_t range;
 	int16_t severityThreshold;
 	uint16_t noiseThreshold;
+};
+
+struct UnsprungAccelerometerSystemConfig {
+	AccelerometerSystemConfig accelerometerSystemConfig;
+	uint16_t measuringPeriod;
 };
 
 struct SuspensionSystemConfig {
@@ -131,7 +140,7 @@ struct Configuration {
 	SuspensionSystemConfig frontSuspension;
 	SuspensionSystemConfig rearSuspension;
 	AccelerometerSystemConfig sprungAccelerometerSystem;
-	AccelerometerSystemConfig unsprungAccelerometerSystem;
+	UnsprungAccelerometerSystemConfig unsprungAccelerometerSystem;
 	PowerSaveSystemConfig powerSave;
 	SemiautomaticStateConfig semiautomaticStateConfig;
 
@@ -139,13 +148,13 @@ struct Configuration {
 
 Configuration EEMEM cfg = {
 		// SystemConfig
-		{MODE_AUTOMATIC, 0.164},
+		{MODE_AUTOMATIC, 0.164, 1051, 2.0, 4000},
 		// ButtonsSystem
 		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION, LOW, LOW, LOW},
 		// SpeedSystemConfig
 		{{SPEED_PIN, MINIMUM_SPEED_TIME, MAXIMUM_SPEED_TIME, LOW}, WHEEL_LENGTH},
 		// CadenceSystemConfig
-		{{CADENCE_PIN, MINIMUM_CADENCE_TIME, MAXIMUM_CADENCE_TIME, LOW}},
+		{{CADENCE_PIN, MINIMUM_CADENCE_TIME, MAXIMUM_CADENCE_TIME, LOW}, 300},
 		// SuspensionSystemConfig frontSuspension
 		{FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 3, {20, 80, 170}},
 		// SuspensionSystemConfig rearSuspension
@@ -153,7 +162,7 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig sprungAccelerometerSystem
 		{ADXL345_ADDRESS_ALT_LOW, 0x2, -20, 15},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
-		{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15},
+		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
 		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, /*servo*/true, /*serial*/false, /*i2c*/true},
 		// SemiautomaticStateConfig

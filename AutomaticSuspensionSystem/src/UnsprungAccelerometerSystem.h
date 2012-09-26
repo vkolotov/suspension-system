@@ -10,24 +10,43 @@
 
 class UnsprungAccelerometerSystem : public AccelerometerSystem {
 public:
-	UnsprungAccelerometerSystem(Configuration* systemConfig, AccelerometerSystemConfig* accelerometerSystemConfig)
-			: AccelerometerSystem(systemConfig, accelerometerSystemConfig) {};
+	UnsprungAccelerometerSystem(Configuration* config,
+			UnsprungAccelerometerSystemConfig* unsprungAccelerometerSystemConfig,
+			SpeedSystem* speedSystem)
+			: AccelerometerSystem(config,
+					&(unsprungAccelerometerSystemConfig->accelerometerSystemConfig)),
+					unsprungAccelerometerSystemConfig(unsprungAccelerometerSystemConfig),
+					speedSystem(speedSystem),
+					timing(unsprungAccelerometerSystemConfig->measuringPeriod) {};
 	~UnsprungAccelerometerSystem() {} ;
+
+	void update(unsigned long currentTime) {
+		AccelerometerSystem::update(currentTime);
+		timing.update(currentTime);
+	}
 
 	bool detectActivity() {
 		return currentX - idleValue >= accelerometerSystemConfig->severityThreshold;
 	}
 
-	unsigned long getTimeout() {
-		long averageActivityTime = getAverageActivityTime();
-		long result = 10000L - (3L * averageActivityTime) / 10L;
-		if (result < 0) {
-			result = 1000;
-		} else if (result > 10000) {
-			result = 10000;
-		}
-		return result;
+	void activity(unsigned long currentTime) {
+		timing.event();
 	}
+
+	unsigned long getTimeout() {
+		uint16_t timeToRearWheel = config->system.wheelBase / speedSystem->getAverageSpeed();
+		uint16_t maxBumpsPerMeasuringPeriod = config->system.maxBumpsPerMeter *
+				((speedSystem->getAverageSpeed() * unsprungAccelerometerSystemConfig->measuringPeriod) / 1000);
+		return map(constrain(timing.getSum(), 0, maxBumpsPerMeasuringPeriod),
+				0, maxBumpsPerMeasuringPeriod,
+				timeToRearWheel, config->system.maxUnlockTimeout);
+	}
+
+protected:
+
+	UnsprungAccelerometerSystemConfig* unsprungAccelerometerSystemConfig;
+	SpeedSystem* speedSystem;
+	FrequencyQueue<20> timing;
 
 };
 

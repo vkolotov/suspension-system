@@ -20,16 +20,20 @@ public:
 		return currentX - idleValue <= accelerometerSystemConfig->severityThreshold;
 	}
 
+	void activity(unsigned long currentTime) {
+
+	}
+
 	unsigned long getTimeout() {
 		// TODO return cadence / 2
-		return 500;
+		return 1000;
 	}
 
 	void update(unsigned long currentTime) {
 		AccelerometerSystem::update(currentTime);
 
 		if (currentTime - lastMeasurement >=
-						config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
+				config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
 
 			double current = getGradient();
 			Serial.print(current);
