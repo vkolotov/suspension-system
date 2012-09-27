@@ -5,7 +5,7 @@ Automaton automaton;
 Application app(config, &automaton);
 
 void setup() {
-
+	initConfiguration();
 	Serial.begin(38400);
 	delay(1000);
 	Serial.println("Starting...");
@@ -23,12 +23,11 @@ void setup() {
 
 
 	AutomaticState* automaticState = new AutomaticState();
-//	automaticState->activeStates = new State*[4];
 	automaton.automaticState = automaticState;
-//	automaticState->activeStates[0] = automaton.absorbState = new AbsorbState();
-//	automaticState->activeStates[1] = automaton.burnOutState = new BurnOutState();
-//	automaticState->activeStates[2] = automaton.pedalState = new PedalState();
-//	automaticState->activeStates[3] = automaton.standOverState = new StandOverState();
+	automaton.absorbState = new AbsorbState();
+	automaton.burnOutState = new BurnOutState();
+	automaton.pedalState = new PedalState();
+	automaton.standOverState = new StandOverState();
 	automaton.idleState = new IdleState();
 
 	app.setup();
