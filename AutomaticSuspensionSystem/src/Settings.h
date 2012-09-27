@@ -1,7 +1,6 @@
 #ifndef SUSPENSION_SYSTEM_SETTINGS_H_
 #define SUSPENSION_SYSTEM_SETTINGS_H_
 
-#include <avr/eeprom.h>
 
 // pins
 static const unsigned char FRONT_BUTTON_PIN = 3;
@@ -132,7 +131,7 @@ struct SemiautomaticStateConfig {
 };
 
 struct Configuration {
-
+	bool virgin;
 	SystemConfig system;
 	ButtonsSystem buttons;
 	SpeedSystemConfig speed;
@@ -143,10 +142,11 @@ struct Configuration {
 	UnsprungAccelerometerSystemConfig unsprungAccelerometerSystem;
 	PowerSaveSystemConfig powerSave;
 	SemiautomaticStateConfig semiautomaticStateConfig;
-
 };
 
 Configuration EEMEM cfg = {
+		// reference
+		true,
 		// SystemConfig
 		{MODE_AUTOMATIC, 0.164, 1051, 2.0, 4000},
 		// ButtonsSystem
@@ -169,6 +169,16 @@ Configuration EEMEM cfg = {
 		{/*11 degrees*/0.20, /*-11 degrees*/-0.20, /*3 degrees*/0.052f, 2000}
 };
 
+void initConfiguration() {
+	if (eeprom_read_byte((const uint8_t *) 0) == true) {
+		Configuration* conf = new Configuration();
+		eeprom_read_block(conf, &cfg, sizeof(cfg));
+		eeprom_write_block(conf, &cfg + sizeof(cfg), sizeof(cfg));
+		eeprom_write_byte((uint8_t *) 0, false);
+		delete conf;
+	}
+}
+
 Configuration* loadConfiguration() {
 	Configuration* result = new Configuration();
 	eeprom_read_block(result, &cfg, sizeof(cfg));
@@ -179,9 +189,11 @@ void saveConfiguration(Configuration* config) {
 	eeprom_write_block(config, &cfg, sizeof(cfg));
 }
 
-void resetConfiguration(Configuration* config) {
-	//TODO calculate address
-	eeprom_read_block((void*)config, (void*)sizeof(&config), sizeof(config));
+Configuration* resetConfiguration() {
+	Configuration* result = new Configuration();
+	eeprom_read_block(result, &cfg + sizeof(cfg), sizeof(cfg));
+	eeprom_write_block(result, &cfg, sizeof(cfg));
+	return result;
 }
 
 #endif

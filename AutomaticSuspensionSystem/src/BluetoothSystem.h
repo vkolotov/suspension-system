@@ -8,11 +8,6 @@
 #ifndef BLUETOOTHSYSTEM_H_
 #define BLUETOOTHSYSTEM_H_
 
-struct Test {
-	uint8_t a;
-	uint8_t b;
-	uint8_t c;
-} test = {7, 8, 9};
 
 const static char* COMMANDS[6] = {"AT", "AT+RESET", "AT+ROLE=0", "AT+NAME=Bike", "AT+INIT", "AT+INQ"};
 

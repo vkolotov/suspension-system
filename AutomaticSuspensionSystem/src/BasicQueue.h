@@ -29,7 +29,7 @@ public:
 		return replacingValue;
 	}
 
-	void clear() {
+	virtual void clear() {
 		cursor = 0;
 		length = 0;
 	}
@@ -92,6 +92,12 @@ public:
 			BasicQueue<capacity, unsigned long>::push(data);
 		}
 		average = sum / BasicQueue<capacity, unsigned long>::size();
+	}
+
+	void clear() {
+		BasicQueue<capacity, unsigned long>::clear();
+		average = 0;
+		sum = 0;
 	}
 
 	unsigned long getSum() {
