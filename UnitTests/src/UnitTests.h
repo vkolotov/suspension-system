@@ -58,6 +58,8 @@
 
 
 #include <SpeedSystemMock.h>
+#include <CadenceSystemMock.h>
+#include <ButtonMock.h>
 
 //end of add your includes here
 #ifdef __cplusplus

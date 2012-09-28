@@ -19,7 +19,7 @@ public:
 	void reset(unsigned long currentTime) {
 		if (currentTime - lastEvent >= frequencySystemConfig->maxTime) {
 			timing.clear();
-			return;
+			processing = false;
 		}
 	}
 
@@ -27,6 +27,7 @@ public:
 		if (lastEvent > 0 && currentTime - lastEvent < frequencySystemConfig->maxTime) {
 			timing.push(currentTime - lastEvent);
 		}
+		processing = true;
 	}
 
 	// meters per hour or mm per msec

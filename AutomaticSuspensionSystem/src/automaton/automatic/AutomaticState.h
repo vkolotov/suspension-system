@@ -33,9 +33,6 @@ public:
 		return 5 - map(constrain(gradient, -5, 30), -5, 30, 0, 4);
 	}
 
-//	State** activeStates;
-
-
 };
 
 #endif /* AUTOMATICSTATE_H_ */

@@ -31,7 +31,7 @@ static const unsigned short BUTTON_DEBOUNCE_DURATION = 500;
 // suspension
 static const unsigned short CALIBRATION_DELAY = 200;
 static const unsigned char CALIBRATION_THRESHOLD = 3;
-static const unsigned char CALIBRATION_STEP = 5;
+static const unsigned char CALIBRATION_STEP = 10;
 static const unsigned char MIN_ANGLE = 20;
 static const unsigned char MAX_ANGLE = 170;
 

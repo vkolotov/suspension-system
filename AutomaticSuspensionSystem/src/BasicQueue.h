@@ -105,7 +105,7 @@ public:
 	}
 
 	unsigned long getAverage() {
-		return this->sum;
+		return this->average;
 	}
 
 protected:

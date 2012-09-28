@@ -24,18 +24,19 @@ public:
 			Serial.println(app->sprungAccelerometerSystem.getGradient());
 			app->config->semiautomaticStateConfig.climbGradient =
 					app->sprungAccelerometerSystem.getGradient();
-		}
-		if (app->modeButton.isPushed(3000)) {
+			saveConfiguration(app->config);
+		} else if (app->modeButton.isPushed(3000)) {
 			Serial.print("Head: ");
 			Serial.println(app->sprungAccelerometerSystem.getGradient());
 			app->config->system.headTubeGradient =
 					app->sprungAccelerometerSystem.getRawGradient();
-		}
-		if (app->rearButton.isPushed(3000)) {
+			saveConfiguration(app->config);
+		} else if (app->rearButton.isPushed(3000)) {
 			Serial.print("Desc: ");
 			Serial.println(app->sprungAccelerometerSystem.getGradient());
 			app->config->semiautomaticStateConfig.descentGradient =
 					app->sprungAccelerometerSystem.getGradient();
+			saveConfiguration(app->config);
 		}
 
 		State* result = CommonState::transit(app);
