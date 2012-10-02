@@ -31,7 +31,10 @@ public:
 	}
 
 	// meters per hour or mm per msec
-	float getAverageSpeed() {
+	virtual float getAverageSpeed() {
+		if (getAverageTime() == 0) {
+			return 0;
+		}
 		return ((float)(speedSystemConfig->wheelLength)) / ((float)getAverageTime());
 	}
 

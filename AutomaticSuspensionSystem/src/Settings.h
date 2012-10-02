@@ -49,11 +49,15 @@ static const uint16_t SERO_STANDBY_TIMEOUT = 500;
 static const uint32_t SLEEP_TIMEOUT = 99999999;
 
 
+// system
+static const uint16_t WHEEL_BASE = 1051;
+
+
 struct ButtonsSystem {
 	uint8_t frontPin;
 	uint8_t modePin;
 	uint8_t rearPin;
-	uint8_t debounceDuration;
+	uint16_t debounceDuration;
 
 	uint8_t frontPinReferenceValue;
 	uint8_t modePinReferenceValue;
@@ -79,10 +83,10 @@ struct SpeedSystemConfig {
 
 struct SystemConfig {
 	uint8_t mode;
+	uint16_t wheelBase;
+	uint16_t maxUnlockTimeout;
 	float headTubeGradient;
-	float wheelBase;
 	float maxBumpsPerMeter;
-	uint8_t maxUnlockTimeout;
 };
 
 struct AccelerometerSystemConfig {
@@ -148,7 +152,7 @@ Configuration EEMEM cfg = {
 		// reference
 		true,
 		// SystemConfig
-		{MODE_AUTOMATIC, 0.164, 1051, 2.0, 4000},
+		{MODE_AUTOMATIC, WHEEL_BASE, 4000, 0.164, 2.0},
 		// ButtonsSystem
 		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION, LOW, LOW, LOW},
 		// SpeedSystemConfig
@@ -180,6 +184,7 @@ void initConfiguration() {
 }
 
 Configuration* loadConfiguration() {
+	eeprom_busy_wait();
 	Configuration* result = new Configuration();
 	eeprom_read_block(result, &cfg, sizeof(cfg));
 	return result;
@@ -187,12 +192,14 @@ Configuration* loadConfiguration() {
 
 void saveConfiguration(Configuration* config) {
 	eeprom_write_block(config, &cfg, sizeof(cfg));
+	eeprom_busy_wait();
 }
 
 Configuration* resetConfiguration() {
 	Configuration* result = new Configuration();
 	eeprom_read_block(result, &cfg + sizeof(cfg), sizeof(cfg));
 	eeprom_write_block(result, &cfg, sizeof(cfg));
+	eeprom_busy_wait();
 	return result;
 }
 

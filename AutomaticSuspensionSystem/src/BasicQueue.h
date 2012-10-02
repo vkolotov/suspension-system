@@ -10,12 +10,12 @@
 
 template <uint8_t capacity, typename Data> class BasicQueue {
 public:
-	BasicQueue() : cursor(0), length(0), iterator(0), iteratorIndex(0) {
+	BasicQueue() : cursor(-1), length(0), iterator(0), iteratorIndex(0) {
 
 	}
 	~BasicQueue() {}
 
-	Data& push(Data entry) {
+	Data push(Data entry) {
 		if (cursor >= capacity - 1) {
 			cursor = 0;
 		} else {
@@ -24,13 +24,13 @@ public:
 		if (length < capacity) {
 			length++;
 		}
-		Data& replacingValue = data[cursor];
+		Data replacingValue = data[cursor];
 		data[cursor] = entry;
 		return replacingValue;
 	}
 
 	virtual void clear() {
-		cursor = 0;
+		cursor = -1;
 		length = 0;
 	}
 
@@ -64,12 +64,8 @@ public:
 	bool iteratorHasNext() {
 		return iteratorIndex < length;
 	}
-
-
-
-
 protected:
-	unsigned char cursor;
+	int16_t cursor;
 	unsigned char length;
 
 	short iterator;
@@ -117,16 +113,34 @@ template <uint8_t capacity>
 class FrequencyQueue: public BasicQueue<capacity, uint16_t> {
 public:
 	FrequencyQueue(unsigned long period) : BasicQueue<capacity, uint16_t>(),
-			period(period), segment(0), sum(0), segmentDuration(period / capacity) {
+			period(period), segmentTail(0), sum(0), segmentDuration(period / capacity) {
+	}
+
+	void start(unsigned long time) {
+		this->clear();
+		segmentTail = time;
 	}
 
 	void update(unsigned long time) {
-		if (time - segment >= segmentDuration) {
-			if (this->size() == capacity) {
-				sum -= this->push(0);
-			} else {
-				this->push(0);
+
+		uint8_t i = 0;
+		while (time - segmentTail >= segmentDuration) {
+			segmentTail += segmentDuration;
+			shift();
+			i++;
+			if (i >= capacity) {
+				break;
 			}
+		}
+
+	}
+
+	void shift() {
+		if (this->size() == capacity) {
+			uint16_t prev = BasicQueue<capacity, uint16_t>::push(0);
+			sum -= prev;
+		} else {
+			BasicQueue<capacity, uint16_t>::push(0);
 		}
 	}
 
@@ -135,13 +149,36 @@ public:
 		this->sum++;
 	}
 
+	void clear() {
+		BasicQueue<capacity, uint16_t>::clear();
+		sum = 0;
+	}
+
+
 	unsigned long getSum() {
 		return this->sum;
 	}
 
+	unsigned long calculateSum() {
+		unsigned long sum = 0;
+		this->iteratorReset();
+		while (this->iteratorHasNext()) {
+			sum += this->iteratorNext();
+		}
+		return sum;
+	}
+
+	unsigned long getSegmentDuration() {
+		return segmentDuration;
+	}
+
+	unsigned long getSegmentTail() {
+		return segmentTail;
+	}
+
 protected:
 	unsigned long period;
-	unsigned long segment;
+	unsigned long segmentTail;
 	unsigned long sum;
 
 private:

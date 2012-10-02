@@ -16,7 +16,7 @@ public:
 			  accel(accelerometerSystemConfig->address),
 			  active(false), idleValue(65),
 			  currentX(0), currentY(0), currentZ(0),
-			  lastActivity(0), timeout(0) {
+			  lastActivity(0), timeout(0), instantActivity(false) {
 	}
 
 	virtual ~AccelerometerSystem() {};
@@ -28,28 +28,43 @@ public:
 	}
 
 	void update(unsigned long currentTime) {
-		accel.getAcceleration(&currentX, &currentY, &currentZ);
+		readAccelerometer();
 
 		if (detectActivity()) {
-			if (!active) {
+			if (!instantActivity) {
 				activity(currentTime);
 				lastActivity = currentTime;
 				timeout = getTimeout();
+				instantActivity = true;
 			}
 			active = true;
-		} else if (currentTime - lastActivity >= timeout) {
+		} else if (currentTime - lastActivity <= timeout) {
 			active = true;
+			instantActivity = false;
 		} else {
 			active = false;
+			instantActivity = false;
 		}
 	}
 
+	virtual void readAccelerometer() {
+		accel.getAcceleration(&currentX, &currentY, &currentZ);
+	}
+
 	void calibrate() {
-		idleValue = accel.getAccelerationX();
+		idleValue = getAccelerationX();
 	}
 
 	bool isActive() {
 		return active;
+	}
+
+	uint16_t getAccelerationX() {
+		return currentX;
+	}
+
+	uint16_t getCurrentTimeout() {
+		return timeout;
 	}
 
 	virtual unsigned long getTimeout() = 0;
@@ -72,6 +87,7 @@ protected:
 
 	unsigned long lastActivity;
 	uint16_t timeout;
+	bool instantActivity;
 
 };
 

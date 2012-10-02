@@ -40,6 +40,10 @@ public:
 			Serial.print(" ");
 			Serial.print(getDegreeGradient());
 			Serial.print(" ");
+			Serial.print(config->system.wheelBase);
+			Serial.print(" ");
+			Serial.print(config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
+			Serial.print(" ");
 			Serial.println(config->system.headTubeGradient);
 
 			lastMeasurement = currentTime;

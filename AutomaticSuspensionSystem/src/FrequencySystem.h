@@ -38,7 +38,7 @@ public:
 		return processing;
 	}
 
-	unsigned short getAverageTime() {
+	unsigned long getAverageTime() {
 		return timing.getAverage();
 	}
 
