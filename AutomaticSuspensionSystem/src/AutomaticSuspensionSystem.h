@@ -11,6 +11,8 @@
 #include <avr/eeprom.h>
 //add your includes for the project AutomaticSuspensionSystem here
 
+void (*resetArduino)(void) = 0; //declare reset function @ address 0
+
 #include <Wire.h>
 #include <ADXL345.h>
 
@@ -37,7 +39,6 @@
 
 #include <BluetoothSystem.h>
 
-#include <CalibrationState.h>
 #include <SleepState.h>
 #include <CommonState.h>
 #include <ManualState.h>
@@ -54,6 +55,8 @@
 #include <PedalState.h>
 #include <StandOverState.h>
 
+
+
 //end of add your includes here
 #ifdef __cplusplus
 extern "C" {
@@ -67,7 +70,6 @@ void setup();
 #endif
 
 //add your function definitions for the project AutomaticSuspensionSystem here
-void updateMudules();
-void updateApplication();
+
 //Do not add code below this line
 #endif /* AutomaticSuspensionSystem_H_ */

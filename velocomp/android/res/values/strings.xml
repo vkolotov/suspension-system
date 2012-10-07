@@ -6,4 +6,6 @@
     <string name="manualMode">Manual</string>
     <string name="semiautomaticMode">CTD</string>
     <string name="automaticMode">Automatic</string>
+
+    <string name="settings">Settings</string>
 </resources>

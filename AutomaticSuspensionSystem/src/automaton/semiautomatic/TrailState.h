@@ -25,8 +25,7 @@ public:
 
 	State* transit(Application* app) {
 
-		app->frontSuspension.medium();
-		app->rearSuspension.medium();
+		app->trailSuspensions();
 
 		State* result = CDTState::transit(app);
 		if (result) {

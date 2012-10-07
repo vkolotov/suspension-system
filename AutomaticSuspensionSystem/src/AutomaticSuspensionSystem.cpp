@@ -6,13 +6,12 @@ Application app(config, &automaton);
 
 void setup() {
 	initConfiguration();
-	Serial.begin(38400);
+	Serial.begin(9600);
 	delay(1000);
-	Serial.println("Starting...");
+	Serial.println(sizeof(size_t));
 
 	app.bluetoothSystem = new BluetoothSystem(&app);
 
-	automaton.calibrationState = new CalibrationState();
 	automaton.sleepState = new SleepState();
 	automaton.previous = automaton.current = automaton.manualState = new ManualState();
 

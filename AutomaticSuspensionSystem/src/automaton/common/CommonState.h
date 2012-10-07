@@ -8,8 +8,6 @@
 #ifndef COMMONSTATE_H_
 #define COMMONSTATE_H_
 
-void (*resetArduino)(void) = 0; //declare reset function @ address 0
-
 class CommonState : public State {
 public:
 	CommonState() {};
@@ -22,10 +20,6 @@ public:
 	State* transit(Application* app) {
 		if (app->modeButton.isPushed(10000)) {
 			resetArduino();
-		}
-
-		if (app->automaton->calibrationState->transitable(app)) {
-			return app->automaton->calibrationState;
 		}
 
 		if (app->rearButton.isPushed(10000)) {

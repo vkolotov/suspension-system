@@ -32,8 +32,8 @@ static const unsigned short BUTTON_DEBOUNCE_DURATION = 500;
 static const unsigned short CALIBRATION_DELAY = 200;
 static const unsigned char CALIBRATION_THRESHOLD = 3;
 static const unsigned char CALIBRATION_STEP = 10;
-static const unsigned char MIN_ANGLE = 20;
-static const unsigned char MAX_ANGLE = 170;
+static const unsigned char MIN_ANGLE = 0;
+static const unsigned char MAX_ANGLE = 180;
 
 // modes
 static const uint8_t MODE_MANUAL = 0;
@@ -68,7 +68,7 @@ struct FrequencySystemConfig {
 	uint8_t pin;
 	uint16_t minTime;
 	uint16_t maxTime;
-	int16_t referenceValue;
+	uint8_t referenceValue;
 };
 
 struct CadenceSystemConfig {
@@ -90,7 +90,7 @@ struct SystemConfig {
 };
 
 struct AccelerometerSystemConfig {
-	uint8_t address;
+	uint16_t address;
 	uint8_t range;
 	int16_t severityThreshold;
 	uint16_t noiseThreshold;
@@ -107,10 +107,10 @@ struct SuspensionSystemConfig {
 	uint16_t calibrationDelay;
 	uint8_t calibrationThreshold;
 	uint8_t calibrationStep;
-	uint8_t minAngle;
-	uint8_t maxAngle;
+	uint16_t minAngle;
+	uint16_t maxAngle;
 	uint8_t modes;
-	uint8_t angles[9];
+	uint16_t angles[9];
 };
 
 struct PowerSaveSystemConfig {
@@ -168,7 +168,7 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
-		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, /*servo*/true, /*serial*/false, /*i2c*/true},
+		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, /*servo*/true, /*serial*/true, /*i2c*/true},
 		// SemiautomaticStateConfig
 		{/*11 degrees*/0.20, /*-11 degrees*/-0.20, /*3 degrees*/0.052f, 2000}
 };
@@ -190,17 +190,17 @@ Configuration* loadConfiguration() {
 	return result;
 }
 
+void reloadConfiguration(Configuration* config) {
+	eeprom_read_block(config, &cfg, sizeof(cfg));
+}
+
 void saveConfiguration(Configuration* config) {
 	eeprom_write_block(config, &cfg, sizeof(cfg));
 	eeprom_busy_wait();
 }
 
-Configuration* resetConfiguration() {
-	Configuration* result = new Configuration();
-	eeprom_read_block(result, &cfg + sizeof(cfg), sizeof(cfg));
-	eeprom_write_block(result, &cfg, sizeof(cfg));
-	eeprom_busy_wait();
-	return result;
+void resetConfiguration(Configuration* config) {
+	eeprom_read_block(config, &cfg + sizeof(cfg), sizeof(cfg));
 }
 
 #endif

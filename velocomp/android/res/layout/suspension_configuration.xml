@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.vol.velocomp.views.SuspensionConfiguration xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent">
+
+    <LinearLayout android:id="@+id/suspension_configuration_content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+     </LinearLayout>
+
+</org.vol.velocomp.views.SuspensionConfiguration>

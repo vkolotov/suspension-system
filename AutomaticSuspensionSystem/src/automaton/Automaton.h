@@ -32,7 +32,7 @@ public:
 		}
 	}
 
-	State* calibrationState;
+
 	State* sleepState;
 	State* manualState;
 

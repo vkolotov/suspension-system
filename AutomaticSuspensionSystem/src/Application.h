@@ -13,12 +13,12 @@ class BluetoothSystem;
 class Application {
 public:
 	Application(Configuration* config, Automaton* automaton) : config(config), automaton(automaton),
-			frontSuspension(config, &(config->frontSuspension)),
-			rearSuspension(config, &(config->rearSuspension)),
-			cadenceSystem(&(config->cadence)),
-			speedSystem(&(config->speed)),
-			unsprungAccelerometerSystem(config, &(config->unsprungAccelerometerSystem), &speedSystem),
-			sprungAccelerometerSystem(config, &(config->sprungAccelerometerSystem)),
+			frontSuspension(config, &config->frontSuspension),
+			rearSuspension(config, &config->rearSuspension),
+			cadenceSystem(&config->cadence),
+			speedSystem(&config->speed),
+			unsprungAccelerometerSystem(config, &config->unsprungAccelerometerSystem, &speedSystem),
+			sprungAccelerometerSystem(config, &config->sprungAccelerometerSystem),
 			frontButton(config->buttons.frontPin, false, config->buttons.debounceDuration, config->buttons.frontPinReferenceValue),
 			rearButton(config->buttons.rearPin, false, config->buttons.debounceDuration, config->buttons.rearPinReferenceValue),
 			modeButton(config->buttons.modePin, false, config->buttons.debounceDuration, config->buttons.modePinReferenceValue),
@@ -85,6 +85,7 @@ public:
 		}
 	}
 
+
 	void sleep() {
 //		digitalWrite(4, LOW);
 //		digitalWrite(5, LOW);
@@ -109,6 +110,22 @@ public:
 	bool getSerialPower() {
 		return digitalRead(config->powerSave.serialRelayPin) == HIGH;
 	}
+
+	void descendSuspensions() {
+		frontSuspension.release();
+		rearSuspension.release();
+	}
+
+	void trailSuspensions() {
+		frontSuspension.medium();
+		rearSuspension.medium();
+	}
+
+	void climbSuspensions() {
+		frontSuspension.lock();
+		rearSuspension.lock();
+	}
+
 
 	Configuration* config;
 	Automaton* automaton;

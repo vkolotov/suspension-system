@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.vol.velocomp.views.ManualBoard xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                >
+                android:layout_height="fill_parent">
 
-    <include layout="@layout/speed_cadence_indicator_areas"/>
-
+    <include layout="@layout/speed_cadence_indicator"/>
 
     <LinearLayout
             android:id="@+id/toggleButtons"
@@ -22,6 +20,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.0">
             <ToggleButton
+                    android:id="@+id/climbButton"
                     android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:textOn="Climb"
@@ -34,6 +33,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.0">
             <ToggleButton
+                    android:id="@+id/trailButton"
                     android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:textOn="Trail"
@@ -46,6 +46,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.0">
             <ToggleButton
+                    android:id="@+id/descendButton"
                     android:layout_height="fill_parent"
                     android:layout_width="fill_parent"
                     android:textOn="Descend"
@@ -56,4 +57,4 @@
 
 
 
-</RelativeLayout>
+</org.vol.velocomp.views.ManualBoard>

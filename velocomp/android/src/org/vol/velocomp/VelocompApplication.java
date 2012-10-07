@@ -8,7 +8,7 @@ public class VelocompApplication extends GDApplication {
 
     @Override
     public Class<?> getHomeActivityClass() {
-        return VelocompActivity.class;
+        return MainActivity.class;
     }
 
     @Override

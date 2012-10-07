@@ -17,9 +17,9 @@
 */
 -->
 
-<greendroid.widget.SegmentedHost
+<org.vol.velocomp.views.Dashboard
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/segmented_host"
+	android:id="@+id/dashboard"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
     android:background="#FFFFFF">
@@ -29,12 +29,17 @@
 		android:layout_width="fill_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1.0"
-		android:foreground="@drawable/gd_shadow_bottom" />
+		android:foreground="@drawable/gd_shadow_bottom" >
+
+        <include layout="@layout/suspension_configuration"/>
+
+
+    </FrameLayout>
 
 	<greendroid.widget.SegmentedBar
 		android:id="@id/gd_segmented_bar"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" />
 
-</greendroid.widget.SegmentedHost>
+</org.vol.velocomp.views.Dashboard>
 

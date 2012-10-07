@@ -1,59 +1,30 @@
 package org.vol.velocomp.threads;
 
 
-import org.vol.velocomp.BikeConnection;
 import org.vol.velocomp.ConnectionException;
-import org.vol.velocomp.VelocompActivity;
+import org.vol.velocomp.service.BikeService;
 
 import java.util.concurrent.TimeoutException;
 
 public class BikeConnectionThread extends GenericThread {
 
-    public BikeConnectionThread(VelocompActivity velocompActivity) {
-        super(velocompActivity, 2000);
+    public BikeConnectionThread() {
+        super(3000);
     }
 
     @Override
     public void kill() {
-        try {
-            BikeConnection.getInstance().disconnect();
-        } catch (ConnectionException e) {
-
-        }
+        BikeService.getInstance().disconnect();
     }
 
     @Override
     public void perform() throws TimeoutException, ConnectionException {
-        try {
-            if (!BikeConnection.getInstance().testConnection(2000)) {
-                velocompActivity.setConnected(false);
-                BikeConnection.getInstance().connect();
-                velocompActivity.setConnected(true);
-                setConnectionStatus("Connected");
-                //setStatus("OK");
-            } else {
-                velocompActivity.setConnected(true);
-                setConnectionStatus("Connected");
-                //setStatus("OK");
-            }
-
-        } catch (TimeoutException e) {
-            setConnectionStatus("Disconnected");
-            velocompActivity.setConnected(false);
-            throw e;
-
-        } catch (ConnectionException e) {
-            setConnectionStatus("Disconnected");
-            velocompActivity.setConnected(false);
-            throw e;
+        if (!BikeService.getInstance().isConnected()) {
+            BikeService.getInstance().disconnect();
+            BikeService.getInstance().connect();
+        } else {
+            BikeService.getInstance().testConnection();
         }
     }
 
-    public void setConnectionStatus(final String status) {
-        this.velocompActivity.runOnUiThread(new Runnable() {
-            public void run() {
-                velocompActivity.setConnectionStatus(status);
-            }
-        });
-    }
 }

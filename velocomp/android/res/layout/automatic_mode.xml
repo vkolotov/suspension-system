@@ -3,7 +3,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 >
-    <include layout="@layout/speed_cadence_indicator_areas"/>
+    <include layout="@layout/speed_cadence_indicator"/>
 
 
 </RelativeLayout>

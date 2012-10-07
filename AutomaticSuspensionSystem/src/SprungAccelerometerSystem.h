@@ -36,15 +36,15 @@ public:
 				config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
 
 			double current = getGradient();
-			Serial.print(current);
-			Serial.print(" ");
-			Serial.print(getDegreeGradient());
-			Serial.print(" ");
-			Serial.print(config->system.wheelBase);
-			Serial.print(" ");
-			Serial.print(config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
-			Serial.print(" ");
-			Serial.println(config->system.headTubeGradient);
+//			Serial.print(current);
+//			Serial.print(" ");
+//			Serial.print(getDegreeGradient());
+//			Serial.print(" ");
+//			Serial.print(config->system.wheelBase);
+//			Serial.print(" ");
+//			Serial.print(config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
+//			Serial.print(" ");
+//			Serial.println(config->system.headTubeGradient);
 
 			lastMeasurement = currentTime;
 			gradients.push(current);

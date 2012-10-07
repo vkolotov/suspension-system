@@ -1,10 +1,12 @@
-package org.vol.velocomp;
+package org.vol.velocomp.service;
 
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import org.vol.velocomp.ConnectionException;
 import org.vol.velocomp.messages.BikeMessageSerializer;
+import org.vol.velocomp.messages.ReceivedSize;
 import org.vol.velocomp.messages.StatusMessage;
 
 import java.io.DataInputStream;
@@ -26,11 +28,11 @@ public class BikeConnection {
 
     private static BikeConnection instance;
 
-    synchronized public void init() {
+    public void init() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    synchronized public static BikeConnection getInstance() {
+    public static BikeConnection getInstance() {
         if (instance == null) {
             instance = new BikeConnection();
         }
@@ -40,7 +42,7 @@ public class BikeConnection {
     private BikeConnection() {
     }
 
-    synchronized public void connect() throws ConnectionException {
+    public void connect(long timeout) throws ConnectionException {
 
         if (isConnected()) {
             disconnect();
@@ -48,24 +50,42 @@ public class BikeConnection {
 
         this.executorService = Executors.newSingleThreadExecutor();
 
-        this.bikeBluetooth = getBikeDevice();
-
-        this.bluetoothSocket = getBluetoothSocket();
+        Future future = executorService.submit( new Callable() {
+            @Override
+            public Object call() throws ConnectionException {
+                bikeBluetooth = getBikeDevice();
+                bluetoothSocket = getBluetoothSocket();
+                try {
+                    bluetoothSocket.connect();
+                } catch (IOException e) {
+                    throw new ConnectionException("Could not open socket with bike");
+                }
+                try {
+                    inputStream = new DataInputStream(bluetoothSocket.getInputStream());
+                    outputStream = new DataOutputStream(bluetoothSocket.getOutputStream());
+                } catch (IOException e) {
+                    throw new ConnectionException("Could not get input/output stream");
+                }
+                return null;
+            }
+        });
 
         try {
-            this.bluetoothSocket.connect();
-        } catch (IOException e) {
-            throw new ConnectionException("Could not open socket with bike");
-        }
-        try {
-            this.inputStream = new DataInputStream(this.bluetoothSocket.getInputStream());
-            this.outputStream = new DataOutputStream(this.bluetoothSocket.getOutputStream());
-        } catch (IOException e) {
-            throw new ConnectionException("Could not get input/output stream");
+            future.get(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            throw new ConnectionException("Interrupted", e);
+        } catch (ExecutionException e) {
+            throw new ConnectionException("Execution", e);
+        } catch (TimeoutException e) {
+            throw new ConnectionException("Timeout", e);
         }
     }
 
-    synchronized public void disconnect() throws ConnectionException {
+    public void disconnect() throws ConnectionException {
+
+        if (!isConnected()) {
+            return;
+        }
 
         this.executorService.shutdownNow();
 
@@ -87,20 +107,17 @@ public class BikeConnection {
         }
     }
 
-    synchronized public boolean testConnection(long timeout) throws TimeoutException {
+    public void testConnection(long timeout) throws TimeoutException, ConnectionException {
         if (!isConnected()) {
-            return false;
+            throw new ConnectionException("Is not connected");
         }
-        try {
-            sendMessageId((byte) 0);
-            return receive(StatusMessage.class, timeout).status == StatusMessage.OK;
-        } catch (ConnectionException e) {
-            return false;
+        sendMessageId((byte) 0);
+        if (receive(StatusMessage.class, timeout).status != StatusMessage.OK) {
+            throw new ConnectionException("Device is not ready");
         }
     }
 
-
-    synchronized public <Request> void send(byte requestId, final Request message, long timeout)
+    public <Request> void send(byte requestId, final Request message, long timeout)
             throws TimeoutException, ConnectionException {
         try {
             this.inputStream.skipBytes(this.inputStream.available());
@@ -109,11 +126,15 @@ public class BikeConnection {
         }
         sendMessageId(requestId);
         checkStatus(timeout);
-        sendMessage(message);
-        checkStatus(timeout);
+        int messageSize = BikeMessageSerializer.getSizeOf(message.getClass());
+        int writtenSize = sendMessage(message);
+        if (writtenSize != messageSize) {
+            throw new ConnectionException("Written size is wrong: expected " + messageSize + " but written " + writtenSize);
+        }
+        checkReceivedSize((short) messageSize, timeout);
     }
 
-    synchronized public <Response> Response request(
+    public <Response> Response request(
             final Class<Response> clazz, byte requestId, long timeout)
             throws TimeoutException, ConnectionException {
         sendMessageId(requestId);
@@ -122,23 +143,13 @@ public class BikeConnection {
         return result;
     }
 
-    synchronized public <Response> Response receive(final Class<Response> clazz, long timeout)
+    public <Response> Response receive(final Class<Response> clazz, long timeout)
             throws TimeoutException, ConnectionException {
 
         Future<Response> future = executorService.submit( new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-
-                Response result = null;
-                //while (isConnected() && !Thread.currentThread().isInterrupted()) {
-                    result = receiveMessage(clazz);
-                //    if (result != null) {
-                //        break;
-                //    } else {
-                //        Thread.sleep(100);
-                //    }
-                //}
-                return result;
+                return receiveMessage(clazz);
             }
         });
 
@@ -159,7 +170,15 @@ public class BikeConnection {
         }
     }
 
-    private void sendMessageId(byte messageId) throws ConnectionException {
+    private void checkReceivedSize(short expected, long timeout) throws TimeoutException, ConnectionException {
+        ReceivedSize receivedSize = receive(ReceivedSize.class, timeout);
+        if (receivedSize.bytes != expected) {
+            throw new ConnectionException("Received size is wrong: expected "
+                    + expected + " but received: " + receivedSize.bytes);
+        }
+    }
+
+    public void sendMessageId(byte messageId) throws ConnectionException {
         checkConnection();
         try {
             this.outputStream.write(messageId);
@@ -169,11 +188,13 @@ public class BikeConnection {
         }
     }
 
-    private <Request> void sendMessage(Request request) throws ConnectionException {
+    private <Request> int sendMessage(Request request) throws ConnectionException {
         checkConnection();
         try {
+            int writtenSize = this.outputStream.size();
             BikeMessageSerializer.serialize(this.outputStream, request);
             this.outputStream.flush();
+            return this.outputStream.size() - writtenSize;
         } catch (IOException e) {
             throw new ConnectionException("Could not send message", e);
         }
@@ -192,7 +213,7 @@ public class BikeConnection {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                if (device.getName().equals("Bike")) {
+                if (device.getName().equals("HC-05")) {
                     return device;
                 }
             }
@@ -205,9 +226,8 @@ public class BikeConnection {
             throw new ConnectionException("Bike device is not initialized");
         }
 
-        Method method = null;
         try {
-            method = bikeBluetooth.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
+            Method method = bikeBluetooth.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
             return (BluetoothSocket) method.invoke(bikeBluetooth, Integer.valueOf(1));
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
@@ -219,7 +239,7 @@ public class BikeConnection {
 
     }
 
-    private boolean isConnected() {
+    public boolean isConnected() {
         return bluetoothSocket != null && outputStream != null && inputStream != null;
     }
 
@@ -232,8 +252,8 @@ public class BikeConnection {
     private void checkExcessiveBytes() throws ConnectionException {
         try {
             if (this.inputStream.available() > 0) {
+                this.inputStream.skipBytes(this.inputStream.available());
                 throw new ConnectionException("Something is available after reading");
-                //this.inputStream.skipBytes(this.inputStream.available());
             }
         } catch (IOException e) {
             throw new ConnectionException(e);

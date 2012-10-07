@@ -19,7 +19,7 @@ public:
 
 	Suspension(Configuration* systemConfig, SuspensionSystemConfig* suspensionConfig)
 			: Servo(), systemConfig(systemConfig), suspensionConfig(suspensionConfig),
-			  lastTime(0), calibrating(false), currentMode(-1) {
+			  lastTime(0), currentMode(0) {
 		pinMode(suspensionConfig->feedbackPin, INPUT);
 	}
 
@@ -57,28 +57,15 @@ public:
 	}
 
 	void update(unsigned long currentTime) {
-		if (calibrating || !attached()) {
+		if (suspensionConfig->angles[currentMode] != read()) {
+			bind();
+			write(suspensionConfig->angles[currentMode]);
 			return;
 		}
-		if (currentTime - lastTime > systemConfig->powerSave.servoStandByTimeout) {
+		if (attached() && currentTime - lastTime > systemConfig->powerSave.servoStandByTimeout) {
 			lastTime = currentTime;
 			detach();
 		}
-	}
-
-	void calibrate() {
-		bind();
-		calibrating = true;
-		write(suspensionConfig->angles[suspensionConfig->modes - 1]);
-		delay(500);
-		suspensionConfig->angles[suspensionConfig->modes - 1] = _calibrate(suspensionConfig->calibrationStep);
-		suspensionConfig->angles[0] = _calibrate(-suspensionConfig->calibrationStep);
-		calibrating = false;
-	}
-
-
-	int getRawFeedback() {
-		return analogRead(suspensionConfig->feedbackPin);
 	}
 
 	SuspensionSystemConfig* getConfig() {
@@ -97,32 +84,7 @@ protected:
 	Configuration* systemConfig;
 	SuspensionSystemConfig* suspensionConfig;
 	unsigned long lastTime;
-	bool calibrating;
 	int8_t currentMode;
-
-	unsigned short _calibrate(char calibrationStep) {
-		short feedback = getRawFeedback();
-		short currentFeedback = 0;
-
-		for (unsigned short angle = read() + calibrationStep; ; ) {
-			write(angle);
-			delay(suspensionConfig->calibrationDelay);
-			currentFeedback = getRawFeedback();
-			if (abs(currentFeedback - feedback) < suspensionConfig->calibrationDelay) {
-				write(angle - calibrationStep);
-				return angle - calibrationStep;
-			}
-			feedback = currentFeedback;
-			angle = angle + calibrationStep;
-			if (angle <= MIN_ANGLE) {
-				return MIN_ANGLE;
-			}
-			if (angle >= MAX_ANGLE) {
-				return MAX_ANGLE;
-			}
-		}
-		return 0;
-	}
 
 };
 
