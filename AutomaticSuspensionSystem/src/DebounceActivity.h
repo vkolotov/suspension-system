@@ -24,7 +24,6 @@ public:
 			if (!processEvent) {
 				processEvent = true;
 				start(current);
-				//Serial.println("Activity!!! : ");
 				lastEvent = current;
 				return;
 			}

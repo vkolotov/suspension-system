@@ -24,6 +24,10 @@ public:
 		app->rearSuspension.lock();
 		return ActiveState::transit(app);
 	}
+
+	uint8_t getId() {
+		return BURNOUT_STATE;
+	}
 };
 
 #endif /* BURNOUTSTATE_H_ */

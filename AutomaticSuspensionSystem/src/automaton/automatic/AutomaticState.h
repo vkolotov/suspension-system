@@ -22,16 +22,18 @@ public:
 		if (result) {
 			return result;
 		}
-
 		return app->automaton->idleState;
 	}
-	String getName() {
-		return "Automatic";
+
+	virtual uint8_t getId() {
+		return AUTOMATIC_STATE;
 	}
 
 	static float getIdleSpeed(float gradient) {
 		return 5 - map(constrain(gradient, -5, 30), -5, 30, 0, 4);
 	}
+
+
 
 };
 

@@ -2,11 +2,14 @@ package org.vol.velocomp.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.CheckBox;
 import com.cyrilmottier.android.greendroid.R;
 import greendroid.widget.SegmentedHost;
 import org.vol.velocomp.adapters.ModesAdapter;
 
 public class Dashboard extends SegmentedHost {
+
+    private ModesAdapter modesAdapter = new ModesAdapter(this);
 
     public Dashboard(Context context) {
         this(context, null);
@@ -22,7 +25,12 @@ public class Dashboard extends SegmentedHost {
 
     protected void onFinishInflate() {
         super.onFinishInflate();
-        setAdapter(new ModesAdapter(this));
+        setAdapter(modesAdapter);
+    }
+
+    public void setBoard(Mode mode) {
+        CheckBox checkBox = (CheckBox) getSegmentedBar().getChildSegmentAt(mode.getBoard());
+        checkBox.performClick();
     }
 
 }

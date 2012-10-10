@@ -8,4 +8,6 @@
     <string name="automaticMode">Automatic</string>
 
     <string name="settings">Settings</string>
+
+    <string name="gradient_underlined"><u>Gradient</u></string>
 </resources>

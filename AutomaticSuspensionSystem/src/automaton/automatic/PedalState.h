@@ -24,5 +24,9 @@ public:
 		app->rearSuspension.lock();
 		return ActiveState::transit(app);
 	}
+
+	uint8_t getId() {
+		return PEDAL_STATE;
+	}
 };
 #endif /* PEDALSTATE_H_ */

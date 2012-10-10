@@ -46,6 +46,7 @@ public:
 		bind();
 		write(suspensionConfig->angles[mode]);
 		currentMode = mode;
+		suspensionConfig->mode = mode;
 	}
 
 	void toggle() {
@@ -57,6 +58,11 @@ public:
 	}
 
 	void update(unsigned long currentTime) {
+
+		if (suspensionConfig->mode != currentMode) {
+			setMode(suspensionConfig->mode);
+		}
+
 		if (suspensionConfig->angles[currentMode] != read()) {
 			bind();
 			write(suspensionConfig->angles[currentMode]);

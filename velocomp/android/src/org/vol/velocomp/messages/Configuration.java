@@ -29,8 +29,6 @@ public class Configuration {
 
 
     public static class SystemConfig {
-        @FieldOrder(0)
-        public byte mode;
         @FieldOrder(1)
         public short wheelBase;
         @FieldOrder(2)
@@ -103,6 +101,8 @@ public class Configuration {
         @FieldOrder(8)
         @ArraySize(9)
         public short[] angles;
+        @FieldOrder(9)
+        public byte mode;
     }
 
     public static class AccelerometerSystemConfig {

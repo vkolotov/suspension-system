@@ -3,6 +3,7 @@ package org.vol.velocomp.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.LinearLayout;
 import greendroid.widget.PageIndicator;
 import greendroid.widget.PagedView;
 import org.vol.velocomp.R;
@@ -10,14 +11,15 @@ import org.vol.velocomp.adapters.ConfigurationAdapter;
 import org.vol.velocomp.messages.Configuration;
 import org.vol.velocomp.service.BikeService;
 
-public class ConfigurationView extends PagedView {
+public class ConfigurationView extends LinearLayout {
 
     private PageIndicator pageIndicatorNext;
     private PageIndicator pageIndicatorPrev;
+    private PagedView pagedView;
 
     private Configuration configuration;
 
-    private OnPagedViewChangeListener onPagedViewChangeListener = new OnPagedViewChangeListener() {
+    private PagedView.OnPagedViewChangeListener onPagedViewChangeListener = new PagedView.OnPagedViewChangeListener() {
 
         @Override
         public void onStopTracking(PagedView pagedView) {
@@ -41,10 +43,6 @@ public class ConfigurationView extends PagedView {
         super(context, attrs);
     }
 
-    public ConfigurationView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
     private void setActivePage(int page) {
         pageIndicatorNext.setActiveDot(ConfigurationAdapter.PAGE_MAX_INDEX - page);
         pageIndicatorPrev.setActiveDot(page);
@@ -54,35 +52,46 @@ public class ConfigurationView extends PagedView {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        this.setOnPageChangeListener(onPagedViewChangeListener);
+        this.pagedView = (PagedView) findViewById(R.id.configuration_paged_view);
 
-        pageIndicatorNext = (PageIndicator) findViewById(R.id.page_indicator_next);
-
-        if (pageIndicatorNext == null) {
-            return;
+        if (this.pagedView != null) {
+            this.pagedView.setOnPageChangeListener(onPagedViewChangeListener);
         }
 
-        pageIndicatorNext.setDotCount(ConfigurationAdapter.PAGE_MAX_INDEX);
-        pageIndicatorNext.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                smoothScrollToNext();
-            }
-        });
+        pageIndicatorNext = (PageIndicator) findViewById(R.id.page_indicator_next);
+        if (pageIndicatorNext != null) {
+            pageIndicatorNext.setDotCount(ConfigurationAdapter.PAGE_MAX_INDEX);
+            pageIndicatorNext.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    ConfigurationView.this.pagedView.smoothScrollToNext();
+                }
+            });
+        }
 
         pageIndicatorPrev = (PageIndicator) findViewById(R.id.page_indicator_prev);
-        pageIndicatorPrev.setDotCount(ConfigurationAdapter.PAGE_MAX_INDEX);
-        pageIndicatorPrev.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                smoothScrollToPrevious();
-            }
-        });
+        if (pageIndicatorPrev != null) {
+            pageIndicatorPrev.setDotCount(ConfigurationAdapter.PAGE_MAX_INDEX);
+            pageIndicatorPrev.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    ConfigurationView.this.pagedView.smoothScrollToPrevious();
+                }
+            });
+        }
     }
 
     public void init() {
         configuration = BikeService.getInstance().getConfiguration();
         if (configuration != null) {
-            setAdapter(new ConfigurationAdapter(configuration));
-            //setActivePage(getCurrentPage());
+            BikeService.getInstance().setManualMode();
+            this.pagedView.setAdapter(new ConfigurationAdapter(configuration));
         }
     }
+
+    public void hide() {
+        if (configuration != null) {
+            BikeService.getInstance().sendConfiguration(configuration);
+            BikeService.getInstance().saveConfiguration();
+        }
+    }
+
 }

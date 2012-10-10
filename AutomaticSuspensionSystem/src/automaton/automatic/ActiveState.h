@@ -46,6 +46,10 @@ public:
 		return app->automaton->standOverState;
 	}
 
+	virtual uint8_t getId() {
+		return ACTIVE_STATE;
+	}
+
 };
 
 #endif /* ACTIVESTATE_H_ */

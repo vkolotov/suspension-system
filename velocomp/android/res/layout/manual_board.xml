@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.vol.velocomp.views.ManualBoard xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:id="@+id/manual_board">
 
     <include layout="@layout/speed_cadence_indicator"/>
 
@@ -25,7 +26,8 @@
                     android:layout_width="fill_parent"
                     android:textOn="Climb"
                     android:textOff="Climb"
-                    android:onClick="climbSuspensionToggle"/>
+                    android:onClick="climbSuspensionToggle"
+                    android:enabled="false"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
@@ -38,7 +40,8 @@
                     android:layout_width="fill_parent"
                     android:textOn="Trail"
                     android:textOff="Trail"
-                    android:onClick="trailSuspensionToggle"/>
+                    android:onClick="trailSuspensionToggle"
+                    android:enabled="false"/>
         </LinearLayout>
         <LinearLayout
                 android:orientation="vertical"
@@ -51,7 +54,8 @@
                     android:layout_width="fill_parent"
                     android:textOn="Descend"
                     android:textOff="Descend"
-                    android:onClick="descendSuspensionToggle"/>
+                    android:onClick="descendSuspensionToggle"
+                    android:enabled="false"/>
         </LinearLayout>
     </LinearLayout>
 

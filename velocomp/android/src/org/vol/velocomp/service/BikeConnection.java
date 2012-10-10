@@ -55,15 +55,18 @@ public class BikeConnection {
             public Object call() throws ConnectionException {
                 bikeBluetooth = getBikeDevice();
                 bluetoothSocket = getBluetoothSocket();
+
                 try {
                     bluetoothSocket.connect();
                 } catch (IOException e) {
+                    disconnect();
                     throw new ConnectionException("Could not open socket with bike");
                 }
                 try {
                     inputStream = new DataInputStream(bluetoothSocket.getInputStream());
                     outputStream = new DataOutputStream(bluetoothSocket.getOutputStream());
                 } catch (IOException e) {
+                    disconnect();
                     throw new ConnectionException("Could not get input/output stream");
                 }
                 return null;
@@ -112,7 +115,8 @@ public class BikeConnection {
             throw new ConnectionException("Is not connected");
         }
         sendMessageId((byte) 0);
-        if (receive(StatusMessage.class, timeout).status != StatusMessage.OK) {
+        StatusMessage statusMessage = receive(StatusMessage.class, timeout);
+        if (!statusMessage.isOk()) {
             throw new ConnectionException("Device is not ready");
         }
     }

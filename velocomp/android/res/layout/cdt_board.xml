@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.vol.velocomp.views.CDTBoard xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:id="@+id/cdt_board">
 
     <include layout="@layout/speed_cadence_indicator"/>
 
@@ -20,17 +21,17 @@
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gradient"
+                android:text="@string/gradient_underlined"
                 android:layout_alignParentBottom="true"
                 android:textSize="@dimen/indicatorLabelFontSize"
                 android:textColor="#000000"
                 android:layout_alignParentLeft="true" />
-        />
+
         <TextView
                 android:id="@+id/gradient"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="15"
+                android:text="0"
                 android:textSize="@dimen/indicatorValueFontSize"
                 android:textColor="#000000"
                 android:layout_alignParentRight="true" />
@@ -59,7 +60,7 @@
                 android:id="@+id/cdtMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Climb"
+                android:text=""
                 android:textSize="@dimen/indicatorValueFontSize"
                 android:textColor="#000000"
                 android:layout_alignParentRight="true" />
@@ -87,7 +88,8 @@
                 android:layout_width="30dip"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="15"
+                android:text="0"
+
                 android:textSize="20dp"
                 android:textColor="#000000"
                 android:layout_below="@id/climbGradientLabel"
@@ -101,9 +103,9 @@
                  android:layout_width="0dp"
                  android:layout_height="wrap_content"
                  android:max="50"
-                 android:progress="25"
+                 android:progress="0"
                  android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="30" />
+                 android:secondaryProgress="0" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -130,7 +132,7 @@
                 android:layout_width="30dip"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="-20"
+                android:text="0"
                 android:textSize="20dp"
                 android:textColor="#000000"
                 android:layout_below="@id/descendGradientLabel"
@@ -144,9 +146,9 @@
                  android:layout_width="0dp"
                  android:layout_height="wrap_content"
                  android:max="50"
-                 android:progress="25"
+                 android:progress="0"
                  android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="30" />
+                 android:secondaryProgress="0" />
     </RelativeLayout>
 
-</RelativeLayout>
+</org.vol.velocomp.views.CDTBoard>

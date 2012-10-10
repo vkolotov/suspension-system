@@ -3,11 +3,9 @@ package org.vol.velocomp.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.Configuration;
 import org.vol.velocomp.service.BikeService;
@@ -37,28 +35,23 @@ public class SuspensionConfiguration extends ScrollView {
 
         for (int i = 0; i < suspensionSystemConfig.modes; i++) {
 
-            View seekBarSection = inflater.inflate(R.layout.seekbar_section, this, false);
+            final SeekBarSectionView seekBarSectionView = (SeekBarSectionView) inflater.inflate(R.layout.seekbar_section, this, false);
 
-            ((TextView) seekBarSection.findViewById(R.id.seekBarLabel)).setText("Mode #" + (i + 1));
-            ((TextView) seekBarSection.findViewById(R.id.seekBarMinValue)).setText(
-                    String.valueOf(suspensionSystemConfig.minAngle));
-            ((TextView) seekBarSection.findViewById(R.id.seekBarMaxValue)).setText(
-                    String.valueOf(suspensionSystemConfig.maxAngle));
-
-            SeekBar seekBar = (SeekBar) seekBarSection.findViewById(R.id.seekBar);
-
-            seekBar.setMax(suspensionSystemConfig.maxAngle - suspensionSystemConfig.minAngle);
-            seekBar.setProgress(suspensionSystemConfig.angles[i] - suspensionSystemConfig.minAngle);
+            seekBarSectionView.setTitle(getModeTitle(suspensionSystemConfig, i));
+            seekBarSectionView.setValue(suspensionSystemConfig.angles[i] - suspensionSystemConfig.minAngle);
+            seekBarSectionView.setMaxValue(suspensionSystemConfig.maxAngle - suspensionSystemConfig.minAngle);
+            seekBarSectionView.setProgress(suspensionSystemConfig.angles[i] - suspensionSystemConfig.minAngle);
 
             final int mode = i;
-
-            seekBar.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
+            seekBarSectionView.setOnSeekBarChangeListener( new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
+                    seekBarSectionView.setValue(value - suspensionSystemConfig.minAngle);
                 }
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
+                    suspensionSystemConfig.mode = (byte) mode;
                 }
 
                 @Override
@@ -70,8 +63,18 @@ public class SuspensionConfiguration extends ScrollView {
                 }
             });
 
-            linearLayout.addView(seekBarSection, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(seekBarSectionView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         }
 
+    }
+
+    private String getModeTitle(Configuration.SuspensionSystemConfig suspensionSystemConfig, int mode) {
+        if (suspensionSystemConfig.modes == 3) {
+            return mode == 0 ? "Climb angle" : (mode == 1 ? "Trail angle" : "Descent angle");
+        } else if (suspensionSystemConfig.modes == 2) {
+            return mode == 0 ? "Climb & Trail angle" : "Descent angle";
+        } else {
+            return "Mode #" + mode + " angle";
+        }
     }
 }

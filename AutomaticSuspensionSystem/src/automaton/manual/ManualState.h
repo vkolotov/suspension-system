@@ -18,7 +18,6 @@ public:
 	}
 
 	State* transit(Application* app) {
-
 		if (calibration) {
 			calibratetionMode(app);
 		} else {
@@ -30,10 +29,12 @@ public:
 			return result;
 		}
 
+
+
 		return this;
 	}
-	String getName() {
-		return "Manual";
+	uint8_t getId() {
+		return MANUAL_STATE;
 	}
 
 protected:
@@ -62,43 +63,35 @@ protected:
 
 	void manualMode(Application* app) {
 		if (app->frontButton.isPushed(3000)) {
-			Serial.println("Front calibrating");
 			beginCalibration(&app->frontSuspension);
 			return;
 		}
 
 		if (app->rearButton.isPushed(3000)) {
-			Serial.println("Rear calibrating");
 			beginCalibration(&app->rearSuspension);
 			return;
 		}
 
 		if (app->modeButton.isPushed(3000)) {
-			Serial.println("Set mode");
 			mode = !mode;
 			return;
 		}
 
 		if (mode) {
 			if (app->frontButton.isPushed()) {
-				app->frontSuspension.lock();
-				app->rearSuspension.lock();
+				app->climbSuspensions();
 			}
 			if (app->modeButton.isPushed()) {
-				app->frontSuspension.medium();
-				app->rearSuspension.medium();
+				app->trailSuspensions();
 			}
 			if (app->rearButton.isPushed()) {
-				app->frontSuspension.release();
-				app->rearSuspension.release();
+				app->descentSuspensions();
 			}
 		} else {
 			if (app->frontButton.isPushed()) {
-				Serial.println("front toggle");
 				app->frontSuspension.toggle();
 			}
 			if (app->rearButton.isPushed()) {
-				Serial.println("rear toggle");
 				app->rearSuspension.toggle();
 			}
 		}

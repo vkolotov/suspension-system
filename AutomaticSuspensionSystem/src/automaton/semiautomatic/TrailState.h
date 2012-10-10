@@ -15,7 +15,7 @@ public:
 
 	bool transitable(Application* app) {
 		return app->sprungAccelerometerSystem.getAverageGradient() >=
-				app->config->semiautomaticStateConfig.descentGradient
+				app->config->semiautomaticStateConfig.descendGradient
 						+ app->config->semiautomaticStateConfig.transitionGap
 						&&
 				app->sprungAccelerometerSystem.getAverageGradient() <=
@@ -34,8 +34,9 @@ public:
 
 		return this;
 	}
-	String getName() {
-		return "Trail";
+
+	uint8_t getId() {
+		return TRAIL_STATE;
 	}
 };
 

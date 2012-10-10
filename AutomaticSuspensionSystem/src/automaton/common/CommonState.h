@@ -27,17 +27,14 @@ public:
 		}
 
 		if (app->automaton->manualState->transitable(app)) {
-			app->config->system.mode = MODE_MANUAL;
 			return app->automaton->manualState;
 		}
 
 		if (app->automaton->cdtState->transitable(app)) {
-			app->config->system.mode = MODE_SEMIAUTOMATIC;
 			return app->automaton->cdtState;
 		}
 
 		if (app->automaton->automaticState->transitable(app)) {
-			app->config->system.mode = MODE_AUTOMATIC;
 			return app->automaton->automaticState;
 		}
 
@@ -47,8 +44,8 @@ public:
 		return 0;
 	}
 
-	String getName() {
-		return "Common";
+	uint8_t getId() {
+		return COMMON_STATE;
 	}
 
 };

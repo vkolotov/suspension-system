@@ -44,7 +44,7 @@ static const uint8_t MODE_AUTOMATIC = 2;
 static const uint8_t SERVO_RELAY_PIN = 6;
 static const uint8_t SERIAL_RELAY_PIN = 7;
 static const uint8_t I2C_RELAY_PIN = 13;
-static const uint8_t SLEEP_INTERRUPTION_NUMBER = 4;
+static const uint8_t SLEEP_INTERRUPTION_NUMBER = 0;
 static const uint16_t SERO_STANDBY_TIMEOUT = 500;
 static const uint32_t SLEEP_TIMEOUT = 99999999;
 
@@ -82,7 +82,6 @@ struct SpeedSystemConfig {
 };
 
 struct SystemConfig {
-	uint8_t mode;
 	uint16_t wheelBase;
 	uint16_t maxUnlockTimeout;
 	float headTubeGradient;
@@ -111,6 +110,7 @@ struct SuspensionSystemConfig {
 	uint16_t maxAngle;
 	uint8_t modes;
 	uint16_t angles[9];
+	uint8_t mode;
 };
 
 struct PowerSaveSystemConfig {
@@ -129,7 +129,7 @@ struct PowerSaveSystemConfig {
 struct SemiautomaticStateConfig {
 
 	float climbGradient;
-	float descentGradient;
+	float descendGradient;
 	float transitionGap;
 	uint16_t averageDegreeMeasuringPeriod;
 };
@@ -152,7 +152,7 @@ Configuration EEMEM cfg = {
 		// reference
 		true,
 		// SystemConfig
-		{MODE_AUTOMATIC, WHEEL_BASE, 4000, 0.164, 2.0},
+		{WHEEL_BASE, 4000, 0.164, 2.0},
 		// ButtonsSystem
 		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION, LOW, LOW, LOW},
 		// SpeedSystemConfig
@@ -160,9 +160,9 @@ Configuration EEMEM cfg = {
 		// CadenceSystemConfig
 		{{CADENCE_PIN, MINIMUM_CADENCE_TIME, MAXIMUM_CADENCE_TIME, LOW}, 300},
 		// SuspensionSystemConfig frontSuspension
-		{FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 3, {20, 80, 170}},
+		{FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 3, {20, 80, 170}, 0},
 		// SuspensionSystemConfig rearSuspension
-		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}},
+		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}, 0},
 		// AccelerometerSystemConfig sprungAccelerometerSystem
 		{ADXL345_ADDRESS_ALT_LOW, 0x2, -20, 15},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem

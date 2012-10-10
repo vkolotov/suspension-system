@@ -34,6 +34,9 @@ public:
 		return this;
 	}
 
+	uint8_t getId() {
+		return IDLE_STATE;
+	}
 
 };
 

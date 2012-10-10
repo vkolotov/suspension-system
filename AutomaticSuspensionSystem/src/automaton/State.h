@@ -19,7 +19,7 @@ public:
 
 	virtual State* transit(Application* app) = 0;
 
-	virtual String getName() = 0;
+	virtual uint8_t getId() = 0;
 
 };
 

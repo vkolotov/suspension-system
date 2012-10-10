@@ -31,8 +31,8 @@ public:
 		return this;
 	}
 
-	String getName() {
-		return "Climb";
+	uint8_t getId() {
+		return CLIMB_STATE;
 	}
 };
 

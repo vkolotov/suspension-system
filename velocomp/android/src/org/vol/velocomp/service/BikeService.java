@@ -2,8 +2,13 @@ package org.vol.velocomp.service;
 
 
 import org.vol.velocomp.ConnectionException;
+import org.vol.velocomp.messages.CDTBoardMessage;
+import org.vol.velocomp.messages.CDTTelemetry;
 import org.vol.velocomp.messages.Configuration;
+import org.vol.velocomp.messages.ManualTelemetry;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
 public class BikeService {
@@ -13,6 +18,7 @@ public class BikeService {
     public enum RequestCode {
 
         RESET(1),
+        SLEEP(2),
 
         SAVE_CONFIGURATION(10),
         RELOAD_CONFIGURATION(11),
@@ -21,10 +27,20 @@ public class BikeService {
         SEND_CONFIGURATION(14),
         SEND_FRONT_SUSPENSION_CONFIGURATION(15),
         SEND_REAR_SUSPENSION_CONFIGURATION(16),
+        SEND_CDT_BOARD_MESSAGE(17),
 
         DESCEND_MODE_ALL(50),
         TRAIL_MODE_ALL(51),
-        CLIMB_MODE_ALL(52);
+        CLIMB_MODE_ALL(52),
+        SET_MANUAL_MODE(53),
+        SET_CDT_MODE(54),
+        SET_AUTOMATIC_MODE(55),
+        CALIBRATE_GRADIENT(56),
+
+
+        GET_MANUAL_TELEMETRY(60),
+        GET_CDT_TELEMETRY(61),
+        GET_AUTOMATIC_TELEMETRY(62);
 
 
         private byte code;
@@ -34,7 +50,7 @@ public class BikeService {
     }
 
     private static BikeService instance;
-    private static BikeServiceListener listener;
+    private Set<BikeServiceListener> listeners = new HashSet<BikeServiceListener>(5);
     private boolean isConnected;
 
     public interface BikeServiceListener {
@@ -53,27 +69,37 @@ public class BikeService {
         return instance;
     }
 
-    public static void setListener(BikeServiceListener listener) {
-        BikeService.listener = listener;
+    public void addListener(BikeServiceListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners(boolean isConnected, Exception ex) {
+        for (BikeServiceListener bikeServiceListener : listeners) {
+            if (isConnected) {
+                bikeServiceListener.onConnected();
+            } else {
+                bikeServiceListener.onDisconnected(ex);
+            }
+        }
     }
 
     synchronized public void connect() {
         try {
             BikeConnection.getInstance().connect(TIMEOUT);
             isConnected = true;
-            listener.onConnected();
+            notifyListeners(true, null);
         } catch (ConnectionException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         }
     }
 
     synchronized public void disconnect() {
         try {
             BikeConnection.getInstance().disconnect();
-            listener.onDisconnected(null);
+            notifyListeners(false, null);
         } catch (ConnectionException e) {
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         }
         isConnected = false;
     }
@@ -90,26 +116,30 @@ public class BikeService {
         try {
             BikeConnection.getInstance().testConnection(TIMEOUT);
             isConnected = true;
-            listener.onConnected();
+            notifyListeners(true, null);
         } catch (TimeoutException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         } catch (ConnectionException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         }
     }
 
-    public void setTrailModeAll() {
-        sendMessage(RequestCode.TRAIL_MODE_ALL);
+    public boolean setTrailModeAll() {
+        return sendMessage(RequestCode.TRAIL_MODE_ALL);
     }
 
-    public void setClimbModeAll() {
-        sendMessage(RequestCode.CLIMB_MODE_ALL);
+    public boolean setClimbModeAll() {
+        return sendMessage(RequestCode.CLIMB_MODE_ALL);
     }
 
-    public void setDescendModeAll() {
-        sendMessage(RequestCode.DESCEND_MODE_ALL);
+    public boolean setDescendModeAll() {
+        return sendMessage(RequestCode.DESCEND_MODE_ALL);
+    }
+
+    public boolean sleep() {
+        return sendMessage(RequestCode.SLEEP);
     }
 
     public Configuration getConfiguration() {
@@ -120,6 +150,30 @@ public class BikeService {
         return sendMessage(RequestCode.SEND_CONFIGURATION, configuration);
     }
 
+    public boolean sendCDTBoardMessage(CDTBoardMessage configuration) {
+        return sendMessage(RequestCode.SEND_CDT_BOARD_MESSAGE, configuration);
+    }
+
+    public boolean saveConfiguration() {
+        return sendMessage(RequestCode.SAVE_CONFIGURATION);
+    }
+
+    public boolean setManualMode() {
+        return sendMessage(RequestCode.SET_MANUAL_MODE);
+    }
+
+    public boolean setCDTMode() {
+        return sendMessage(RequestCode.SET_CDT_MODE);
+    }
+
+    public boolean setAutomaticMode() {
+        return sendMessage(RequestCode.SET_AUTOMATIC_MODE);
+    }
+
+    public boolean calibrateGradient() {
+        return sendMessage(RequestCode.CALIBRATE_GRADIENT);
+    }
+
     public boolean sendFrontSuspensionConfiguration(Configuration.SuspensionSystemConfig configuration) {
         return sendMessage(RequestCode.SEND_FRONT_SUSPENSION_CONFIGURATION, configuration);
     }
@@ -128,21 +182,29 @@ public class BikeService {
         return sendMessage(RequestCode.SEND_REAR_SUSPENSION_CONFIGURATION, configuration);
     }
 
+    public ManualTelemetry getManualTelemetry() {
+        return getMessage(ManualTelemetry.class, RequestCode.GET_MANUAL_TELEMETRY);
+    }
+
+    public CDTTelemetry getCDTTelemetry() {
+        return getMessage(CDTTelemetry.class, RequestCode.GET_CDT_TELEMETRY);
+    }
+
     synchronized private <Message> boolean sendMessage(RequestCode requestCode, Message message) {
         if (!isConnected) {
             return false;
         }
         try {
             BikeConnection.getInstance().send(requestCode.code, message, TIMEOUT);
-            listener.onConnected();
+            notifyListeners(true, null);
             this.isConnected = true;
             return true;
         } catch (TimeoutException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         } catch (ConnectionException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         }
         return false;
     }
@@ -153,30 +215,32 @@ public class BikeService {
         }
         try {
             Message result = BikeConnection.getInstance().request(clazz, requestCode.code, TIMEOUT);
-            listener.onConnected();
+            notifyListeners(true, null);
             isConnected = true;
             return result;
         } catch (TimeoutException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         } catch (ConnectionException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
         }
         return null;
     }
 
-    synchronized private void sendMessage(RequestCode requestCode) {
+    synchronized private boolean sendMessage(RequestCode requestCode) {
         if (!isConnected) {
-            return;
+            return false;
         }
         try {
             BikeConnection.getInstance().sendMessageId(requestCode.code);
             isConnected = true;
-            listener.onConnected();
+            notifyListeners(true, null);
+            return true;
         } catch (ConnectionException e) {
             disconnect();
-            listener.onDisconnected(e);
+            notifyListeners(false, e);
+            return false;
         }
     }
 

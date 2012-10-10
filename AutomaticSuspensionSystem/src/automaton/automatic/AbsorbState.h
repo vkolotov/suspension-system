@@ -19,9 +19,12 @@ public:
 	}
 
 	State* transit(Application* app) {
-		app->frontSuspension.release();
-		app->rearSuspension.release();
+		app->descentSuspensions();
 		return ActiveState::transit(app);
+	}
+
+	uint8_t getId() {
+		return ABSORB_STATE;
 	}
 };
 

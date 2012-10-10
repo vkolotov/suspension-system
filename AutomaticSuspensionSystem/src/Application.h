@@ -42,28 +42,12 @@ public:
 		digitalWrite(config->cadence.frequencySystemConfig.pin, HIGH);
 		digitalWrite(config->speed.frequencySystemConfig.pin, HIGH);
 
-		//digitalWrite(HEART_RATE_PIN, LOW);
-		//digitalWrite(4, HIGH);
-		//digitalWrite(5, HIGH);
-		digitalWrite(SERVO_RELAY_PIN, HIGH);
-		digitalWrite(SERIAL_RELAY_PIN, HIGH);
-		digitalWrite(I2C_RELAY_PIN, HIGH);
-//
-
-
-
-		digitalWrite(config->powerSave.servoRelayPin, HIGH);
-		digitalWrite(config->powerSave.i2cRelayPin, HIGH);
-
-		Serial.println(config->powerSave.isSerialPowerOn);
-
+		digitalWrite(config->powerSave.servoRelayPin, config->powerSave.isServoPowerOn);
+		digitalWrite(config->powerSave.i2cRelayPin, config->powerSave.isi2cPowerOn);
 		setSerialPower(config->powerSave.isSerialPowerOn);
-
 
 		unsprungAccelerometerSystem.init();
 		sprungAccelerometerSystem.init();
-
-
 	}
 
 	void update() {
@@ -85,23 +69,20 @@ public:
 		}
 	}
 
-
 	void sleep() {
-//		digitalWrite(4, LOW);
-//		digitalWrite(5, LOW);
-//		digitalWrite(6, LOW);
+		digitalWrite(config->powerSave.servoRelayPin, LOW);
+		digitalWrite(config->powerSave.i2cRelayPin, LOW);
+		setSerialPower(false);
 	}
 
 	void wakeup() {
-
-//		digitalWrite(4, HIGH);
-//		digitalWrite(5, HIGH);
-//		digitalWrite(6, HIGH);
+		digitalWrite(config->powerSave.servoRelayPin, config->powerSave.isServoPowerOn);
+		digitalWrite(config->powerSave.i2cRelayPin, config->powerSave.isi2cPowerOn);
+		setSerialPower(config->powerSave.isSerialPowerOn);
 	}
 
 	void setSerialPower(bool on) {
 		digitalWrite(config->powerSave.serialRelayPin, on ? HIGH : LOW);
-		config->powerSave.isSerialPowerOn = on;
 		if (on) {
 			bluetoothSystem->init();
 		}
@@ -111,7 +92,7 @@ public:
 		return digitalRead(config->powerSave.serialRelayPin) == HIGH;
 	}
 
-	void descendSuspensions() {
+	void descentSuspensions() {
 		frontSuspension.release();
 		rearSuspension.release();
 	}
@@ -125,7 +106,6 @@ public:
 		frontSuspension.lock();
 		rearSuspension.lock();
 	}
-
 
 	Configuration* config;
 	Automaton* automaton;

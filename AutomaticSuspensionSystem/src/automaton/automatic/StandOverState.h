@@ -22,6 +22,10 @@ public:
 		app->rearSuspension.release();
 		return ActiveState::transit(app);
 	}
+
+	uint8_t getId() {
+		return STANDOVER_STATE;
+	}
 };
 
 #endif /* STANDOVERSTATE_H_ */

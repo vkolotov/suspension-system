@@ -10,7 +10,7 @@
 
 class CDTState : public CommonState {
 public:
-	CDTState() : CommonState() {};
+	CDTState() : CommonState(), currentState(0) {};
 	~CDTState() {};
 
 	bool transitable(Application* app) {
@@ -18,23 +18,16 @@ public:
 	}
 
 	State* transit(Application* app) {
-
 		if (app->frontButton.isPushed(3000)) {
-			Serial.print("Climb: ");
-			Serial.println(app->sprungAccelerometerSystem.getGradient());
 			app->config->semiautomaticStateConfig.climbGradient =
 					app->sprungAccelerometerSystem.getGradient();
 			saveConfiguration(app->config);
 		} else if (app->modeButton.isPushed(3000)) {
-			Serial.print("Head: ");
-			Serial.println(app->sprungAccelerometerSystem.getGradient());
 			app->config->system.headTubeGradient =
 					app->sprungAccelerometerSystem.getRawGradient();
 			saveConfiguration(app->config);
 		} else if (app->rearButton.isPushed(3000)) {
-			Serial.print("Desc: ");
-			Serial.println(app->sprungAccelerometerSystem.getGradient());
-			app->config->semiautomaticStateConfig.descentGradient =
+			app->config->semiautomaticStateConfig.descendGradient =
 					app->sprungAccelerometerSystem.getGradient();
 			saveConfiguration(app->config);
 		}
@@ -45,23 +38,33 @@ public:
 		}
 
 		if (app->automaton->descentState->transitable(app)) {
+			currentState = 2;
 			return app->automaton->descentState;
 		}
 
 		if (app->automaton->trailState->transitable(app)) {
+			currentState = 1;
 			return app->automaton->trailState;
 		}
 
 		if (app->automaton->climbState->transitable(app)) {
+			currentState = 0;
 			return app->automaton->climbState;
 		}
 
 		return this;
 	}
 
-	String getName() {
-		return "Semiautomatic";
+	uint8_t getCurrentState() {
+		return currentState;
 	}
+
+	virtual uint8_t getId() {
+		return CDT_STATE;
+	}
+
+protected:
+	uint8_t currentState;
 
 };
 

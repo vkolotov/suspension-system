@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.vol.velocomp.views.ConfigurationView xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:background="#ffffff"
-              xmlns:greendroid="http://schemas.android.com/apk/res/org.vol.velocomp">
+              xmlns:greendroid="http://schemas.android.com/apk/res/org.vol.velocomp"
+              android:id="@+id/configuration_view">
 
-	<org.vol.velocomp.views.ConfigurationView
-		android:id="@+id/configuration_view"
+	<greendroid.widget.PagedView
+		android:id="@+id/configuration_paged_view"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
         android:background="#FFFFFF"/>
@@ -37,4 +38,4 @@
 		android:paddingLeft="15dp"
 		greendroid:dotType="multiple"
 		greendroid:gravity="right" />
-</LinearLayout>
+</org.vol.velocomp.views.ConfigurationView>

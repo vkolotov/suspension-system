@@ -8,4 +8,8 @@ public class StatusMessage {
     @FieldOrder(1)
     public byte status;
 
+    public boolean isOk() {
+        return status == OK;
+    }
+
 }

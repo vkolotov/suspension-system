@@ -8,13 +8,26 @@
 #ifndef MESSAGES_H_
 #define MESSAGES_H_
 
-struct TelemetryMessage {
-	int8_t speed;
-	int16_t cadence;
-	int32_t distance;
-	int16_t heartRate;
-	float floatField;
-	double doubleField;
+struct ManualTelemetry {
+	uint8_t state;
+	uint8_t speed;
+	uint16_t cadence;
+	uint8_t suspensionMode;
+};
+
+struct CDTTelemetry {
+	uint8_t state;
+	uint8_t speed;
+	uint16_t cadence;
+	uint8_t suspensionMode;
+	int8_t gradient;
+	int8_t climbGradient;
+	int8_t descendGradient;
+};
+
+struct CDTBoardMessage {
+	int8_t climbGradient;
+	int8_t descendGradient;
 };
 
 #endif /* MESSAGES_H_ */

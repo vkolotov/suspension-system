@@ -15,13 +15,13 @@ public:
 
 	bool transitable(Application* app) {
 		return app->sprungAccelerometerSystem.getAverageGradient() <=
-				app->config->semiautomaticStateConfig.descentGradient
+				app->config->semiautomaticStateConfig.descendGradient
 						- app->config->semiautomaticStateConfig.transitionGap;
 	}
 
 	State* transit(Application* app) {
 
-		app->descendSuspensions();
+		app->descentSuspensions();
 
 		State* result = CDTState::transit(app);
 		if (result) {
@@ -31,8 +31,8 @@ public:
 		return this;
 	}
 
-	String getName() {
-		return "Descent";
+	uint8_t getId() {
+		return DESCENT_STATE;
 	}
 
 };

@@ -23,9 +23,9 @@ public class ModesAdapter extends SegmentedAdapter {
 
         switch (position) {
             case 0:
-                return inflater.inflate(R.layout.manual_mode, parent, false);
+                return inflater.inflate(R.layout.manual_board, parent, false);
             case 1:
-                return inflater.inflate(R.layout.cdt_mode, parent, false);
+                return inflater.inflate(R.layout.cdt_board, parent, false);
             case 2:
                 return inflater.inflate(R.layout.automatic_mode, parent, false);
 

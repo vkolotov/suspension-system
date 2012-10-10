@@ -8,7 +8,6 @@ void setup() {
 	initConfiguration();
 	Serial.begin(9600);
 	delay(1000);
-	Serial.println(sizeof(size_t));
 
 	app.bluetoothSystem = new BluetoothSystem(&app);
 

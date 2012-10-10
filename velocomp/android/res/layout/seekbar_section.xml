@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<org.vol.velocomp.views.SeekBarSectionView
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/seekbar_section"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingRight="5dp"
@@ -10,45 +11,34 @@
         android:paddingBottom="10dp">
     <TextView
             android:id="@+id/seekBarLabel"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="Label"
-            android:textSize="15dp"
-            android:textColor="#000000"
-            android:layout_alignParentLeft="true" />
-
-    <TextView
-            android:id="@+id/seekBarMinValue"
-            android:layout_width="30dip"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="0"
-            android:textSize="20dp"
-            android:textColor="#000000"
-            android:layout_below="@id/seekBarLabel"
-            android:layout_alignParentLeft="true"/>
-
-    <SeekBar android:id="@+id/seekBar"
-             android:layout_below="@id/seekBarLabel"
-             android:layout_toRightOf="@+id/seekBarMinValue"
-
-             android:paddingRight="35dp"
-             android:layout_width="0dp"
-             android:layout_height="wrap_content"
-             android:max="50"
-             android:progress="25"
-             android:progressDrawable="@drawable/seekbar_bg"
-             android:secondaryProgress="30"
-             android:layout_alignParentRight="true"/>/>
-    <TextView
-            android:id="@+id/seekBarMaxValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text=""
+            android:textSize="15dp"
+            android:textColor="#000000"
+            android:layout_alignParentRight="true" />
+    <TextView
+            android:id="@+id/seekBarValue"
+            android:layout_width="35dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
             android:layout_marginRight="5dp"
             android:text="0"
             android:textSize="20dp"
             android:textColor="#000000"
             android:layout_below="@id/seekBarLabel"
-            android:layout_alignParentRight="true"/>
-</RelativeLayout>
+            android:layout_alignParentLeft="true"
+            android:gravity="right"/>
+
+    <SeekBar android:id="@+id/seekBar"
+             android:layout_below="@id/seekBarLabel"
+             android:layout_toRightOf="@+id/seekBarValue"
+             android:paddingRight="0dp"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:progress="0"
+             android:progressDrawable="@drawable/seekbar_bg"
+             android:secondaryProgress="0"
+             android:layout_alignParentRight="true"/>
+</org.vol.velocomp.views.SeekBarSectionView>

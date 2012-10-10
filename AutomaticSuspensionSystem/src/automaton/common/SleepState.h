@@ -33,25 +33,28 @@ public:
 	}
 
 	State* transit(Application* app) {
-
 		app->sleep();
 
 		set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 		sleep_enable();
-		attachInterrupt(SLEEP_INTERRUPTION_NUMBER, wakeup, LOW);
+		attachInterrupt(0, wakeup, LOW);
+		attachInterrupt(1, wakeup, LOW);
 
 		sleep_mode();
+
 		// Continuing
 		sleep_disable();
-		detachInterrupt(SLEEP_INTERRUPTION_NUMBER);
+		detachInterrupt(0);
+		detachInterrupt(1);
 
 		app->wakeup();
 		app->cadenceSystem.setLastActivity(millis());
 
 		return app->automaton->previous;
 	}
-	String getName() {
-		return "Sleep";
+
+	uint8_t getId() {
+		return SLEEP_STATE;
 	}
 
 

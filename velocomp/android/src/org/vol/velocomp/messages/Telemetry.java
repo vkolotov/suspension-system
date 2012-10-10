@@ -1,16 +1,12 @@
 package org.vol.velocomp.messages;
 
 public class Telemetry {
+
     @FieldOrder(0)
-    public byte speed;
+    public byte state;
     @FieldOrder(1)
-    public short cadence;
+    public byte speed;
     @FieldOrder(2)
-    public int distance;
-    @FieldOrder(3)
-    public short heartRate;
-    @FieldOrder(4)
-    public float floatField;
-    @FieldOrder(5)
-    public double doubleField;
+    public short cadence;
 }
+
