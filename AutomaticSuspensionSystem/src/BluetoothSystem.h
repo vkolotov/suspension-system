@@ -11,17 +11,25 @@
 
 class BluetoothSystem : public Activity {
 public:
-	BluetoothSystem(Application* app) : Activity(), app(app) {};
+	BluetoothSystem(Application* app) : Activity(), app(app), lastActivity(0) {};
 	~BluetoothSystem() {};
 
 	void init() {
+		Serial.println("BT init");
+		lastActivity = millis();
 	}
 
 	void update(unsigned long time) {
 
+		if (app->config->powerSave.isBluetoothSleepEnabled
+				&& time > lastActivity
+				&& time - lastActivity >= app->config->powerSave.bluetoothSleepTimeout) {
+			app->setSerialPower(false);
+		}
+
 		if (Serial.available()) {
 			if (Serial.available() == 1) {
-
+				lastActivity = time;
 				uint8_t requestId = Serial.read();
 
 				switch (requestId) {
@@ -61,6 +69,10 @@ public:
 
 		}
 
+	}
+
+	unsigned long getLastActivity() {
+		return lastActivity;
 	}
 
 
@@ -132,6 +144,7 @@ private:
 private:
 
 	Application* app;
+	unsigned long lastActivity;
 
 };
 

@@ -72,16 +72,17 @@ public:
 	void sleep() {
 		digitalWrite(config->powerSave.servoRelayPin, LOW);
 		digitalWrite(config->powerSave.i2cRelayPin, LOW);
-		setSerialPower(false);
+		digitalWrite(config->powerSave.serialRelayPin, LOW);
 	}
 
 	void wakeup() {
-		digitalWrite(config->powerSave.servoRelayPin, config->powerSave.isServoPowerOn);
-		digitalWrite(config->powerSave.i2cRelayPin, config->powerSave.isi2cPowerOn);
+		//digitalWrite(config->powerSave.servoRelayPin, config->powerSave.isServoPowerOn);
+		//digitalWrite(config->powerSave.i2cRelayPin, config->powerSave.isi2cPowerOn);
 		setSerialPower(config->powerSave.isSerialPowerOn);
 	}
 
 	void setSerialPower(bool on) {
+		config->powerSave.isSerialPowerOn = on;
 		digitalWrite(config->powerSave.serialRelayPin, on ? HIGH : LOW);
 		if (on) {
 			bluetoothSystem->init();

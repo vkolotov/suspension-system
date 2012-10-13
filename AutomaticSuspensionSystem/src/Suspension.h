@@ -71,6 +71,7 @@ public:
 		if (attached() && currentTime - lastTime > systemConfig->powerSave.servoStandByTimeout) {
 			lastTime = currentTime;
 			detach();
+			digitalWrite(systemConfig->powerSave.servoRelayPin, LOW);
 		}
 	}
 
@@ -80,7 +81,8 @@ public:
 
 	void bind() {
 		if (!attached()) {
-			attach(suspensionConfig->controlPin, suspensionConfig->minAngle, suspensionConfig->maxAngle);
+			digitalWrite(systemConfig->powerSave.servoRelayPin, HIGH);
+			attach(suspensionConfig->controlPin);//, suspensionConfig->minAngle, suspensionConfig->maxAngle);
 		}
 		lastTime = millis();
 	}

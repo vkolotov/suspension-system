@@ -18,15 +18,15 @@ public:
 	}
 
 	State* transit(Application* app) {
+		State* result = CommonState::transit(app);
+		if (result) {
+			return result;
+		}
+
 		if (calibration) {
 			calibratetionMode(app);
 		} else {
 			manualMode(app);
-		}
-
-		State* result = CommonState::transit(app);
-		if (result) {
-			return result;
 		}
 
 
@@ -41,18 +41,14 @@ protected:
 
 	void calibratetionMode(Application* app) {
 		if (app->frontButton.isPushed()) {
-			calibrationSuspension->bind();
-			calibrationSuspension->write(calibrationSuspension->read()
-					+ calibrationSuspension->getConfig()->calibrationStep);
+			calibrationSuspension->getConfig()->angles[currentSuspentionMode] -=
+					calibrationSuspension->getConfig()->calibrationStep;
 		} else if (app->rearButton.isPushed()) {
-			calibrationSuspension->bind();
-			calibrationSuspension->write(calibrationSuspension->read()
-					- calibrationSuspension->getConfig()->calibrationStep);
+			calibrationSuspension->getConfig()->angles[currentSuspentionMode] +=
+								calibrationSuspension->getConfig()->calibrationStep;
 		} if (app->modeButton.isPushed()) {
-			SuspensionSystemConfig* config = calibrationSuspension->getConfig();
-			config->angles[currentSuspentionMode] = calibrationSuspension->read();
 			currentSuspentionMode++;
-			if (currentSuspentionMode >= config->modes) {
+			if (currentSuspentionMode >= calibrationSuspension->getConfig()->modes) {
 				calibration = false;
 				saveConfiguration(app->config);
 				return;

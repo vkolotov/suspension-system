@@ -22,7 +22,7 @@ public:
 			resetArduino();
 		}
 
-		if (app->rearButton.isPushed(10000)) {
+		if (app->frontButton.isPushed(5000)) {
 			app->setSerialPower(!app->config->powerSave.isSerialPowerOn);
 		}
 

@@ -9,11 +9,12 @@ import greendroid.widget.PagedAdapter;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.Configuration;
 import org.vol.velocomp.views.CDTModeConfiguration;
+import org.vol.velocomp.views.PowerSaveSystemConfiguration;
 import org.vol.velocomp.views.SuspensionConfiguration;
 
 public class ConfigurationAdapter extends PagedAdapter {
 
-    public static final int PAGE_COUNT = 3;
+    public static final int PAGE_COUNT = 4;
     public static final int PAGE_MAX_INDEX = PAGE_COUNT - 1;
 
     private final Configuration configuration;
@@ -46,6 +47,9 @@ public class ConfigurationAdapter extends PagedAdapter {
                 return getSuspensionView(parent, "Rear Suspension Configuration", configuration.rearSuspension);
             case 2:
                 return getCDTMode(parent);
+            case 3:
+                return getPowerSaveView(parent);
+
 
         }
         return null;
@@ -72,6 +76,17 @@ public class ConfigurationAdapter extends PagedAdapter {
         cdtModeConfiguration.setSemiautomaticStateConfig(configuration.semiautomaticStateConfig);
 
         return cdtModeConfiguration;
+    }
+
+    private View getPowerSaveView(ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        PowerSaveSystemConfiguration powerSaveSystemConfiguration = (PowerSaveSystemConfiguration)
+                inflater.inflate(R.layout.powe_save_configuration, parent, false);
+
+        powerSaveSystemConfiguration.setConfiguration(configuration.powerSave);
+
+        return powerSaveSystemConfiguration;
     }
 
 }

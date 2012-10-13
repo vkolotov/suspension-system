@@ -46,7 +46,7 @@ static const uint8_t SERIAL_RELAY_PIN = 7;
 static const uint8_t I2C_RELAY_PIN = 13;
 static const uint8_t SLEEP_INTERRUPTION_NUMBER = 0;
 static const uint16_t SERO_STANDBY_TIMEOUT = 500;
-static const uint32_t SLEEP_TIMEOUT = 99999999;
+static const uint32_t SLEEP_TIMEOUT = 300000;
 
 
 // system
@@ -119,11 +119,13 @@ struct PowerSaveSystemConfig {
 	uint8_t i2cRelayPin;
 	uint8_t sleepInterruption;
 	uint16_t servoStandByTimeout;
+	bool isSleepEnabled;
 	uint32_t sleepTimeout;
-
-	boolean isServoPowerOn;
-	boolean isSerialPowerOn;
-	boolean isi2cPowerOn;
+	bool isBluetoothSleepEnabled;
+	uint32_t bluetoothSleepTimeout;
+	bool isServoPowerOn;
+	bool isSerialPowerOn;
+	bool isi2cPowerOn;
 };
 
 struct SemiautomaticStateConfig {
@@ -168,7 +170,7 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
-		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, SLEEP_TIMEOUT, /*servo*/true, /*serial*/true, /*i2c*/true},
+		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, true, SLEEP_TIMEOUT, true, 120000, /*servo*/true, /*serial*/true, /*i2c*/false},
 		// SemiautomaticStateConfig
 		{/*11 degrees*/0.20, /*-11 degrees*/-0.20, /*3 degrees*/0.052f, 2000}
 };

@@ -135,12 +135,18 @@ public class Configuration {
         @FieldOrder(4)
         public short servoStandByTimeout;
         @FieldOrder(5)
-        public int sleepTimeout;
+        public boolean isSleepEnabled;
         @FieldOrder(6)
-        public boolean isServoPowerOn;
+        public int sleepTimeout;
         @FieldOrder(7)
-        public boolean isSerialPowerOn;
+        public boolean isBluetoothSleepEnabled;
         @FieldOrder(8)
+        public int bluetoothSleepTimeout;
+        @FieldOrder(9)
+        public boolean isServoPowerOn;
+        @FieldOrder(10)
+        public boolean isSerialPowerOn;
+        @FieldOrder(11)
         public boolean isi2cPowerOn;
     }
 

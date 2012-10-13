@@ -16,16 +16,18 @@ public:
 	~SleepState() {};
 
 	bool transitable(Application* app) {
-		if (app->time - app->startTime < SLEEP_TIMEOUT) {
+		if (app->config->powerSave.isSleepEnabled
+				&& app->time - app->startTime < app->config->powerSave.sleepTimeout) {
 			return false;
 		}
-		unsigned long timeout = app->time - SLEEP_TIMEOUT;
+		unsigned long timeout = app->time - app->config->powerSave.sleepTimeout;
 
 		if (app->frontButton.getLastActivity() < timeout
 				&& app->modeButton.getLastActivity() < timeout
 				&& app->rearButton.getLastActivity() < timeout
 				&& app->speedSystem.getLastActivity() < timeout
-				&& app->cadenceSystem.getLastActivity() < timeout) {
+				&& app->cadenceSystem.getLastActivity() < timeout
+				&& app->getBluetoothSystem()->getLastActivity() < timeout) {
 			return true;
 		}
 
