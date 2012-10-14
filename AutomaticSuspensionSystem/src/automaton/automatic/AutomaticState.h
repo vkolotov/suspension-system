@@ -25,6 +25,18 @@ public:
 		return app->automaton->idleState;
 	}
 
+	void handleButtons(Application* app) {
+		if (app->frontButton.isPushed()) {
+			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold +=
+					app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.calibrationStep;
+		} else if (app->rearButton.isPushed()) {
+			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold -=
+					app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.calibrationStep;
+		} else if (app->modeButton.isPushed()) {
+			app->unsprungAccelerometerSystem.calibrate();
+		}
+	}
+
 	virtual uint8_t getId() {
 		return AUTOMATIC_STATE;
 	}

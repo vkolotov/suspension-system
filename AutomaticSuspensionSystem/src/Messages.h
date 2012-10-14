@@ -30,4 +30,16 @@ struct CDTBoardMessage {
 	int8_t descendGradient;
 };
 
+
+struct AutomaticTelemetry {
+	uint8_t state;
+	uint8_t speed;
+	uint16_t cadence;
+	int16_t severityThreshold;
+	int16_t idleValue;
+};
+
+struct AutomaticBoardMessage {
+	int16_t severityThreshold;
+};
 #endif /* MESSAGES_H_ */

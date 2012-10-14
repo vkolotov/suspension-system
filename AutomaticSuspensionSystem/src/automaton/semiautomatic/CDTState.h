@@ -18,6 +18,7 @@ public:
 	}
 
 	State* transit(Application* app) {
+
 		if (app->frontButton.isPushed(3000)) {
 			app->config->semiautomaticStateConfig.climbGradient =
 					app->sprungAccelerometerSystem.getGradient();
@@ -25,6 +26,7 @@ public:
 		} else if (app->modeButton.isPushed(3000)) {
 			app->config->system.headTubeGradient =
 					app->sprungAccelerometerSystem.getRawGradient();
+			app->sprungAccelerometerSystem.calibrate();
 			saveConfiguration(app->config);
 		} else if (app->rearButton.isPushed(3000)) {
 			app->config->semiautomaticStateConfig.descendGradient =
@@ -38,25 +40,18 @@ public:
 		}
 
 		if (app->automaton->descentState->transitable(app)) {
-			currentState = 2;
 			return app->automaton->descentState;
 		}
 
 		if (app->automaton->trailState->transitable(app)) {
-			currentState = 1;
 			return app->automaton->trailState;
 		}
 
 		if (app->automaton->climbState->transitable(app)) {
-			currentState = 0;
 			return app->automaton->climbState;
 		}
 
 		return this;
-	}
-
-	uint8_t getCurrentState() {
-		return currentState;
 	}
 
 	virtual uint8_t getId() {

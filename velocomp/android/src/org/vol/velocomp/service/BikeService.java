@@ -2,10 +2,7 @@ package org.vol.velocomp.service;
 
 
 import org.vol.velocomp.ConnectionException;
-import org.vol.velocomp.messages.CDTBoardMessage;
-import org.vol.velocomp.messages.CDTTelemetry;
-import org.vol.velocomp.messages.Configuration;
-import org.vol.velocomp.messages.ManualTelemetry;
+import org.vol.velocomp.messages.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +25,7 @@ public class BikeService {
         SEND_FRONT_SUSPENSION_CONFIGURATION(15),
         SEND_REAR_SUSPENSION_CONFIGURATION(16),
         SEND_CDT_BOARD_MESSAGE(17),
+        SEND_AUTOMATIC_BOARD_MESSAGE(18),
 
         DESCEND_MODE_ALL(50),
         TRAIL_MODE_ALL(51),
@@ -154,6 +152,10 @@ public class BikeService {
         return sendMessage(RequestCode.SEND_CDT_BOARD_MESSAGE, configuration);
     }
 
+    public boolean sendAutomaticMessage(AutomaticBoardMessage configuration) {
+        return sendMessage(RequestCode.SEND_AUTOMATIC_BOARD_MESSAGE, configuration);
+    }
+
     public boolean saveConfiguration() {
         return sendMessage(RequestCode.SAVE_CONFIGURATION);
     }
@@ -188,6 +190,10 @@ public class BikeService {
 
     public CDTTelemetry getCDTTelemetry() {
         return getMessage(CDTTelemetry.class, RequestCode.GET_CDT_TELEMETRY);
+    }
+
+    public AutomaticTelemetry getAutomaticTelemetry() {
+        return getMessage(AutomaticTelemetry.class, RequestCode.GET_AUTOMATIC_TELEMETRY);
     }
 
     synchronized private <Message> boolean sendMessage(RequestCode requestCode, Message message) {

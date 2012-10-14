@@ -27,7 +27,7 @@ public class ModesAdapter extends SegmentedAdapter {
             case 1:
                 return inflater.inflate(R.layout.cdt_board, parent, false);
             case 2:
-                return inflater.inflate(R.layout.automatic_mode, parent, false);
+                return inflater.inflate(R.layout.automatic_board, parent, false);
 
         }
         return null;

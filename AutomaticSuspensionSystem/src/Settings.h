@@ -62,6 +62,13 @@ struct ButtonsSystem {
 	uint8_t frontPinReferenceValue;
 	uint8_t modePinReferenceValue;
 	uint8_t rearPinReferenceValue;
+
+/*	uint8_t switchModeDelay;
+	uint8_t servoCalibrationDelay;
+	uint8_t anglesCalibrationDelay;
+	uint8_t resetDelay;
+	uint8_t toggleSerialDelay;
+	uint8_t accelerometerCalibrationDelay;*/
 };
 
 struct FrequencySystemConfig {
@@ -92,6 +99,7 @@ struct AccelerometerSystemConfig {
 	uint16_t address;
 	uint8_t range;
 	int16_t severityThreshold;
+	uint8_t calibrationStep;
 	uint16_t noiseThreshold;
 };
 
@@ -170,7 +178,7 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
-		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, true, SLEEP_TIMEOUT, true, 120000, /*servo*/true, /*serial*/true, /*i2c*/false},
+		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, true, SLEEP_TIMEOUT, false, 120000, /*servo*/true, /*serial*/true, /*i2c*/false},
 		// SemiautomaticStateConfig
 		{/*11 degrees*/0.20, /*-11 degrees*/-0.20, /*3 degrees*/0.052f, 2000}
 };

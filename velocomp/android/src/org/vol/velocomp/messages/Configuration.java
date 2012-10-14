@@ -113,6 +113,8 @@ public class Configuration {
         @FieldOrder(2)
         public short severityThreshold;
         @FieldOrder(3)
+        public byte calibrationStep;
+        @FieldOrder(4)
         public short noiseThreshold;
     }
 

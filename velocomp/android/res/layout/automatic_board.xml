@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.vol.velocomp.views.AutomaticBoard xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/automatic_board">
+
+    <include layout="@layout/speed_cadence_indicator"/>
+
+
+    <RelativeLayout
+            android:id="@+id/modeGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/indicatorAreaHeight"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_below="@+id/speedGroup">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode"
+                android:layout_alignParentBottom="true"
+                android:textSize="@dimen/indicatorLabelFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+
+        <TextView
+                android:id="@+id/automaticMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/indicatorValueFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+            android:id="@+id/severityThresholdGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_alignParentBottom="true"
+            android:baselineAligned="false"
+            android:paddingBottom="10dp">
+        <TextView
+                android:id="@+id/severityThresholdLabel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Severity threshold"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+
+        <TextView
+                android:id="@+id/severityThreshold"
+                android:layout_width="35dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="0"
+                android:textSize="20dp"
+                android:textColor="#000000"
+                android:layout_below="@id/severityThresholdLabel"
+                android:layout_alignParentLeft="true"/>
+
+        <SeekBar android:id="@+id/severityThresholdSeekBar"
+                 android:layout_below="@id/severityThresholdLabel"
+                 android:layout_alignParentRight="true"
+                 android:layout_toRightOf="@+id/severityThreshold"
+                 android:paddingLeft="5dp"
+                 android:layout_width="0dp"
+                 android:layout_height="wrap_content"
+                 android:max="50"
+                 android:progress="0"
+                 android:progressDrawable="@drawable/seekbar_bg"
+                 android:secondaryProgress="0" />
+    </RelativeLayout>
+
+</org.vol.velocomp.views.AutomaticBoard>

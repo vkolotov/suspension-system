@@ -15,7 +15,6 @@ public:
 	~BluetoothSystem() {};
 
 	void init() {
-		Serial.println("BT init");
 		lastActivity = millis();
 	}
 
@@ -45,6 +44,7 @@ public:
 					case 15: receiveSuspensionConfig(&app->config->frontSuspension); break;
 					case 16: receiveSuspensionConfig(&app->config->rearSuspension); break;
 					case 17: receiveCdtBoardMessage(); break;
+					case 18: receiveAutomaticBoardMessage(); break;
 
 					case 50: app->descentSuspensions(); break;
 					case 51: app->trailSuspensions(); break;
@@ -53,10 +53,13 @@ public:
 					case 53: app->automaton->setState(MANUAL_STATE); break;
 					case 54: app->automaton->setState(CDT_STATE); break;
 					case 55: app->automaton->setState(AUTOMATIC_STATE); break;
-					case 56: app->config->system.headTubeGradient = app->sprungAccelerometerSystem.getRawGradient(); break;
+					case 56: app->config->system.headTubeGradient = app->sprungAccelerometerSystem.getRawGradient();
+							app->sprungAccelerometerSystem.calibrate();
+							break;
 
 					case 60: sendManualTelemetry(); break;
 					case 61: sendCDTTelemetry(); break;
+					case 62: sendAutomaticTelemetry(); break;
 
 				}
 
@@ -117,11 +120,30 @@ private:
 		Serial.flush();
 	}
 
+	void sendAutomaticTelemetry() {
+		AutomaticTelemetry msg = {app->automaton->current->getId(),
+				app->speedSystem.getAverageSpeedKmH(),
+				app->cadenceSystem.getCadence(),
+				app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
+				app->unsprungAccelerometerSystem.getIdleValue()
+		};
+		Serial.write((uint8_t*)&msg, sizeof(msg));
+		Serial.flush();
+	}
+
 	void receiveCdtBoardMessage() {
 		CDTBoardMessage* tmp = new CDTBoardMessage();
 		if (receiveMessage((char*)tmp, sizeof(CDTBoardMessage))) {
 			app->config->semiautomaticStateConfig.climbGradient = (float) tmp->climbGradient * PI / 180.0f;
 			app->config->semiautomaticStateConfig.descendGradient = (float) tmp->descendGradient * PI / 180.0f;
+		}
+		delete tmp;
+	}
+
+	void receiveAutomaticBoardMessage() {
+		AutomaticBoardMessage* tmp = new AutomaticBoardMessage();
+		if (receiveMessage((char*)tmp, sizeof(AutomaticBoardMessage))) {
+			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold = tmp->severityThreshold;
 		}
 		delete tmp;
 	}

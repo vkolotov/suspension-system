@@ -19,6 +19,9 @@ public:
 	}
 
 	State* transit(Application* app) {
+
+		handleButtons(app);
+
 		State* result = CommonState::transit(app);
 		if (result) {
 			return result;

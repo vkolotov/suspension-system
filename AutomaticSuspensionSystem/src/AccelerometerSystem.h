@@ -67,6 +67,10 @@ public:
 		return timeout;
 	}
 
+	int16_t getIdleValue() {
+		return idleValue;
+	}
+
 	virtual unsigned long getTimeout() = 0;
 
 	virtual bool detectActivity() = 0;

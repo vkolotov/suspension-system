@@ -18,11 +18,11 @@ public:
 	}
 
 	State* transit(Application* app) {
-		if (app->modeButton.isPushed(10000)) {
+		if (app->modeButton.isPushed(5000, false)) {
 			resetArduino();
 		}
 
-		if (app->frontButton.isPushed(5000)) {
+		if (app->frontButton.isPushed(5000, false)) {
 			app->setSerialPower(!app->config->powerSave.isSerialPowerOn);
 		}
 

@@ -18,10 +18,6 @@ public:
 	}
 
 	State* transit(Application* app) {
-		State* result = CommonState::transit(app);
-		if (result) {
-			return result;
-		}
 
 		if (calibration) {
 			calibratetionMode(app);
@@ -29,7 +25,10 @@ public:
 			manualMode(app);
 		}
 
-
+		State* result = CommonState::transit(app);
+		if (result) {
+			return result;
+		}
 
 		return this;
 	}

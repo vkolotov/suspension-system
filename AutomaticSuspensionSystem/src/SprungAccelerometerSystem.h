@@ -32,8 +32,8 @@ public:
 	void update(unsigned long currentTime) {
 		AccelerometerSystem::update(currentTime);
 
-		if (currentTime - lastMeasurement >=
-				config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5) {
+		if (currentTime - lastMeasurement >= config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5
+				&& currentX - idleValue < 10) {
 
 			double current = getGradient();
 			lastMeasurement = currentTime;

@@ -37,12 +37,16 @@ public:
 		return digitalRead(pin) == pinReference;
 	}
 
-	inline bool isPushed(unsigned short duration) {
+	inline bool isPushed(unsigned short duration, bool flush) {
 		bool result = labs(pushDuration) >= duration;
-		if (result) {
+		if (result && flush) {
 			reset(millis());
 		}
 		return result;
+	}
+
+	inline bool isPushed(unsigned short duration) {
+		return isPushed(duration, true);
 	}
 
 	inline bool isPushed() {
