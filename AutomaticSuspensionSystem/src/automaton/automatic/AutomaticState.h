@@ -41,7 +41,7 @@ public:
 		return AUTOMATIC_STATE;
 	}
 
-	static float getIdleSpeed(float gradient) {
+	static float getIdleSpeed(int16_t gradient) {
 		return 5 - map(constrain(gradient, -5, 30), -5, 30, 0, 4);
 	}
 

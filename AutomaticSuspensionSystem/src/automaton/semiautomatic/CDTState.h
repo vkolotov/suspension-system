@@ -21,7 +21,7 @@ public:
 
 		if (app->frontButton.isPushed(3000)) {
 			app->config->semiautomaticStateConfig.climbGradient =
-					app->sprungAccelerometerSystem.getGradient();
+					app->sprungAccelerometerSystem.getAverageGradient();
 			saveConfiguration(app->config);
 		} else if (app->modeButton.isPushed(3000)) {
 			app->config->system.headTubeGradient =
@@ -30,7 +30,7 @@ public:
 			saveConfiguration(app->config);
 		} else if (app->rearButton.isPushed(3000)) {
 			app->config->semiautomaticStateConfig.descendGradient =
-					app->sprungAccelerometerSystem.getGradient();
+					app->sprungAccelerometerSystem.getAverageGradient();
 			saveConfiguration(app->config);
 		}
 

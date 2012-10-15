@@ -112,9 +112,10 @@ private:
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
 				app->config->frontSuspension.mode,
-				app->sprungAccelerometerSystem.getDegreeGradient(),
+				app->sprungAccelerometerSystem.getAverageDegreeGradient(),
 				app->config->semiautomaticStateConfig.climbGradient * 180.0f / PI,
-				app->config->semiautomaticStateConfig.descendGradient * 180.0f / PI
+				app->config->semiautomaticStateConfig.descendGradient * 180.0f / PI,
+				app->sprungAccelerometerSystem.getDelta()
 		};
 		Serial.write((uint8_t*)&msg, sizeof(msg));
 		Serial.flush();

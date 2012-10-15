@@ -31,7 +31,7 @@ public:
 
 	static bool transitableToActive(Application* app) {
 		return app->speedSystem.getAverageSpeedKmH() >= AutomaticState::getIdleSpeed(
-						app->sprungAccelerometerSystem.getDegreeGradient()) + 1;
+						app->sprungAccelerometerSystem.getAverageDegreeGradient()) + 1;
 	}
 
 	static State* transitToActive(Application* app) {

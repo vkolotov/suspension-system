@@ -18,6 +18,7 @@ public class MainActivity extends GDActivity {
     private BikeConnectionThread connectionThread;
     private ActionBarItem settingsActionBarItem;
     private ActionBarItem sleepActionBarItem;
+    private ActionBarItem resetActionBarItem;
 
     private ViewFlipper viewFlipper;
     private Dashboard dashboard;
@@ -30,6 +31,7 @@ public class MainActivity extends GDActivity {
         getActionBar().setType(ActionBar.Type.Empty);
         getActionBar().setTitle(getString(R.string.app_name));
         sleepActionBarItem = addActionBarItem(ActionBarItem.Type.Eye, R.id.action_bar_sleep);
+        resetActionBarItem = addActionBarItem(ActionBarItem.Type.Star, R.id.action_bar_reset);
         settingsActionBarItem = addActionBarItem(ActionBarItem.Type.Settings, R.id.action_bar_settings);
         viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         dashboard = (Dashboard) findViewById(R.id.dashboard);
@@ -45,6 +47,10 @@ public class MainActivity extends GDActivity {
                         }
                         if (sleepActionBarItem != null) {
                             sleepActionBarItem.getItemView().setVisibility(View.GONE);
+                        }
+
+                        if (resetActionBarItem != null) {
+                            resetActionBarItem.getItemView().setVisibility(View.GONE);
                         }
                         getActionBar().setTitle(getString(R.string.app_name) + " disconnected");
                         for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
@@ -65,6 +71,9 @@ public class MainActivity extends GDActivity {
                         if (sleepActionBarItem != null) {
                             sleepActionBarItem.getItemView().setVisibility(View.VISIBLE);
                         }
+                        if (resetActionBarItem != null) {
+                            resetActionBarItem.getItemView().setVisibility(View.VISIBLE);
+                        }
                         getActionBar().setTitle(getString(R.string.app_name) + " connected");
                         for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
                             dashboard.getSegmentedBar().getChildAt(i).setEnabled(true);
@@ -82,6 +91,8 @@ public class MainActivity extends GDActivity {
                     showConfiguration();
                 } else if (getActionBar().getItem(position) == sleepActionBarItem) {
                     BikeService.getInstance().sleep();
+                } else if (getActionBar().getItem(position) == resetActionBarItem) {
+                    BikeService.getInstance().reset();
                 }
             }
         });

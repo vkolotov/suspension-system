@@ -11,13 +11,14 @@
 
 class SprungAccelerometerSystem: public AccelerometerSystem {
 public:
-	SprungAccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
-		: AccelerometerSystem(config, accelerometerSystemConfig),
-		  lastMeasurement(0), averageGradient(0), gradients() {
+	SprungAccelerometerSystem(Configuration* config, SprungAccelerometerSystemConfig* sprungAccelerometerSystemConfig)
+		: AccelerometerSystem(config, &sprungAccelerometerSystemConfig->accelerometerSystemConfig),
+		  lastMeasurement(0), averageGradient(0.0f),
+		  filter(sprungAccelerometerSystemConfig->angleFilterAlpha, sprungAccelerometerSystemConfig->angleFilterBeta) {
 	}
 
 	bool detectActivity() {
-		return currentX - idleValue <= accelerometerSystemConfig->severityThreshold;
+		return currentX - idleX <= accelerometerSystemConfig->severityThreshold;
 	}
 
 	void activity(unsigned long currentTime) {
@@ -31,43 +32,30 @@ public:
 
 	void update(unsigned long currentTime) {
 		AccelerometerSystem::update(currentTime);
-
-		if (currentTime - lastMeasurement >= config->semiautomaticStateConfig.averageDegreeMeasuringPeriod / 5
-				&& currentX - idleValue < 10) {
-
-			double current = getGradient();
+		int16_t delta = getDelta();
+		if (delta < 15 && delta > -10 && currentTime - lastMeasurement > 50) {
+			averageGradient = filter.next(getInstantGradient(), currentTime - lastMeasurement);
 			lastMeasurement = currentTime;
-			gradients.push(current);
-			// TODO optimize by calculating sum
-			averageGradient = _getAverageGradient();
 		}
 	}
 
-	int16_t getDegreeGradient() {
-		return getGradient() * 180.0f / PI;
+	int16_t getDelta() {
+		return abs(currentX) + abs(currentZ) - (abs(idleX) + abs(idleZ));
 	}
 
-	double getGradient() {
+	int16_t getAverageDegreeGradient() {
+		return averageGradient * 180.0f / PI;
+	}
+
+	float getInstantGradient() {
 		return getRawGradient() - config->system.headTubeGradient;
 	}
 
-	double getRawGradient() {
-		return atan((float)currentZ / (float)currentX);
+	float getRawGradient() {
+		return atan((double)currentZ / (double)currentX);
 	}
 
-	double _getAverageGradient() {
-		if (gradients.size() < 1) {
-			return 0;
-		}
-		double sum = 0;
-		gradients.iteratorReset();
-		while (gradients.iteratorHasNext()) {
-			sum += gradients.iteratorNext();
-		}
-		return sum / (double) gradients.size();
-	}
-
-	double getAverageGradient() {
+	float getAverageGradient() {
 		return averageGradient;
 	}
 
@@ -76,10 +64,10 @@ public:
 	}
 
 protected:
-	unsigned long lastMeasurement;
-	double averageGradient;
-	BasicQueue<5, double> gradients;
 
+	unsigned long lastMeasurement;
+	float averageGradient;
+	ComplementaryFilter<float> filter;
 };
 
 #endif /* SPUNGACCELEROMETERSYSTEM_H_ */

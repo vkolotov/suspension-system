@@ -18,6 +18,9 @@ public class CDTBoard extends RelativeLayout {
     private TextView gradient;
     private TextView cdtMode;
     private TextView climbGradient;
+
+    private TextView delta;
+
     private SeekBar climbGradientSeekBar;
     private TextView descendGradient;
     private SeekBar descendGradientSeekBar;
@@ -35,6 +38,7 @@ public class CDTBoard extends RelativeLayout {
             speed.setText(String.valueOf(telemetry.speed));
             cadence.setText(String.valueOf(telemetry.cadence));
             gradient.setText(String.valueOf(telemetry.gradient));
+            delta.setText(String.valueOf(telemetry.delta));
 
             cdtMode.setText(telemetry.suspensionMode == 0 ? "Climb" : (telemetry.suspensionMode == 1 ? "Trail" : "Descend"));
 
@@ -115,6 +119,7 @@ public class CDTBoard extends RelativeLayout {
         cadence = (TextView) findViewById(R.id.cadence);
         gradient = (TextView) findViewById(R.id.gradient);
         cdtMode = (TextView) findViewById(R.id.cdtMode);
+        delta = (TextView) findViewById(R.id.delta);
 
         climbGradient = (TextView) findViewById(R.id.climbGradient);
         climbGradientSeekBar = (SeekBar) findViewById(R.id.climbGradientSeekBar);

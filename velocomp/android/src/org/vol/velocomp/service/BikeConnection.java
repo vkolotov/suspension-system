@@ -4,6 +4,7 @@ package org.vol.velocomp.service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 import org.vol.velocomp.ConnectionException;
 import org.vol.velocomp.messages.BikeMessageSerializer;
 import org.vol.velocomp.messages.ReceivedSize;
@@ -18,6 +19,8 @@ import java.util.Set;
 import java.util.concurrent.*;
 
 public class BikeConnection {
+
+    private static final String TAG = BikeConnection.class.getSimpleName();
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothDevice bikeBluetooth;
@@ -59,14 +62,14 @@ public class BikeConnection {
                 try {
                     bluetoothSocket.connect();
                 } catch (IOException e) {
-                    disconnect();
+                    Log.e(TAG, e.getMessage(), e);
                     throw new ConnectionException("Could not open socket with bike");
                 }
                 try {
                     inputStream = new DataInputStream(bluetoothSocket.getInputStream());
                     outputStream = new DataOutputStream(bluetoothSocket.getOutputStream());
                 } catch (IOException e) {
-                    disconnect();
+                    Log.e(TAG, e.getMessage(), e);
                     throw new ConnectionException("Could not get input/output stream");
                 }
                 return null;
@@ -76,10 +79,16 @@ public class BikeConnection {
         try {
             future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
+            Log.e(TAG, e.getMessage(), e);
+            disconnect();
             throw new ConnectionException("Interrupted", e);
         } catch (ExecutionException e) {
+            Log.e(TAG, e.getMessage(), e);
+            disconnect();
             throw new ConnectionException("Execution", e);
         } catch (TimeoutException e) {
+            Log.e(TAG, e.getMessage(), e);
+            disconnect();
             throw new ConnectionException("Timeout", e);
         }
     }
@@ -106,6 +115,7 @@ public class BikeConnection {
                 this.bluetoothSocket = null;
             }
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException(e);
         }
     }
@@ -126,6 +136,7 @@ public class BikeConnection {
         try {
             this.inputStream.skipBytes(this.inputStream.available());
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException(e.getMessage());
         }
         sendMessageId(requestId);
@@ -161,8 +172,12 @@ public class BikeConnection {
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
+            disconnect();
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException("Interrupted", e);
         } catch (ExecutionException e) {
+            disconnect();
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException("Execution", e);
         }
     }
@@ -188,6 +203,7 @@ public class BikeConnection {
             this.outputStream.write(messageId);
             this.outputStream.flush();
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException("Was unable to send message ID", e);
         }
     }
@@ -200,6 +216,7 @@ public class BikeConnection {
             this.outputStream.flush();
             return this.outputStream.size() - writtenSize;
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException("Could not send message", e);
         }
     }
@@ -209,6 +226,7 @@ public class BikeConnection {
         try {
             return BikeMessageSerializer.deserialize(clazz, this.inputStream);
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException("Could not receive message", e);
         }
     }
@@ -234,10 +252,13 @@ public class BikeConnection {
             Method method = bikeBluetooth.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
             return (BluetoothSocket) method.invoke(bikeBluetooth, Integer.valueOf(1));
         } catch (NoSuchMethodException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new IllegalStateException(e);
         } catch (InvocationTargetException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException(e);
         } catch (IllegalAccessException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new IllegalStateException(e);
         }
 
@@ -260,6 +281,7 @@ public class BikeConnection {
                 throw new ConnectionException("Something is available after reading");
             }
         } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
             throw new ConnectionException(e);
         }
     }

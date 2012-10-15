@@ -66,6 +66,36 @@
     </RelativeLayout>
 
     <RelativeLayout
+            android:id="@+id/deltaGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/indicatorAreaHeight"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingRight="5dp"
+            android:background="#F0F0F0"
+            android:layout_below="@+id/modeGroup">
+        <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delta"
+                android:layout_alignParentBottom="true"
+                android:textSize="@dimen/indicatorLabelFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentLeft="true" />
+
+        <TextView
+                android:id="@+id/delta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="@dimen/indicatorValueFontSize"
+                android:textColor="#000000"
+                android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
             android:id="@+id/climbGradientGroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

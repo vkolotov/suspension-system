@@ -13,11 +13,13 @@
 #include <avr/eeprom.h>
 //add your includes for the project AutomaticSuspensionSystem here
 
+
+
 #include <Wire.h>
 #include <ADXL345.h>
 
 #include <Activity.h>
-
+#include <ComplementaryFilter.h>
 #include <Settings.h>
 #include <Suspension.h>
 #include <FrequencySystem.h>
@@ -39,7 +41,6 @@
 
 #include <BluetoothSystem.h>
 
-#include <CalibrationState.h>
 #include <SleepState.h>
 #include <CommonState.h>
 #include <ManualState.h>

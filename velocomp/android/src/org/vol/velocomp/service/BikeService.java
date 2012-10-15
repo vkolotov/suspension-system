@@ -140,6 +140,10 @@ public class BikeService {
         return sendMessage(RequestCode.SLEEP);
     }
 
+    public boolean reset() {
+        return sendMessage(RequestCode.RESET);
+    }
+
     public Configuration getConfiguration() {
         return getMessage(Configuration.class, RequestCode.GET_CONFIGURATION);
     }

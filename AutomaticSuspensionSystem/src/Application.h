@@ -47,7 +47,9 @@ public:
 		setSerialPower(config->powerSave.isSerialPowerOn);
 
 		unsprungAccelerometerSystem.init();
+		delay(500);
 		sprungAccelerometerSystem.init();
+		delay(500);
 	}
 
 	void update() {

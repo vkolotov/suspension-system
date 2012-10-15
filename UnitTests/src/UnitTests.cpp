@@ -31,7 +31,7 @@ void assertEquals(Type reference, Type value, String message = "") {
 }
 
 void setup() {
-	Serial.begin(38400);
+	Serial.begin(9600);
 	//delay(2000);
 	Serial.println("Starting...");
 	initConfiguration();
@@ -39,29 +39,29 @@ void setup() {
 
 
 void testConfiguration() {
-	Configuration* config = resetConfiguration();
+	Configuration* config = loadConfiguration();
+	resetConfiguration(config);
 	Serial.println("Conf test --");
-	assertEquals<uint8_t>(2, config->system.mode);
-	assertEquals<uint16_t>(2000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
 	assertEquals<uint16_t>(WHEEL_BASE, config->system.wheelBase);
+	assertEquals<uint16_t>(2000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
+
 	assertEquals<uint16_t>(4000, config->system.maxUnlockTimeout);
 
-	config->system.mode = 1;
+	config->system.wheelBase = 2001;
 	config->semiautomaticStateConfig.averageDegreeMeasuringPeriod = 1000;
 
 	saveConfiguration(config);
 	delete config;
 	config = loadConfiguration();
 
-	assertEquals<uint8_t>(1, config->system.mode);
+	assertEquals<uint16_t>(2001, config->system.wheelBase);
 	assertEquals<uint16_t>(1000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
 
 	delete config;
-	config = resetConfiguration();
-	assertEquals<uint8_t>(2, config->system.mode);
-	assertEquals<uint16_t>(2000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
-
+	config = loadConfiguration();
+	resetConfiguration(config);
 	assertEquals<uint16_t>(WHEEL_BASE, config->system.wheelBase);
+	assertEquals<uint16_t>(2000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
 
 	Serial.println("Done --");
 	delete config;
@@ -70,7 +70,8 @@ void testConfiguration() {
 
 void testSpeedSystem() {
 	Serial.println("Speed test --");
-	Configuration* config = resetConfiguration();
+	Configuration* config = loadConfiguration();
+	resetConfiguration(config);
 	SpeedSystemMock mock(&(config->speed));
 	mock.update(500);
 	assertEquals<uint32_t>(0.0f, mock.getAverageSpeed());
@@ -105,7 +106,8 @@ void testSpeedSystem() {
 
 void testCadenceSystem() {
 	Serial.println("Cadence test --");
-	Configuration* config = resetConfiguration();
+	Configuration* config = loadConfiguration();
+	resetConfiguration(config);
 	CadenceSystemMock mock(&(config->cadence));
 	assertTrue(!mock.isProcessing());
 	mock.update(500);
@@ -193,7 +195,8 @@ void testButtons() {
 
 void testUnsprungAccelerometerSystem() {
 	Serial.println("UnsprungAccelerometerSystem test --");
-	Configuration* config = resetConfiguration();
+	Configuration* config = loadConfiguration();
+	resetConfiguration(config);
 	SpeedSystemMock speed(&(config->speed));
 	UnsprungAccelerometerSysteMock accel(config, &(config->unsprungAccelerometerSystem), &speed);
 	speed.update(500);
@@ -272,6 +275,7 @@ void testUnsprungAccelerometerSystem() {
 	delete config;
 }
 void testFrequencyQueue() {
+	Serial.println("testFrequencyQueue --");
 	FrequencyQueue<20> timing(4000);
 
 	uint16_t segment = 4000 / 20;
@@ -315,10 +319,11 @@ void testFrequencyQueue() {
 	assertEquals<unsigned long>(0, timing.calculateSum());
 	assertEquals<unsigned long>(20, timing.size());
 
-
+	Serial.println("Done --");
 }
 
 void testBasicQueue() {
+	Serial.println("testBasicQueue --");
 	BasicQueue<2, uint16_t> queue;
 	assertEquals<uint16_t>(0, queue.size());
 
@@ -340,7 +345,7 @@ void testBasicQueue() {
 
 	queue.clear();
 	assertEquals<uint16_t>(0, queue.size());
-
+	Serial.println("Done --");
 }
 
 void loop() {
@@ -349,12 +354,12 @@ void loop() {
 		return;
 	}
 
-	//testConfiguration();
-	//testSpeedSystem();
-	//testCadenceSystem();
-	//testButtons();
+	testConfiguration();
+	testSpeedSystem();
+	testCadenceSystem();
+	testButtons();
 	testUnsprungAccelerometerSystem();
-	//testFrequencyQueue();
-	//testBasicQueue();
+	testFrequencyQueue();
+	testBasicQueue();
 
 }

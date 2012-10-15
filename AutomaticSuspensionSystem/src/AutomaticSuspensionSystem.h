@@ -19,6 +19,7 @@ void (*resetArduino)(void) = 0; //declare reset function @ address 0
 #include <Activity.h>
 
 #include <Settings.h>
+#include <ComplementaryFilter.h>
 #include <Suspension.h>
 #include <FrequencySystem.h>
 #include <SpeedSystem.h>

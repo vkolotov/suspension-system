@@ -14,7 +14,7 @@ public:
 	AccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
 			: config(config), accelerometerSystemConfig(accelerometerSystemConfig),
 			  accel(accelerometerSystemConfig->address),
-			  active(false), idleValue(65),
+			  active(false), idleX(65), idleZ(0),
 			  currentX(0), currentY(0), currentZ(0),
 			  lastActivity(0), timeout(0), instantActivity(false) {
 	}
@@ -22,7 +22,6 @@ public:
 	virtual ~AccelerometerSystem() {};
 
 	void init() {
-		Wire.begin();
 		accel.initialize();
 		accel.setRange(accelerometerSystemConfig->range);
 	}
@@ -52,7 +51,8 @@ public:
 	}
 
 	void calibrate() {
-		idleValue = getAccelerationX();
+		idleX = getAccelerationX();
+		idleZ = getAccelerationZ();
 	}
 
 	bool isActive() {
@@ -62,13 +62,16 @@ public:
 	uint16_t getAccelerationX() {
 		return currentX;
 	}
+	uint16_t getAccelerationZ() {
+		return currentZ;
+	}
 
 	uint16_t getCurrentTimeout() {
 		return timeout;
 	}
 
 	int16_t getIdleValue() {
-		return idleValue;
+		return idleX;
 	}
 
 	virtual unsigned long getTimeout() = 0;
@@ -83,7 +86,8 @@ protected:
 	AccelerometerSystemConfig* accelerometerSystemConfig;
 	ADXL345 accel;
 	bool active;
-	int16_t idleValue;
+	int16_t idleX;
+	int16_t idleZ;
 
 	int16_t currentX;
 	int16_t currentY;

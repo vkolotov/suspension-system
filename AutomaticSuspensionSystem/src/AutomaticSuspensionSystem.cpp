@@ -7,7 +7,11 @@ Application app(config, &automaton);
 void setup() {
 	initConfiguration();
 	Serial.begin(9600);
+	Wire.begin();
 	delay(1000);
+
+	//Serial.println(config->sprungAccelerometerSystem.angleFilterAlpha);
+	//Serial.println(config->sprungAccelerometerSystem.angleFilterBeta);
 
 	app.bluetoothSystem = new BluetoothSystem(&app);
 

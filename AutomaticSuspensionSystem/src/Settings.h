@@ -108,6 +108,12 @@ struct UnsprungAccelerometerSystemConfig {
 	uint16_t measuringPeriod;
 };
 
+struct SprungAccelerometerSystemConfig {
+	AccelerometerSystemConfig accelerometerSystemConfig;
+	float angleFilterAlpha;
+	float angleFilterBeta;
+};
+
 struct SuspensionSystemConfig {
 	uint8_t controlPin;
 	uint8_t feedbackPin;
@@ -152,7 +158,7 @@ struct Configuration {
 	CadenceSystemConfig cadence;
 	SuspensionSystemConfig frontSuspension;
 	SuspensionSystemConfig rearSuspension;
-	AccelerometerSystemConfig sprungAccelerometerSystem;
+	SprungAccelerometerSystemConfig sprungAccelerometerSystem;
 	UnsprungAccelerometerSystemConfig unsprungAccelerometerSystem;
 	PowerSaveSystemConfig powerSave;
 	SemiautomaticStateConfig semiautomaticStateConfig;
@@ -174,7 +180,7 @@ Configuration EEMEM cfg = {
 		// SuspensionSystemConfig rearSuspension
 		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}, 0},
 		// AccelerometerSystemConfig sprungAccelerometerSystem
-		{ADXL345_ADDRESS_ALT_LOW, 0x2, -20, 15},
+		{{ADXL345_ADDRESS_ALT_LOW, 0x3, -20, 15}, /*alpha*/0.1, /*beta*/ 0.001},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
@@ -184,33 +190,31 @@ Configuration EEMEM cfg = {
 };
 
 void initConfiguration() {
-	if (eeprom_read_byte((const uint8_t *) 0) == true) {
-		Configuration* conf = new Configuration();
-		eeprom_read_block(conf, &cfg, sizeof(cfg));
-		eeprom_write_block(conf, &cfg + sizeof(cfg), sizeof(cfg));
+	if (eeprom_read_byte((const uint8_t *) &cfg) == true) {
 		eeprom_write_byte((uint8_t *) 0, false);
+		Configuration* conf = new Configuration();
+		eeprom_read_block(conf, &cfg, sizeof(Configuration));
+		eeprom_write_block(conf, &cfg + sizeof(Configuration), sizeof(Configuration));
 		delete conf;
 	}
 }
 
 Configuration* loadConfiguration() {
-	eeprom_busy_wait();
 	Configuration* result = new Configuration();
-	eeprom_read_block(result, &cfg, sizeof(cfg));
+	eeprom_read_block(result, &cfg, sizeof(Configuration));
 	return result;
 }
 
 void reloadConfiguration(Configuration* config) {
-	eeprom_read_block(config, &cfg, sizeof(cfg));
+	eeprom_read_block(config, &cfg, sizeof(Configuration));
 }
 
 void saveConfiguration(Configuration* config) {
-	eeprom_write_block(config, &cfg, sizeof(cfg));
-	eeprom_busy_wait();
+	eeprom_write_block(config, &cfg, sizeof(Configuration));
 }
 
 void resetConfiguration(Configuration* config) {
-	eeprom_read_block(config, &cfg + sizeof(cfg), sizeof(cfg));
+	eeprom_read_block(config, &cfg + sizeof(Configuration), sizeof(Configuration));
 }
 
 #endif

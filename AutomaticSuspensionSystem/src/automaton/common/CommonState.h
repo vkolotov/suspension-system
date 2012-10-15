@@ -19,7 +19,7 @@ public:
 
 	State* transit(Application* app) {
 		if (app->modeButton.isPushed(5000, false)) {
-			resetArduino();
+			//resetArduino();
 		}
 
 		if (app->frontButton.isPushed(5000, false)) {

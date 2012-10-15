@@ -23,6 +23,7 @@ struct CDTTelemetry {
 	int8_t gradient;
 	int8_t climbGradient;
 	int8_t descendGradient;
+	int16_t delta;
 };
 
 struct CDTBoardMessage {

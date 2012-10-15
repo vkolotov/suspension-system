@@ -19,7 +19,7 @@ public class Configuration {
     @FieldOrder(6)
     public SuspensionSystemConfig rearSuspension;
     @FieldOrder(7)
-    public AccelerometerSystemConfig sprungAccelerometerSystem;
+    public SprungAccelerometerSystemConfig sprungAccelerometerSystem;
     @FieldOrder(8)
     public UnsprungAccelerometerSystemConfig unsprungAccelerometerSystem;
     @FieldOrder(9)
@@ -123,6 +123,15 @@ public class Configuration {
         public AccelerometerSystemConfig accelerometerSystemConfig;
         @FieldOrder(1)
         public short measuringPeriod;
+    }
+
+    public static class SprungAccelerometerSystemConfig {
+        @FieldOrder(0)
+        public AccelerometerSystemConfig accelerometerSystemConfig;
+        @FieldOrder(1)
+        public float angleFilterAlpha;
+        @FieldOrder(2)
+        public float angleFilterBeta;
     }
 
     public static class PowerSaveSystemConfig {

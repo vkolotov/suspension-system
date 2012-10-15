@@ -15,7 +15,7 @@ public:
 
 	bool transitable(Application* app) {
 		return app->speedSystem.getAverageSpeedKmH() <= AutomaticState::getIdleSpeed(
-				app->sprungAccelerometerSystem.getDegreeGradient()) - 1;
+				app->sprungAccelerometerSystem.getAverageDegreeGradient()) - 1;
 	}
 
 	State* transit(Application* app) {
