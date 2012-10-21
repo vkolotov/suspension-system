@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.vol.velocomp.views.AutomaticModeConfiguration
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+    <LinearLayout
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Automatic Mode Configuration"
+                android:textSize="15dp"
+                android:textColor="#000000"/>
+
+        <include android:id="@+id/bumps" layout="@layout/seekbar_section"/>
+        <include android:id="@+id/measuringPeriod" layout="@layout/seekbar_section"/>
+        <include android:id="@+id/maxUnlockTimeout" layout="@layout/seekbar_section"/>
+
+
+    </LinearLayout>
+
+</org.vol.velocomp.views.AutomaticModeConfiguration>

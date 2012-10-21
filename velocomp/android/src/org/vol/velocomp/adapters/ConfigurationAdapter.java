@@ -8,13 +8,14 @@ import android.widget.TextView;
 import greendroid.widget.PagedAdapter;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.Configuration;
+import org.vol.velocomp.views.AutomaticModeConfiguration;
 import org.vol.velocomp.views.CDTModeConfiguration;
 import org.vol.velocomp.views.PowerSaveSystemConfiguration;
 import org.vol.velocomp.views.SuspensionConfiguration;
 
 public class ConfigurationAdapter extends PagedAdapter {
 
-    public static final int PAGE_COUNT = 4;
+    public static final int PAGE_COUNT = 5;
     public static final int PAGE_MAX_INDEX = PAGE_COUNT - 1;
 
     private final Configuration configuration;
@@ -48,7 +49,10 @@ public class ConfigurationAdapter extends PagedAdapter {
             case 2:
                 return getCDTMode(parent);
             case 3:
+                return getAutomaticModeView(parent);
+            case 4:
                 return getPowerSaveView(parent);
+
 
 
         }
@@ -74,6 +78,17 @@ public class ConfigurationAdapter extends PagedAdapter {
                 inflater.inflate(R.layout.cdt_mode_configuration, parent, false);
 
         cdtModeConfiguration.setSemiautomaticStateConfig(configuration.semiautomaticStateConfig);
+
+        return cdtModeConfiguration;
+    }
+
+    private View getAutomaticModeView(ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        AutomaticModeConfiguration cdtModeConfiguration = (AutomaticModeConfiguration)
+                inflater.inflate(R.layout.automatic_mode_configuration, parent, false);
+
+        cdtModeConfiguration.setConfig(configuration);
 
         return cdtModeConfiguration;
     }

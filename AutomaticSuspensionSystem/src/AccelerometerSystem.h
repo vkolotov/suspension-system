@@ -74,6 +74,10 @@ public:
 		return idleX;
 	}
 
+	unsigned long getCalculatedTimeout() {
+		return timeout;
+	}
+
 	virtual unsigned long getTimeout() = 0;
 
 	virtual bool detectActivity() = 0;

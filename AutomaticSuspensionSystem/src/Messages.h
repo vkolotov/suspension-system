@@ -38,6 +38,7 @@ struct AutomaticTelemetry {
 	uint16_t cadence;
 	int16_t severityThreshold;
 	int16_t idleValue;
+	uint16_t timeout;
 };
 
 struct AutomaticBoardMessage {

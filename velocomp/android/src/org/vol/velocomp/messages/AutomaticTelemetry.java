@@ -5,6 +5,8 @@ public class AutomaticTelemetry extends Telemetry {
     public short severityThreshold;
     @FieldOrder(202)
     public short idleValue;
+    @FieldOrder(203)
+    public short timeout;
 }
 
 

@@ -126,7 +126,8 @@ private:
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
 				app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
-				app->unsprungAccelerometerSystem.getIdleValue()
+				app->unsprungAccelerometerSystem.getIdleValue(),
+				app->unsprungAccelerometerSystem.getCalculatedTimeout()
 		};
 		Serial.write((uint8_t*)&msg, sizeof(msg));
 		Serial.flush();

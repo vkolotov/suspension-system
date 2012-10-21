@@ -4,7 +4,8 @@
                 android:layout_height="fill_parent"
                 android:id="@+id/manual_board">
 
-    <include layout="@layout/speed_cadence_indicator"/>
+    <include android:id="@+id/cadence" layout="@layout/indicator"/>
+    <include android:id="@+id/speed" layout="@layout/indicator"/>
 
     <LinearLayout
             android:id="@+id/toggleButtons"

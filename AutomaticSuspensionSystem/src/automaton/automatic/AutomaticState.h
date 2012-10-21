@@ -32,7 +32,7 @@ public:
 		} else if (app->rearButton.isPushed()) {
 			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold -=
 					app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.calibrationStep;
-		} else if (app->modeButton.isPushed()) {
+		} else if (app->modeButton.isPushed(2000)) {
 			app->unsprungAccelerometerSystem.calibrate();
 		}
 	}

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.ManualTelemetry;
@@ -16,8 +15,8 @@ public class ManualBoard extends RelativeLayout {
     private ToggleButton trialButton;
     private ToggleButton descendButton;
 
-    private TextView speed;
-    private TextView cadence;
+    private Indicator speed;
+    private Indicator cadence;
 
     private boolean firstLoad = true;
 
@@ -31,8 +30,8 @@ public class ManualBoard extends RelativeLayout {
         @Override
         public void updateTelemetry(ManualTelemetry telemetry) {
             super.updateTelemetry(telemetry);
-            speed.setText(String.valueOf(telemetry.speed));
-            cadence.setText(String.valueOf(telemetry.cadence));
+            speed.setValue(telemetry.speed);
+            cadence.setValue(telemetry.cadence);
             updateButtons(telemetry.suspensionMode);
         }
 
@@ -94,8 +93,8 @@ public class ManualBoard extends RelativeLayout {
             descendButton.setOnClickListener(onClickListener);
         }
 
-        speed = (TextView) findViewById(R.id.speed);
-        cadence = (TextView) findViewById(R.id.cadence);
+        speed = Utils.initIndicator(this, R.id.speed, "Speed");
+        cadence = Utils.initIndicator(this, R.id.cadence, "Cadence");
     }
 
     private void updateButtons(int mode) {
