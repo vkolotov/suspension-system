@@ -182,7 +182,7 @@ Configuration EEMEM cfg = {
 		// AccelerometerSystemConfig sprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_LOW, 0x3, -20, 15}, /*alpha*/0.1, /*beta*/ 0.001},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
-		{{ADXL345_ADDRESS_ALT_HIGH, 0x2, 60, 15}, 4000},
+		{{ADXL345_ADDRESS_ALT_HIGH, 0x3, 60, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
 		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, true, SLEEP_TIMEOUT, false, 120000, /*servo*/true, /*serial*/true, /*i2c*/false},
 		// SemiautomaticStateConfig
