@@ -9,6 +9,7 @@
 #define MESSAGES_H_
 
 struct ManualTelemetry {
+	uint16_t clockSpeed;
 	uint8_t state;
 	uint8_t speed;
 	uint16_t cadence;
@@ -16,6 +17,7 @@ struct ManualTelemetry {
 };
 
 struct CDTTelemetry {
+	uint16_t clockSpeed;
 	uint8_t state;
 	uint8_t speed;
 	uint16_t cadence;
@@ -23,7 +25,9 @@ struct CDTTelemetry {
 	int8_t gradient;
 	int8_t climbGradient;
 	int8_t descendGradient;
-	int16_t delta;
+	int16_t rawGradients[20];
+	int16_t filteredGradients[20];
+	uint8_t dataLength;
 };
 
 struct CDTBoardMessage {
@@ -33,6 +37,7 @@ struct CDTBoardMessage {
 
 
 struct AutomaticTelemetry {
+	uint16_t clockSpeed;
 	uint8_t state;
 	uint8_t speed;
 	uint16_t cadence;

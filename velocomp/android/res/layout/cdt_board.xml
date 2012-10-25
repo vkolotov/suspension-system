@@ -1,99 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <org.vol.velocomp.views.CDTBoard xmlns:android="http://schemas.android.com/apk/res/android"
+                                 xmlns:indicator= "http://schemas.android.com/apk/res/org.vol.velocomp"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/cdt_board">
 
-    <include layout="@layout/speed_cadence_indicator"/>
-
-    <RelativeLayout
-            android:id="@+id/gradientGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/indicatorAreaHeight"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_below="@+id/speedGroup">
-        <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/gradient_underlined"
-                android:layout_alignParentBottom="true"
-                android:textSize="@dimen/indicatorLabelFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
-
-        <TextView
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/indicators">
+        <org.vol.velocomp.views.Indicator
+                android:id="@+id/clockSpeed"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                indicator:label="CPU Speed"/>
+        <org.vol.velocomp.views.Indicator
+                android:id="@+id/cadence"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                indicator:label="Cadence" />
+        <org.vol.velocomp.views.Indicator
+                android:id="@+id/speed"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                indicator:label="Speed" />
+        <org.vol.velocomp.views.Indicator
                 android:id="@+id/gradient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="@dimen/indicatorValueFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentRight="true" />
-    </RelativeLayout>
-    <RelativeLayout
-            android:id="@+id/modeGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/indicatorAreaHeight"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_below="@+id/gradientGroup">
-        <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mode"
-                android:layout_alignParentBottom="true"
-                android:textSize="@dimen/indicatorLabelFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
-
-        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                android:visibility="gone"
+                indicator:label="@string/gradient_underlined"/>
+        <org.vol.velocomp.views.Indicator
                 android:id="@+id/cdtMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="@dimen/indicatorValueFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentRight="true" />
-    </RelativeLayout>
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                indicator:label="Mode"/>
 
-    <RelativeLayout
-            android:id="@+id/deltaGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/indicatorAreaHeight"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_below="@+id/modeGroup">
-        <TextView
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delta"
-                android:layout_alignParentBottom="true"
-                android:textSize="@dimen/indicatorLabelFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
+    </LinearLayout>
 
-        <TextView
-                android:id="@+id/delta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="@dimen/indicatorValueFontSize"
-                android:textColor="#000000"
-                android:layout_alignParentRight="true" />
-    </RelativeLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:layout_below="@+id/indicators"
+                  android:layout_margin="10dp"
+                  android:layout_alignParentBottom="true"
+                  android:background="#C0C0C0"
+                  android:id="@+id/gradientGraph"/>
 
     <RelativeLayout
             android:id="@+id/climbGradientGroup"
@@ -102,7 +81,8 @@
             android:paddingRight="5dp"
             android:background="#F0F0F0"
             android:layout_above="@+id/descendGradientGroup"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:visibility="gone">
         <TextView
                 android:id="@+id/climbGradientLabel"
                 android:layout_width="fill_parent"
@@ -148,7 +128,8 @@
             android:background="#F0F0F0"
             android:layout_alignParentBottom="true"
             android:baselineAligned="false"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:visibility="gone">
         <TextView
                 android:id="@+id/descendGradientLabel"
                 android:layout_width="fill_parent"

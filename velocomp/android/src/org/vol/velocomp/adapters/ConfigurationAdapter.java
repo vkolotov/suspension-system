@@ -77,7 +77,7 @@ public class ConfigurationAdapter extends PagedAdapter {
         CDTModeConfiguration cdtModeConfiguration = (CDTModeConfiguration)
                 inflater.inflate(R.layout.cdt_mode_configuration, parent, false);
 
-        cdtModeConfiguration.setSemiautomaticStateConfig(configuration.semiautomaticStateConfig);
+        cdtModeConfiguration.setConfig(configuration);
 
         return cdtModeConfiguration;
     }

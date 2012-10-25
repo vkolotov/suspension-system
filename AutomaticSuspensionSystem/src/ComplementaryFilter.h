@@ -11,7 +11,7 @@
 template <class T>
 class ComplementaryFilter {
 public:
-	ComplementaryFilter(float alpha, float beta) : alpha(alpha), beta(beta), lastValue(), lastVelocity(0.0) {};
+	ComplementaryFilter(float& alpha, float& beta) : alpha(alpha), beta(beta), lastValue(), lastVelocity(0.0) {};
 	~ComplementaryFilter() {};
 
 	T next(T raw, unsigned long dt) {
@@ -31,8 +31,8 @@ public:
 	}
 
 protected:
-	float alpha;
-	float beta;
+	float& alpha;
+	float& beta;
 	T lastValue;
 	float lastVelocity;
 };

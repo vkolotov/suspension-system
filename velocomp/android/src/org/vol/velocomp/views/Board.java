@@ -68,13 +68,15 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
     private TelemetryThread telemetryThread;
     private boolean isShown;
     private Mode currentMode = null;
+    private int updateTime;
 
     private V boardView;
     private Dashboard dashboard;
 
-    protected Board(V boardView) {
+    protected Board(V boardView, int updateTime) {
         BikeService.getInstance().addListener(bikeServiceListener);
         this.boardView = boardView;
+        this.updateTime = updateTime;
     }
 
     private BikeService.BikeServiceListener bikeServiceListener = new BikeService.BikeServiceListener() {
@@ -105,7 +107,7 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
         if (isShown && BikeService.getInstance().isConnected()
                 && (telemetryThread == null || telemetryThread.isKilled())) {
 
-            telemetryThread = new TelemetryThread(this, 2000);
+            telemetryThread = new TelemetryThread(this, updateTime);
             telemetryThread.start();
         }
     }

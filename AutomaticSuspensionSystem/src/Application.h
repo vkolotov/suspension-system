@@ -23,7 +23,7 @@ public:
 			rearButton(config->buttons.rearPin, false, config->buttons.debounceDuration, config->buttons.rearPinReferenceValue),
 			modeButton(config->buttons.modePin, false, config->buttons.debounceDuration, config->buttons.modePinReferenceValue),
 			bluetoothSystem(),
-			time(0), lastTime(0), startTime(0) {
+			time(0), lastTime(0), startTime(0), tact(0), clockSpeed(0) {
 
 	}
 	virtual ~Application() {};
@@ -69,6 +69,13 @@ public:
 		if (config->powerSave.isSerialPowerOn) {
 			bluetoothSystem->update(time);
 		}
+
+		if (time - lastTime >= 1000) {
+			clockSpeed = tact;
+			lastTime = time;
+			tact = 0;
+		}
+		tact++;
 	}
 
 	void sleep() {
@@ -134,6 +141,8 @@ public:
 	unsigned long time;
 	unsigned long lastTime;
 	unsigned long startTime;
+	unsigned long tact;
+	unsigned long clockSpeed;
 
 };
 

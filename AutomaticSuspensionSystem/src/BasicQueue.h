@@ -64,6 +64,10 @@ public:
 	bool iteratorHasNext() {
 		return iteratorIndex < length;
 	}
+
+	Data* getData() {
+		return data;
+	}
 protected:
 	int16_t cursor;
 	unsigned char length;

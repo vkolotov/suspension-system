@@ -14,7 +14,8 @@ public:
 	SprungAccelerometerSystem(Configuration* config, SprungAccelerometerSystemConfig* sprungAccelerometerSystemConfig)
 		: AccelerometerSystem(config, &sprungAccelerometerSystemConfig->accelerometerSystemConfig),
 		  lastMeasurement(0), averageGradient(0.0f),
-		  filter(sprungAccelerometerSystemConfig->angleFilterAlpha, sprungAccelerometerSystemConfig->angleFilterBeta) {
+		  filter(sprungAccelerometerSystemConfig->angleFilterAlpha, sprungAccelerometerSystemConfig->angleFilterBeta),
+		  rawGradients(), filteredGradients() {
 	}
 
 	bool detectActivity() {
@@ -36,6 +37,8 @@ public:
 		if (delta < 15 && delta > -10 && currentTime - lastMeasurement > 50) {
 			averageGradient = filter.next(getInstantGradient(), currentTime - lastMeasurement);
 			lastMeasurement = currentTime;
+			filteredGradients.push(getAverageDegreeGradient());
+			rawGradients.push(getInstantGradient() * 180.0f / PI);
 		}
 	}
 
@@ -63,11 +66,22 @@ public:
 		return false;
 	}
 
+	BasicQueue<20, int16_t>* getFilteredGradients() {
+		return &filteredGradients;
+	}
+
+	BasicQueue<20, int16_t>* getRawGradients() {
+		return &rawGradients;
+	}
+
 protected:
 
 	unsigned long lastMeasurement;
 	float averageGradient;
 	ComplementaryFilter<float> filter;
+
+	BasicQueue<20, int16_t> rawGradients;
+	BasicQueue<20, int16_t> filteredGradients;
 };
 
 #endif /* SPUNGACCELEROMETERSYSTEM_H_ */

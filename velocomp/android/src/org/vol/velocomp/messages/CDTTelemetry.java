@@ -7,8 +7,14 @@ public class CDTTelemetry extends ManualTelemetry {
     public byte climbGradient;
     @FieldOrder(202)
     public byte descendGradient;
-    @FieldOrder(203)
-    public short delta;
+    @FieldOrder(204)
+    @ArraySize(20)
+    public short[] rawGradients;
+    @FieldOrder(205)
+    @ArraySize(20)
+    public short[] filteredGradients;
+    @FieldOrder(206)
+    public byte dataLength;
 }
 
 

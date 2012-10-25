@@ -98,7 +98,7 @@ private:
 	}
 
 	void sendManualTelemetry() {
-		ManualTelemetry msg = {app->automaton->current->getId(),
+		ManualTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
 				app->config->frontSuspension.mode
@@ -108,21 +108,39 @@ private:
 	}
 
 	void sendCDTTelemetry() {
-		CDTTelemetry msg = {app->automaton->current->getId(),
+		CDTTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
 				app->config->frontSuspension.mode,
 				app->sprungAccelerometerSystem.getAverageDegreeGradient(),
 				app->config->semiautomaticStateConfig.climbGradient * 180.0f / PI,
-				app->config->semiautomaticStateConfig.descendGradient * 180.0f / PI,
-				app->sprungAccelerometerSystem.getDelta()
+				app->config->semiautomaticStateConfig.descendGradient * 180.0f / PI
 		};
+
+		BasicQueue<20, int16_t>* gradients = app->sprungAccelerometerSystem.getFilteredGradients();
+		gradients->iteratorReset();
+		byte i = 0;
+		while (gradients->iteratorHasNext()) {
+			msg.filteredGradients[i++] = gradients->iteratorNext();
+		}
+		gradients->clear();
+
+		gradients = app->sprungAccelerometerSystem.getRawGradients();
+		gradients->iteratorReset();
+		i = 0;
+		while (gradients->iteratorHasNext()) {
+			msg.rawGradients[i++] = gradients->iteratorNext();
+		}
+		gradients->clear();
+
+		msg.dataLength = i;
+
 		Serial.write((uint8_t*)&msg, sizeof(msg));
 		Serial.flush();
 	}
 
 	void sendAutomaticTelemetry() {
-		AutomaticTelemetry msg = {app->automaton->current->getId(),
+		AutomaticTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
 				app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,

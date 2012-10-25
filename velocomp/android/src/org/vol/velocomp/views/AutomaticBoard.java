@@ -12,6 +12,7 @@ import org.vol.velocomp.service.BikeService;
 
 public class AutomaticBoard extends RelativeLayout {
 
+    private Indicator cpuClockSpeed;
     private Indicator speed;
     private Indicator cadence;
     private Indicator mode;
@@ -21,7 +22,7 @@ public class AutomaticBoard extends RelativeLayout {
     private SeekBar severityThresholdSeekBar;
 
 
-    private Board board = new Board<AutomaticTelemetry, AutomaticBoard>(this) {
+    private Board board = new Board<AutomaticTelemetry, AutomaticBoard>(this, 500) {
         @Override
         public AutomaticTelemetry getTelemetry() {
             return BikeService.getInstance().getAutomaticTelemetry();
@@ -30,6 +31,7 @@ public class AutomaticBoard extends RelativeLayout {
         @Override
         public void updateTelemetry(AutomaticTelemetry telemetry) {
             super.updateTelemetry(telemetry);
+            cpuClockSpeed.setValue(telemetry.clockSpeed);
             speed.setValue(telemetry.speed);
             cadence.setValue(telemetry.cadence);
             mode.setValue(geMode(telemetry.state));
@@ -103,10 +105,11 @@ public class AutomaticBoard extends RelativeLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        speed = Utils.initIndicator(this, R.id.speed, "Speed");
-        cadence = Utils.initIndicator(this, R.id.cadence, "Cadence");
-        mode = Utils.initIndicator(this, R.id.mode, "Mode");
-        timeout = Utils.initIndicator(this, R.id.timeout, "Timeout");
+        cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        speed = (Indicator) findViewById(R.id.speed);
+        cadence = (Indicator) findViewById(R.id.cadence);
+        mode = (Indicator) findViewById(R.id.mode);
+        timeout = (Indicator) findViewById(R.id.timeout);
 
         severityThreshold = (TextView) findViewById(R.id.severityThreshold);
         severityThresholdSeekBar = (SeekBar) findViewById(R.id.severityThresholdSeekBar);

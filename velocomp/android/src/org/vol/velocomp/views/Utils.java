@@ -2,8 +2,15 @@ package org.vol.velocomp.views;
 
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class Utils {
+
+    public static void init(TextView textView, Object value) {
+        if (value != null && textView != null) {
+            textView.setText(value.toString());
+        }
+    }
 
     public static Indicator initIndicator(View parent, int id, String label) {
         Indicator result = (Indicator) parent.findViewById(id);

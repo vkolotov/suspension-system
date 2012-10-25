@@ -15,13 +15,14 @@ public class ManualBoard extends RelativeLayout {
     private ToggleButton trialButton;
     private ToggleButton descendButton;
 
+    private Indicator cpuClockSpeed;
     private Indicator speed;
     private Indicator cadence;
 
     private boolean firstLoad = true;
 
 
-    private Board board = new Board<ManualTelemetry, ManualBoard>(this) {
+    private Board board = new Board<ManualTelemetry, ManualBoard>(this, 2000) {
         @Override
         public ManualTelemetry getTelemetry() {
             return BikeService.getInstance().getManualTelemetry();
@@ -30,6 +31,8 @@ public class ManualBoard extends RelativeLayout {
         @Override
         public void updateTelemetry(ManualTelemetry telemetry) {
             super.updateTelemetry(telemetry);
+
+            cpuClockSpeed.setValue(telemetry.clockSpeed);
             speed.setValue(telemetry.speed);
             cadence.setValue(telemetry.cadence);
             updateButtons(telemetry.suspensionMode);
@@ -93,8 +96,10 @@ public class ManualBoard extends RelativeLayout {
             descendButton.setOnClickListener(onClickListener);
         }
 
-        speed = Utils.initIndicator(this, R.id.speed, "Speed");
-        cadence = Utils.initIndicator(this, R.id.cadence, "Cadence");
+        cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        cadence = (Indicator) findViewById(R.id.cadence);
+        speed = (Indicator) findViewById(R.id.speed);
+
     }
 
     private void updateButtons(int mode) {

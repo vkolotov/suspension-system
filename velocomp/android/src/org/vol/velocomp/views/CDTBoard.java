@@ -3,9 +3,13 @@ package org.vol.velocomp.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.CDTBoardMessage;
 import org.vol.velocomp.messages.CDTTelemetry;
@@ -13,20 +17,25 @@ import org.vol.velocomp.service.BikeService;
 
 public class CDTBoard extends RelativeLayout {
 
-    private TextView speed;
-    private TextView cadence;
-    private TextView gradient;
-    private TextView cdtMode;
+    private Indicator cpuClockSpeed;
+    private Indicator speed;
+    private Indicator cadence;
+    private Indicator gradient;
+    private Indicator cdtMode;
+
     private TextView climbGradient;
-
-    private TextView delta;
-
     private SeekBar climbGradientSeekBar;
     private TextView descendGradient;
     private SeekBar descendGradientSeekBar;
-    private View calibrateGradient;
 
-    private Board board = new Board<CDTTelemetry, CDTBoard>(this) {
+    private GraphView gradientGraph;
+    private GraphViewSeries filteredGradientSeries;
+    private GraphViewSeries rawGradientSeries;
+
+
+    private long time;
+
+    private Board board = new Board<CDTTelemetry, CDTBoard>(this, 1000) {
         @Override
         public CDTTelemetry getTelemetry() {
             return BikeService.getInstance().getCDTTelemetry();
@@ -35,12 +44,11 @@ public class CDTBoard extends RelativeLayout {
         @Override
         public void updateTelemetry(CDTTelemetry telemetry) {
             super.updateTelemetry(telemetry);
-            speed.setText(String.valueOf(telemetry.speed));
-            cadence.setText(String.valueOf(telemetry.cadence));
-            gradient.setText(String.valueOf(telemetry.gradient));
-            delta.setText(String.valueOf(telemetry.delta));
-
-            cdtMode.setText(telemetry.suspensionMode == 0 ? "Climb" : (telemetry.suspensionMode == 1 ? "Trail" : "Descend"));
+            cpuClockSpeed.setValue(telemetry.clockSpeed);
+            speed.setValue(telemetry.speed);
+            cadence.setValue(telemetry.cadence);
+            gradient.setValue(telemetry.gradient);
+            cdtMode.setValue(telemetry.suspensionMode == 0 ? "Climb" : (telemetry.suspensionMode == 1 ? "Trail" : "Descend"));
 
             descendGradient.setText(String.valueOf(telemetry.descendGradient));
             climbGradient.setText(String.valueOf(telemetry.climbGradient));
@@ -49,6 +57,16 @@ public class CDTBoard extends RelativeLayout {
 
             descendGradientSeekBar.setSecondaryProgress(-telemetry.gradient);
             climbGradientSeekBar.setSecondaryProgress(telemetry.gradient);
+
+            for (int i = 0; i < telemetry.dataLength; i++) {
+                filteredGradientSeries.appendData(new GraphView.GraphViewData(time, telemetry.filteredGradients[i]), false);
+                rawGradientSeries.appendData(new GraphView.GraphViewData(time, telemetry.rawGradients[i]), false);
+                time += 50;
+            }
+            if (telemetry.dataLength > 0) {
+                gradientGraph.scrollToEnd();
+            }
+
         }
 
         @Override
@@ -115,11 +133,11 @@ public class CDTBoard extends RelativeLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        speed = (TextView) findViewById(R.id.speed);
-        cadence = (TextView) findViewById(R.id.cadence);
-        gradient = (TextView) findViewById(R.id.gradient);
-        cdtMode = (TextView) findViewById(R.id.cdtMode);
-        delta = (TextView) findViewById(R.id.delta);
+        cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        speed = (Indicator) findViewById(R.id.speed);
+        cadence = (Indicator) findViewById(R.id.cadence);
+        gradient = (Indicator) findViewById(R.id.gradient);
+        cdtMode = (Indicator) findViewById(R.id.cdtMode);
 
         climbGradient = (TextView) findViewById(R.id.climbGradient);
         climbGradientSeekBar = (SeekBar) findViewById(R.id.climbGradientSeekBar);
@@ -132,15 +150,30 @@ public class CDTBoard extends RelativeLayout {
             descendGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(descendGradient));
         }
 
-        calibrateGradient = findViewById(R.id.gradientGroup);
-        if (calibrateGradient != null) {
-            calibrateGradient.setOnClickListener( new OnClickListener() {
+        if (speed != null) {
+            speed.setOnClickListener( new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     BikeService.getInstance().calibrateGradient();
                 }
             });
         }
+
+        filteredGradientSeries = new GraphViewSeries("Filtered", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), new GraphView.GraphViewData[]{});
+        rawGradientSeries = new GraphViewSeries("Raw", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), new GraphView.GraphViewData[]{});
+
+        gradientGraph = new LineGraphView(this.getContext(), "Gradient");
+        gradientGraph.addSeries(filteredGradientSeries);
+        gradientGraph.addSeries(rawGradientSeries);
+
+        gradientGraph.setScalable(true);
+        gradientGraph.setViewPort(0, 7000);
+        gradientGraph.setScrollable(true);
+        gradientGraph.setManualYAxis(true);
+        gradientGraph.setManualYAxisBounds(45, -45);
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.gradientGraph);
+        layout.addView(gradientGraph);
     }
 
     private CDTBoardMessage getCdtBoardMessage() {
