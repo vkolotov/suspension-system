@@ -118,22 +118,14 @@ private:
 		};
 
 		BasicQueue<20, int16_t>* gradients = app->sprungAccelerometerSystem.getFilteredGradients();
-		gradients->iteratorReset();
-		byte i = 0;
-		while (gradients->iteratorHasNext()) {
-			msg.filteredGradients[i++] = gradients->iteratorNext();
-		}
+		gradients->copyTo(msg.filteredGradients);
 		gradients->clear();
 
 		gradients = app->sprungAccelerometerSystem.getRawGradients();
-		gradients->iteratorReset();
-		i = 0;
-		while (gradients->iteratorHasNext()) {
-			msg.rawGradients[i++] = gradients->iteratorNext();
-		}
-		gradients->clear();
+		gradients->copyTo(msg.rawGradients);
 
-		msg.dataLength = i;
+		msg.dataLength = gradients->size();
+		gradients->clear();
 
 		Serial.write((uint8_t*)&msg, sizeof(msg));
 		Serial.flush();
@@ -143,10 +135,21 @@ private:
 		AutomaticTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
 				app->cadenceSystem.getCadence(),
+				app->config->sprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
 				app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
-				app->unsprungAccelerometerSystem.getIdleValue(),
 				app->unsprungAccelerometerSystem.getCalculatedTimeout()
 		};
+
+		BasicQueue<20, int16_t>* readings = app->sprungAccelerometerSystem.getReadingsX();
+		readings->copyTo(msg.sprungReadingsX);
+		readings->clear();
+
+		readings = app->unsprungAccelerometerSystem.getReadingsX();
+		readings->copyTo(msg.unsprungReadingsX);
+
+		msg.dataLength = readings->size();
+		readings->clear();
+
 		Serial.write((uint8_t*)&msg, sizeof(msg));
 		Serial.flush();
 	}
@@ -163,7 +166,8 @@ private:
 	void receiveAutomaticBoardMessage() {
 		AutomaticBoardMessage* tmp = new AutomaticBoardMessage();
 		if (receiveMessage((char*)tmp, sizeof(AutomaticBoardMessage))) {
-			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold = tmp->severityThreshold;
+			app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold = tmp->unsprungSeverityThreshold;
+			app->config->sprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold = tmp->sprungSeverityThreshold;
 		}
 		delete tmp;
 	}

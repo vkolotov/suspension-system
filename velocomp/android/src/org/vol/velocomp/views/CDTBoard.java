@@ -9,8 +9,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
 import org.vol.velocomp.R;
+import org.vol.velocomp.graph.FixedSizeGraphViewSeries;
+import org.vol.velocomp.graph.SensorGraph;
+import org.vol.velocomp.graph.Threshold;
 import org.vol.velocomp.messages.CDTBoardMessage;
 import org.vol.velocomp.messages.CDTTelemetry;
 import org.vol.velocomp.service.BikeService;
@@ -28,9 +30,12 @@ public class CDTBoard extends RelativeLayout {
     private TextView descendGradient;
     private SeekBar descendGradientSeekBar;
 
-    private GraphView gradientGraph;
-    private GraphViewSeries filteredGradientSeries;
-    private GraphViewSeries rawGradientSeries;
+    private SensorGraph gradientGraph;
+    private FixedSizeGraphViewSeries filteredGradientSeries;
+    private FixedSizeGraphViewSeries rawGradientSeries;
+
+    private Threshold climbThreshold = new Threshold(0xffff0000, 1, 0);
+    private Threshold descentThreshold = new Threshold(0xff0077cc, 1, 0);
 
 
     private long time;
@@ -52,17 +57,23 @@ public class CDTBoard extends RelativeLayout {
 
             descendGradient.setText(String.valueOf(telemetry.descendGradient));
             climbGradient.setText(String.valueOf(telemetry.climbGradient));
+
             descendGradientSeekBar.setProgress(Math.abs(telemetry.descendGradient));
             climbGradientSeekBar.setProgress(telemetry.climbGradient);
 
             descendGradientSeekBar.setSecondaryProgress(-telemetry.gradient);
             climbGradientSeekBar.setSecondaryProgress(telemetry.gradient);
 
+            climbThreshold.setValue(telemetry.climbGradient);
+            descentThreshold.setValue(telemetry.descendGradient);
+
             for (int i = 0; i < telemetry.dataLength; i++) {
                 filteredGradientSeries.appendData(new GraphView.GraphViewData(time, telemetry.filteredGradients[i]), false);
                 rawGradientSeries.appendData(new GraphView.GraphViewData(time, telemetry.rawGradients[i]), false);
                 time += 50;
             }
+            filteredGradientSeries.prepare();
+            rawGradientSeries.prepare();
             if (telemetry.dataLength > 0) {
                 gradientGraph.scrollToEnd();
             }
@@ -90,9 +101,11 @@ public class CDTBoard extends RelativeLayout {
     private class GradientSeekBarListener implements SeekBar.OnSeekBarChangeListener {
 
         private TextView label;
+        private Threshold threshold;
 
-        private GradientSeekBarListener(TextView label) {
+        private GradientSeekBarListener(TextView label, Threshold threshold) {
             this.label = label;
+            this.threshold = threshold;
         }
 
         @Override
@@ -103,6 +116,7 @@ public class CDTBoard extends RelativeLayout {
             }
 
             label.setText(String.valueOf(i));
+            threshold.setValue(i);
         }
 
         @Override
@@ -142,16 +156,16 @@ public class CDTBoard extends RelativeLayout {
         climbGradient = (TextView) findViewById(R.id.climbGradient);
         climbGradientSeekBar = (SeekBar) findViewById(R.id.climbGradientSeekBar);
         if (climbGradientSeekBar != null) {
-            climbGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(climbGradient));
+            climbGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(climbGradient, climbThreshold));
         }
         descendGradient = (TextView) findViewById(R.id.descendGradient);
         descendGradientSeekBar = (SeekBar) findViewById(R.id.descendGradientSeekBar);
         if (descendGradientSeekBar != null) {
-            descendGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(descendGradient));
+            descendGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(descendGradient, descentThreshold));
         }
 
-        if (speed != null) {
-            speed.setOnClickListener( new OnClickListener() {
+        if (gradient != null) {
+            gradient.setOnClickListener( new OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     BikeService.getInstance().calibrateGradient();
@@ -159,21 +173,33 @@ public class CDTBoard extends RelativeLayout {
             });
         }
 
-        filteredGradientSeries = new GraphViewSeries("Filtered", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), new GraphView.GraphViewData[]{});
-        rawGradientSeries = new GraphViewSeries("Raw", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), new GraphView.GraphViewData[]{});
+        filteredGradientSeries = new FixedSizeGraphViewSeries("Filtered", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8);
+        rawGradientSeries = new FixedSizeGraphViewSeries("Raw", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8);
 
-        gradientGraph = new LineGraphView(this.getContext(), "Gradient");
-        gradientGraph.addSeries(filteredGradientSeries);
+        gradientGraph = new SensorGraph(this.getContext(), "Gradient");
         gradientGraph.addSeries(rawGradientSeries);
+        gradientGraph.addSeries(filteredGradientSeries);
 
-        gradientGraph.setScalable(true);
+
         gradientGraph.setViewPort(0, 7000);
-        gradientGraph.setScrollable(true);
         gradientGraph.setManualYAxis(true);
-        gradientGraph.setManualYAxisBounds(45, -45);
+        gradientGraph.setManualYAxisBounds(40, -40);
+        gradientGraph.setVerticalLabels( new String[] {"40", "0", "-40"});
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.gradientGraph);
         layout.addView(gradientGraph);
+
+        layout.setOnClickListener( new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int visibility = findViewById(R.id.climbGradientGroup).getVisibility();
+                findViewById(R.id.climbGradientGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+                findViewById(R.id.descendGradientGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        gradientGraph.addThreshold(climbThreshold);
+        gradientGraph.addThreshold(descentThreshold);
     }
 
     private CDTBoardMessage getCdtBoardMessage() {

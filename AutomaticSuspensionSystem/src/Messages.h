@@ -41,12 +41,16 @@ struct AutomaticTelemetry {
 	uint8_t state;
 	uint8_t speed;
 	uint16_t cadence;
-	int16_t severityThreshold;
-	int16_t idleValue;
+	int16_t sprungSeverityThreshold;
+	int16_t unsprungSeverityThreshold;
 	uint16_t timeout;
+	int16_t sprungReadingsX[20];
+	int16_t unsprungReadingsX[20];
+	uint8_t dataLength;
 };
 
 struct AutomaticBoardMessage {
-	int16_t severityThreshold;
+	int16_t sprungSeverityThreshold;
+	int16_t unsprungSeverityThreshold;
 };
 #endif /* MESSAGES_H_ */

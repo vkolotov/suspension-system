@@ -18,8 +18,13 @@ public:
 		  rawGradients(), filteredGradients() {
 	}
 
+	virtual void readAccelerometer() {
+		accel.getAcceleration(&currentX, &currentY, &currentZ);
+		currentX = -currentX;
+	}
+
 	bool detectActivity() {
-		return currentX - idleX <= accelerometerSystemConfig->severityThreshold;
+		return moduleXZ <= accelerometerSystemConfig->severityThreshold;
 	}
 
 	void activity(unsigned long currentTime) {
@@ -33,8 +38,8 @@ public:
 
 	void update(unsigned long currentTime) {
 		AccelerometerSystem::update(currentTime);
-		int16_t delta = getDelta();
-		if (delta < 15 && delta > -10 && currentTime - lastMeasurement > 50) {
+
+		if (currentTime - lastMeasurement > 50) {
 			averageGradient = filter.next(getInstantGradient(), currentTime - lastMeasurement);
 			lastMeasurement = currentTime;
 			filteredGradients.push(getAverageDegreeGradient());
@@ -42,9 +47,6 @@ public:
 		}
 	}
 
-	int16_t getDelta() {
-		return abs(currentX) + abs(currentZ) - (abs(idleX) + abs(idleZ));
-	}
 
 	int16_t getAverageDegreeGradient() {
 		return averageGradient * 180.0f / PI;
@@ -55,15 +57,11 @@ public:
 	}
 
 	float getRawGradient() {
-		return atan((double)currentZ / (double)currentX);
+		return atan((double)currentZ / -(double)currentX);
 	}
 
 	float getAverageGradient() {
 		return averageGradient;
-	}
-
-	bool isActive() {
-		return false;
 	}
 
 	BasicQueue<20, int16_t>* getFilteredGradients() {

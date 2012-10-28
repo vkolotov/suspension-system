@@ -68,6 +68,15 @@ public:
 	Data* getData() {
 		return data;
 	}
+
+	void copyTo(Data* destination) {
+		iteratorReset();
+		byte i = 0;
+		while (iteratorHasNext()) {
+			destination[i++] = iteratorNext();
+		}
+	}
+
 protected:
 	int16_t cursor;
 	unsigned char length;

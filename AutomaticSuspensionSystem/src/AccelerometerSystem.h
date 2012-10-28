@@ -14,9 +14,9 @@ public:
 	AccelerometerSystem(Configuration* config, AccelerometerSystemConfig* accelerometerSystemConfig)
 			: config(config), accelerometerSystemConfig(accelerometerSystemConfig),
 			  accel(accelerometerSystemConfig->address),
-			  active(false), idleX(65), idleZ(0),
+			  active(false),
 			  currentX(0), currentY(0), currentZ(0),
-			  lastActivity(0), timeout(0), instantActivity(false) {
+			  lastActivity(0), timeout(0), instantActivity(false), readingsX(), lastReadingTime(0), moduleXZ(0) {
 	}
 
 	virtual ~AccelerometerSystem() {};
@@ -24,11 +24,16 @@ public:
 	void init() {
 		accel.initialize();
 		accel.setRange(accelerometerSystemConfig->range);
+		accel.setRate(12);
 	}
 
 	void update(unsigned long currentTime) {
 		readAccelerometer();
-
+		moduleXZ = getModuleXZ();
+		if (currentTime - lastReadingTime > 50) {
+			readingsX.push(moduleXZ);
+			lastReadingTime = currentTime;
+		}
 		if (detectActivity()) {
 			if (!instantActivity) {
 				activity(currentTime);
@@ -51,8 +56,7 @@ public:
 	}
 
 	void calibrate() {
-		idleX = getAccelerationX();
-		idleZ = getAccelerationZ();
+
 	}
 
 	bool isActive() {
@@ -70,9 +74,6 @@ public:
 		return timeout;
 	}
 
-	int16_t getIdleValue() {
-		return idleX;
-	}
 
 	unsigned long getCalculatedTimeout() {
 		return timeout;
@@ -85,13 +86,19 @@ public:
 	virtual void activity(unsigned long currentTime) = 0;
 
 
+	BasicQueue<20, int16_t>* getReadingsX() {
+		return &readingsX;
+	}
+
+	int16_t getModuleXZ() {
+		return (currentX >= 0 ? 1 : -1) * sqrt(currentX * currentX + currentZ * currentZ);
+	}
+
 protected:
 	Configuration* config;
 	AccelerometerSystemConfig* accelerometerSystemConfig;
 	ADXL345 accel;
 	bool active;
-	int16_t idleX;
-	int16_t idleZ;
 
 	int16_t currentX;
 	int16_t currentY;
@@ -100,6 +107,11 @@ protected:
 	unsigned long lastActivity;
 	uint16_t timeout;
 	bool instantActivity;
+
+	BasicQueue<20, int16_t> readingsX;
+	unsigned long lastReadingTime;
+
+	int16_t moduleXZ;
 
 };
 

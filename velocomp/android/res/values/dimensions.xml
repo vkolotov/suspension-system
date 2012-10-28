@@ -1,7 +1,7 @@
 <resources>
 
-    <dimen name="indicatorAreaHeight">50dp</dimen>
-    <dimen name="indicatorValueFontSize">40dp</dimen>
+    <dimen name="indicatorAreaHeight">30dp</dimen>
+    <dimen name="indicatorValueFontSize">25dp</dimen>
     <dimen name="indicatorLabelFontSize">20dp</dimen>
 
 

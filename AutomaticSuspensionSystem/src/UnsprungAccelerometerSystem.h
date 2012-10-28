@@ -26,7 +26,7 @@ public:
 	}
 
 	bool detectActivity() {
-		return currentX - idleX >= accelerometerSystemConfig->severityThreshold;
+		return moduleXZ >= accelerometerSystemConfig->severityThreshold;
 	}
 
 	void activity(unsigned long currentTime) {

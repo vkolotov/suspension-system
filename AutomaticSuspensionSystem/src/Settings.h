@@ -180,9 +180,9 @@ Configuration EEMEM cfg = {
 		// SuspensionSystemConfig rearSuspension
 		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}, 0},
 		// AccelerometerSystemConfig sprungAccelerometerSystem
-		{{ADXL345_ADDRESS_ALT_LOW, 0x3, -20, 15}, /*alpha*/0.02, /*beta*/ 0.00001},
+		{{ADXL345_ADDRESS_ALT_LOW, 0x3, -30, 15}, /*alpha*/0.02, /*beta*/ 0.00001},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem
-		{{ADXL345_ADDRESS_ALT_HIGH, 0x3, 60, 15}, 4000},
+		{{ADXL345_ADDRESS_ALT_HIGH, 0x3, 300, 15}, 4000},
 		// PowerSaveSystemConfig powerSave
 		{SERVO_RELAY_PIN, SERIAL_RELAY_PIN, I2C_RELAY_PIN, SLEEP_INTERRUPTION_NUMBER, SERO_STANDBY_TIMEOUT, true, SLEEP_TIMEOUT, false, 120000, /*servo*/true, /*serial*/true, /*i2c*/false},
 		// SemiautomaticStateConfig
