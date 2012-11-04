@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.configs;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,6 +6,8 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.Configuration;
+import org.vol.velocomp.views.controls.SeekBarSectionView;
+import org.vol.velocomp.views.Utils;
 
 public class AutomaticModeConfiguration extends ScrollView {
 

@@ -8,10 +8,10 @@ import android.widget.TextView;
 import greendroid.widget.PagedAdapter;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.Configuration;
-import org.vol.velocomp.views.AutomaticModeConfiguration;
-import org.vol.velocomp.views.CDTModeConfiguration;
-import org.vol.velocomp.views.PowerSaveSystemConfiguration;
-import org.vol.velocomp.views.SuspensionConfiguration;
+import org.vol.velocomp.views.configs.AutomaticModeConfiguration;
+import org.vol.velocomp.views.configs.CDTModeConfiguration;
+import org.vol.velocomp.views.configs.PowerSaveSystemConfiguration;
+import org.vol.velocomp.views.configs.SuspensionConfiguration;
 
 public class ConfigurationAdapter extends PagedAdapter {
 

@@ -8,25 +8,27 @@
 #ifndef MESSAGES_H_
 #define MESSAGES_H_
 
-struct ManualTelemetry {
+struct Telemetry {
 	uint16_t clockSpeed;
+	uint16_t memory;
 	uint8_t state;
 	uint8_t speed;
 	uint16_t cadence;
+};
+
+struct ManualTelemetry {
+	Telemetry telemetry;
 	uint8_t suspensionMode;
 };
 
 struct CDTTelemetry {
-	uint16_t clockSpeed;
-	uint8_t state;
-	uint8_t speed;
-	uint16_t cadence;
+	Telemetry telemetry;
 	uint8_t suspensionMode;
 	int8_t gradient;
 	int8_t climbGradient;
 	int8_t descendGradient;
-	int16_t rawGradients[20];
-	int16_t filteredGradients[20];
+	int16_t rawGradients[10];
+	int16_t filteredGradients[10];
 	uint8_t dataLength;
 };
 
@@ -37,10 +39,7 @@ struct CDTBoardMessage {
 
 
 struct AutomaticTelemetry {
-	uint16_t clockSpeed;
-	uint8_t state;
-	uint8_t speed;
-	uint16_t cadence;
+	Telemetry telemetry;
 	int16_t sprungSeverityThreshold;
 	int16_t unsprungSeverityThreshold;
 	uint16_t timeout;

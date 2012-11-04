@@ -53,9 +53,7 @@ public:
 					case 53: app->automaton->setState(MANUAL_STATE); break;
 					case 54: app->automaton->setState(CDT_STATE); break;
 					case 55: app->automaton->setState(AUTOMATIC_STATE); break;
-					case 56: app->config->system.headTubeGradient = app->sprungAccelerometerSystem.getRawGradient();
-							app->sprungAccelerometerSystem.calibrate();
-							break;
+					case 56: app->config->system.headTubeGradient = app->sprungAccelerometerSystem.getRawGradient(); break;
 
 					case 60: sendManualTelemetry(); break;
 					case 61: sendCDTTelemetry(); break;
@@ -98,9 +96,9 @@ private:
 	}
 
 	void sendManualTelemetry() {
-		ManualTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
+		ManualTelemetry msg = {{app->clockSpeed, getFreeMemory(), app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
-				app->cadenceSystem.getCadence(),
+				app->cadenceSystem.getCadence()},
 				app->config->frontSuspension.mode
 		};
 		Serial.write((uint8_t*)&msg, sizeof(msg));
@@ -108,16 +106,16 @@ private:
 	}
 
 	void sendCDTTelemetry() {
-		CDTTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
+		CDTTelemetry msg = {{app->clockSpeed, getFreeMemory(), app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
-				app->cadenceSystem.getCadence(),
+				app->cadenceSystem.getCadence()},
 				app->config->frontSuspension.mode,
 				app->sprungAccelerometerSystem.getAverageDegreeGradient(),
 				app->config->semiautomaticStateConfig.climbGradient * 180.0f / PI,
 				app->config->semiautomaticStateConfig.descendGradient * 180.0f / PI
 		};
 
-		BasicQueue<20, int16_t>* gradients = app->sprungAccelerometerSystem.getFilteredGradients();
+		BasicQueue<10, int16_t>* gradients = app->sprungAccelerometerSystem.getFilteredGradients();
 		gradients->copyTo(msg.filteredGradients);
 		gradients->clear();
 
@@ -132,19 +130,19 @@ private:
 	}
 
 	void sendAutomaticTelemetry() {
-		AutomaticTelemetry msg = {app->clockSpeed, app->automaton->current->getId(),
+		AutomaticTelemetry msg = {{app->clockSpeed, getFreeMemory(), app->automaton->current->getId(),
 				app->speedSystem.getAverageSpeedKmH(),
-				app->cadenceSystem.getCadence(),
+				app->cadenceSystem.getCadence()},
 				app->config->sprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
 				app->config->unsprungAccelerometerSystem.accelerometerSystemConfig.severityThreshold,
 				app->unsprungAccelerometerSystem.getCalculatedTimeout()
 		};
 
-		BasicQueue<20, int16_t>* readings = app->sprungAccelerometerSystem.getReadingsX();
+		BasicQueue<20, int16_t>* readings = app->sprungAccelerometerSystem.getReadings();
 		readings->copyTo(msg.sprungReadingsX);
 		readings->clear();
 
-		readings = app->unsprungAccelerometerSystem.getReadingsX();
+		readings = app->unsprungAccelerometerSystem.getReadings();
 		readings->copyTo(msg.unsprungReadingsX);
 
 		msg.dataLength = readings->size();

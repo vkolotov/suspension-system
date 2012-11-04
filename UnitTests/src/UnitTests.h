@@ -9,54 +9,10 @@
 #include "Arduino.h"
 //add your includes for the project UnitTests here
 
-#include <math.h>
-#include <avr/eeprom.h>
+
 //add your includes for the project AutomaticSuspensionSystem here
 
-
-
-#include <Wire.h>
-#include <ADXL345.h>
-
-#include <Activity.h>
-#include <ComplementaryFilter.h>
-#include <Settings.h>
-#include <Suspension.h>
-#include <FrequencySystem.h>
-#include <SpeedSystem.h>
-#include <CadenceSystem.h>
-#include <AccelerometerSystem.h>
-#include <UnsprungAccelerometerSystem.h>
-#include <SprungAccelerometerSystem.h>
-
-#include <Button.h>
-#include <Messages.h>
-
-#include <avr/sleep.h>
-
-
-#include <State.h>
-#include <Automaton.h>
-#include <Application.h>
-
-#include <BluetoothSystem.h>
-
-#include <SleepState.h>
-#include <CommonState.h>
-#include <ManualState.h>
-#include <CDTState.h>
-#include <AutomaticState.h>
-#include <DescentState.h>
-#include <TrailState.h>
-#include <ClimbState.h>
-
-#include <ActiveState.h>
-#include <AbsorbState.h>
-#include <BurnOutState.h>
-#include <IdleState.h>
-#include <PedalState.h>
-#include <StandOverState.h>
-
+#include <AutomaticSuspensionSystem.h>
 
 #include <SpeedSystemMock.h>
 #include <CadenceSystemMock.h>

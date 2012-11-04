@@ -84,9 +84,13 @@ public class BikeService {
     synchronized public void connect() {
         try {
             BikeConnection.getInstance().connect(TIMEOUT);
+            BikeConnection.getInstance().testConnection(TIMEOUT);
             isConnected = true;
             notifyListeners(true, null);
         } catch (ConnectionException e) {
+            disconnect();
+            notifyListeners(false, e);
+        } catch (TimeoutException e) {
             disconnect();
             notifyListeners(false, e);
         }

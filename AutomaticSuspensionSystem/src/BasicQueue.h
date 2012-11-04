@@ -90,7 +90,6 @@ template <uint8_t capacity>
 class NumericQueue: public BasicQueue<capacity, unsigned long> {
 public:
 	NumericQueue() : BasicQueue<capacity, unsigned long>(), sum(0), average(0) {
-
 	}
 
 	void push(unsigned long data) {
@@ -122,10 +121,10 @@ protected:
 	unsigned long average;
 };
 
-template <uint8_t capacity>
-class FrequencyQueue: public BasicQueue<capacity, uint16_t> {
+template <uint8_t capacity, typename Data>
+class FrequencyQueue: public BasicQueue<capacity, Data> {
 public:
-	FrequencyQueue(unsigned long period) : BasicQueue<capacity, uint16_t>(),
+	FrequencyQueue(unsigned long period) : BasicQueue<capacity, Data>(),
 			period(period), segmentTail(0), sum(0), segmentDuration(period / capacity) {
 	}
 
@@ -135,7 +134,6 @@ public:
 	}
 
 	void update(unsigned long time) {
-
 		uint8_t i = 0;
 		while (time - segmentTail >= segmentDuration) {
 			segmentTail += segmentDuration;
@@ -150,10 +148,10 @@ public:
 
 	void shift() {
 		if (this->size() == capacity) {
-			uint16_t prev = BasicQueue<capacity, uint16_t>::push(0);
+			uint16_t prev = BasicQueue<capacity, Data>::push(0);
 			sum -= prev;
 		} else {
-			BasicQueue<capacity, uint16_t>::push(0);
+			BasicQueue<capacity, Data>::push(0);
 		}
 	}
 
@@ -163,7 +161,7 @@ public:
 	}
 
 	void clear() {
-		BasicQueue<capacity, uint16_t>::clear();
+		BasicQueue<capacity, Data>::clear();
 		sum = 0;
 	}
 

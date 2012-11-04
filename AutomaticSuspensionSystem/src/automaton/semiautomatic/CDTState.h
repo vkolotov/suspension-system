@@ -26,7 +26,6 @@ public:
 		} else if (app->modeButton.isPushed(3000)) {
 			app->config->system.headTubeGradient =
 					app->sprungAccelerometerSystem.getRawGradient();
-			app->sprungAccelerometerSystem.calibrate();
 			saveConfiguration(app->config);
 		} else if (app->rearButton.isPushed(3000)) {
 			app->config->semiautomaticStateConfig.descendGradient =

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.vol.velocomp.views.ManualBoard
+<org.vol.velocomp.views.boards.ManualBoard
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:velocomp= "http://schemas.android.com/apk/res/org.vol.velocomp"
                 android:layout_width="fill_parent"
@@ -10,7 +10,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/clockSpeed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -20,7 +20,17 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="CPU Speed"/>
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
+                android:id="@+id/freeMemory"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                velocomp:label="Free Memory"/>
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/cadence"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -30,7 +40,7 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="Cadence" />
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/speed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -99,4 +109,4 @@
 
 
 
-</org.vol.velocomp.views.ManualBoard>
+</org.vol.velocomp.views.boards.ManualBoard>

@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.controls;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import org.vol.velocomp.R;
+import org.vol.velocomp.views.Utils;
 
 public class Indicator extends RelativeLayout {
 
@@ -15,19 +16,16 @@ public class Indicator extends RelativeLayout {
 
     public Indicator(Context context) {
         super(context);
-        //initLayout();
     }
 
     public Indicator(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //initLayout();
         inflateContent();
         init(attrs);
     }
 
     public Indicator(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        //initLayout();
         inflateContent();
         init(attrs);
     }
@@ -53,7 +51,7 @@ public class Indicator extends RelativeLayout {
                 this.getContext().obtainStyledAttributes(attrs, R.styleable.Indicator);
 
         String label = typedArray.getString(R.styleable.Indicator_label);
-        String value = typedArray.getString(R.styleable.Indicator_value);
+        String value = typedArray.getString(R.styleable.Indicator_valueStr);
 
         Utils.init(labelField, label);
         Utils.init(valueField, value);
@@ -65,17 +63,5 @@ public class Indicator extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.indicator, this);
     }
-
-    private void initLayout() {
-        RelativeLayout.LayoutParams layoutParams =
-                new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, R.dimen.indicatorAreaHeight);
-        layoutParams.setMargins(10, 10, 10, 0);
-
-        setLayoutParams(layoutParams);
-        setBackgroundColor(0xF0F0F0);
-
-        setPadding(0, 0, 5, 0);
-    }
-
 
 }

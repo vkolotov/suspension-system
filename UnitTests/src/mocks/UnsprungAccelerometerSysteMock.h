@@ -22,6 +22,7 @@ public:
 	void setAccelerationX(uint16_t x) {
 		currentX = x;
 	}
+
 };
 
 #endif /* UNSPRUNGACCELEROMETERSYSTEMOCK_H_ */

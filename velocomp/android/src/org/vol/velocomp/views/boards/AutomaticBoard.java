@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.boards;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import org.vol.velocomp.R;
@@ -16,19 +15,22 @@ import org.vol.velocomp.graph.Threshold;
 import org.vol.velocomp.messages.AutomaticBoardMessage;
 import org.vol.velocomp.messages.AutomaticTelemetry;
 import org.vol.velocomp.service.BikeService;
+import org.vol.velocomp.views.Board;
+import org.vol.velocomp.views.Mode;
+import org.vol.velocomp.views.controls.Indicator;
+import org.vol.velocomp.views.controls.SeekBarConfig;
 
 public class AutomaticBoard extends RelativeLayout {
 
     private Indicator cpuClockSpeed;
+    private Indicator freeMemory;
     private Indicator speed;
     private Indicator cadence;
     private Indicator mode;
     private Indicator timeout;
 
-    private TextView unsprungSeverityThreshold;
-    private SeekBar unsprungSeverityThresholdSeekBar;
-    private TextView sprungSeverityThreshold;
-    private SeekBar sprungSeverityThresholdSeekBar;
+    private SeekBarConfig unsprungSeverityThreshold;
+    private SeekBarConfig sprungSeverityThreshold;
 
     private SensorGraph accelerometerReadingsGraph;
     private FixedSizeGraphViewSeries sprungSeries;
@@ -51,17 +53,16 @@ public class AutomaticBoard extends RelativeLayout {
         public void updateTelemetry(AutomaticTelemetry telemetry) {
             super.updateTelemetry(telemetry);
             cpuClockSpeed.setValue(telemetry.clockSpeed);
+            freeMemory.setValue(telemetry.freeMemory);
             speed.setValue(telemetry.speed);
             cadence.setValue(telemetry.cadence);
             mode.setValue(geMode(telemetry.state));
             timeout.setValue(telemetry.timeout);
 
-            unsprungSeverityThreshold.setText(String.valueOf(telemetry.unsprungSeverityThreshold));
-            unsprungSeverityThresholdSeekBar.setProgress(telemetry.unsprungSeverityThreshold);
+            unsprungSeverityThreshold.setValue(telemetry.unsprungSeverityThreshold);
             unsprungThreshold.setValue(telemetry.unsprungSeverityThreshold);
 
-            sprungSeverityThreshold.setText(String.valueOf(telemetry.sprungSeverityThreshold));
-            sprungSeverityThresholdSeekBar.setProgress(-telemetry.sprungSeverityThreshold);
+            sprungSeverityThreshold.setValue(telemetry.sprungSeverityThreshold);
             sprungThreshold.setValue(telemetry.sprungSeverityThreshold);
 
 
@@ -85,12 +86,14 @@ public class AutomaticBoard extends RelativeLayout {
 
         @Override
         public void onConnected() {
-            unsprungSeverityThresholdSeekBar.setEnabled(true);
+            unsprungSeverityThreshold.setEnabled(true);
+            sprungSeverityThreshold.setEnabled(true);
         }
 
         @Override
         public void onDisconnected() {
-            unsprungSeverityThresholdSeekBar.setEnabled(false);
+            unsprungSeverityThreshold.setEnabled(false);
+            sprungSeverityThreshold.setEnabled(false);
         }
     };
 
@@ -99,25 +102,17 @@ public class AutomaticBoard extends RelativeLayout {
         return result != null ? result.getName() : "Unknown";
     }
 
-    private class SeverityThresholdSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+    private class SeverityThresholdSeekBarListener extends SeekBarConfig.AbstractOnSeekBarChangeListener {
 
-        private TextView label;
         private Threshold threshold;
 
-        private SeverityThresholdSeekBarListener(TextView label, Threshold threshold) {
-            this.label = label;
+        private SeverityThresholdSeekBarListener(Threshold threshold) {
             this.threshold = threshold;
         }
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-            label.setText(String.valueOf(threshold == sprungThreshold ? -i : i));
-            threshold.setValue(threshold == sprungThreshold ? -i : i);
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
+            threshold.setValue(i);
         }
 
         @Override
@@ -144,34 +139,31 @@ public class AutomaticBoard extends RelativeLayout {
         super.onFinishInflate();
 
         cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        freeMemory = (Indicator) findViewById(R.id.freeMemory);
         speed = (Indicator) findViewById(R.id.speed);
         cadence = (Indicator) findViewById(R.id.cadence);
         mode = (Indicator) findViewById(R.id.mode);
         timeout = (Indicator) findViewById(R.id.timeout);
 
-        unsprungSeverityThreshold = (TextView) findViewById(R.id.unsprungSeverityThreshold);
-        unsprungSeverityThresholdSeekBar = (SeekBar) findViewById(R.id.unsprungSeverityThresholdSeekBar);
-        if (unsprungSeverityThresholdSeekBar != null) {
-            unsprungSeverityThresholdSeekBar.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(unsprungSeverityThreshold, unsprungThreshold));
-            unsprungSeverityThresholdSeekBar.setMax(400);
+        unsprungSeverityThreshold = (SeekBarConfig) findViewById(R.id.unsprungSeverityThreshold);
+        if (unsprungSeverityThreshold != null) {
+            unsprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(unsprungThreshold));
         }
 
-        sprungSeverityThreshold = (TextView) findViewById(R.id.sprungSeverityThreshold);
-        sprungSeverityThresholdSeekBar = (SeekBar) findViewById(R.id.sprungSeverityThresholdSeekBar);
-        if (sprungSeverityThresholdSeekBar != null) {
-            sprungSeverityThresholdSeekBar.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(sprungSeverityThreshold, sprungThreshold));
-            sprungSeverityThresholdSeekBar.setMax(400);
+        sprungSeverityThreshold = (SeekBarConfig) findViewById(R.id.sprungSeverityThreshold);
+        if (sprungSeverityThreshold != null) {
+            sprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(sprungThreshold));
         }
 
-        sprungSeries = new FixedSizeGraphViewSeries("Sprung", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8);
-        unsprungSeries = new FixedSizeGraphViewSeries("Unsprung", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8);
+        sprungSeries = new FixedSizeGraphViewSeries("Sprung", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8 * 10);
+        unsprungSeries = new FixedSizeGraphViewSeries("Unsprung", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8 * 10);
 
         accelerometerReadingsGraph = new SensorGraph(this.getContext(), "Accelerometers");
 
         accelerometerReadingsGraph.addSeries(unsprungSeries);
         accelerometerReadingsGraph.addSeries(sprungSeries);
 
-        accelerometerReadingsGraph.setViewPort(0, 7000);
+        accelerometerReadingsGraph.setViewPort(0, 4000);
         accelerometerReadingsGraph.setManualYAxis(true);
         accelerometerReadingsGraph.setManualYAxisBounds(400, -400);
         accelerometerReadingsGraph.setVerticalLabels(new String[]{"400", "0", "-400"});
@@ -179,15 +171,16 @@ public class AutomaticBoard extends RelativeLayout {
         accelerometerReadingsGraph.addThreshold(sprungThreshold);
         accelerometerReadingsGraph.addThreshold(unsprungThreshold);
 
+
         LinearLayout layout = (LinearLayout) findViewById(R.id.accelerometersReadings);
         layout.addView(accelerometerReadingsGraph);
 
         layout.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick(View view) {
-                int visibility = findViewById(R.id.unsprungSeverityThresholdGroup).getVisibility();
-                findViewById(R.id.unsprungSeverityThresholdGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
-                findViewById(R.id.sprungSeverityThresholdGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+                int visibility = findViewById(R.id.configs).getVisibility();
+                findViewById(R.id.configs).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+                findViewById(R.id.indicators).setVisibility(View.VISIBLE != visibility ? View.GONE : View.VISIBLE);
             }
         });
 
@@ -195,8 +188,8 @@ public class AutomaticBoard extends RelativeLayout {
 
     private AutomaticBoardMessage getAutomaticBoardMessage() {
         AutomaticBoardMessage automaticBoardMessage = new AutomaticBoardMessage();
-        automaticBoardMessage.unsprungSeverityThreshold = (short) unsprungSeverityThresholdSeekBar.getProgress();
-        automaticBoardMessage.sprungSeverityThreshold = (short) -sprungSeverityThresholdSeekBar.getProgress();
+        automaticBoardMessage.unsprungSeverityThreshold = (short) unsprungSeverityThreshold.getValue();
+        automaticBoardMessage.sprungSeverityThreshold = (short) sprungSeverityThreshold.getValue();
         return automaticBoardMessage;
     }
 

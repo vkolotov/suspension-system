@@ -13,6 +13,20 @@
 
 void (*resetArduino)(void) = 0; //declare reset function @ address 0
 
+extern int __bss_end;
+extern void *__brkval;
+
+int getFreeMemory() {
+  int free_memory;
+
+  if((int)__brkval == 0)
+    free_memory = ((int)&free_memory) - ((int)&__bss_end);
+  else
+    free_memory = ((int)&free_memory) - ((int)__brkval);
+
+  return free_memory;
+}
+
 #include <Wire.h>
 #include <ADXL345.h>
 

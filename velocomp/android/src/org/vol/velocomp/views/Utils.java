@@ -3,6 +3,8 @@ package org.vol.velocomp.views;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import org.vol.velocomp.views.controls.Indicator;
+import org.vol.velocomp.views.controls.SeekBarSectionView;
 
 public class Utils {
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.vol.velocomp.views.AutomaticBoard xmlns:android="http://schemas.android.com/apk/res/android"
+<org.vol.velocomp.views.boards.AutomaticBoard xmlns:android="http://schemas.android.com/apk/res/android"
                                        xmlns:velocomp= "http://schemas.android.com/apk/res/org.vol.velocomp"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/indicators">
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/clockSpeed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -20,7 +20,17 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="CPU Speed"/>
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
+                android:id="@+id/freeMemory"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                velocomp:label="Free Memory"/>
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/cadence"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -30,7 +40,7 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="Cadence" />
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/speed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -40,7 +50,7 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="Speed" />
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/mode"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -50,7 +60,7 @@
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
                 velocomp:label="Mode" />
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/timeout"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -66,94 +76,37 @@
                   android:layout_height="fill_parent"
                   android:layout_width="fill_parent"
                   android:layout_below="@+id/indicators"
-                  android:layout_above="@+id/sprungSeverityThresholdGroup"
+                  android:layout_above="@+id/configs"
                   android:orientation="vertical"
                   android:background="#C0C0C0"
                   android:layout_margin="10dp"/>
 
-    <RelativeLayout
-            android:id="@+id/sprungSeverityThresholdGroup"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_above="@+id/unsprungSeverityThresholdGroup"
-            android:baselineAligned="false">
-        <TextView
-                android:id="@+id/sprungSeverityThresholdLabel"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Sprung Severity Threshold"
-                android:textSize="10dp"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
 
-        <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/configs"
+                  android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:baselineAligned="false"
+                  android:visibility="gone">
+
+        <org.vol.velocomp.views.controls.SeekBarConfig
                 android:id="@+id/sprungSeverityThreshold"
-                android:layout_width="45dip"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="0"
-                android:textSize="20dp"
-                android:textColor="#000000"
-                android:layout_below="@id/sprungSeverityThresholdLabel"
-                android:layout_alignParentLeft="true"/>
-
-        <SeekBar android:id="@+id/sprungSeverityThresholdSeekBar"
-                 android:layout_below="@id/sprungSeverityThresholdLabel"
-                 android:layout_alignParentRight="true"
-                 android:layout_toRightOf="@+id/sprungSeverityThreshold"
-                 android:paddingLeft="5dp"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:max="50"
-                 android:progress="0"
-                 android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="0" />
-    </RelativeLayout>
-
-    <RelativeLayout
-            android:id="@+id/unsprungSeverityThresholdGroup"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_alignParentBottom="true"
-            android:baselineAligned="false"
-            android:paddingBottom="5dp">
-        <TextView
-                android:id="@+id/unsprungSeverityThresholdLabel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Unsprung Severity Threshold"
-                android:textSize="10dp"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
-
-        <TextView
+                android:layout_marginRight="10dp"
+                velocomp:maxValue="400"
+                velocomp:title="Sprung Severity Threshold"/>
+        <org.vol.velocomp.views.controls.SeekBarConfig
                 android:id="@+id/unsprungSeverityThreshold"
-                android:layout_width="45dip"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="0"
-                android:textSize="20dp"
-                android:textColor="#000000"
-                android:layout_below="@id/unsprungSeverityThresholdLabel"
-                android:layout_alignParentLeft="true"/>
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="10dp"
+                velocomp:maxValue="400"
+                velocomp:title="Unsprung Severity Threshold"/>
 
-        <SeekBar android:id="@+id/unsprungSeverityThresholdSeekBar"
-                 android:layout_below="@id/unsprungSeverityThresholdLabel"
-                 android:layout_alignParentRight="true"
-                 android:layout_toRightOf="@+id/unsprungSeverityThreshold"
-                 android:paddingLeft="5dp"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:max="50"
-                 android:progress="0"
-                 android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="0" />
-    </RelativeLayout>
+    </LinearLayout>
 
-</org.vol.velocomp.views.AutomaticBoard>
+</org.vol.velocomp.views.boards.AutomaticBoard>

@@ -86,10 +86,6 @@ public class Configuration {
         public byte controlPin;
         @FieldOrder(1)
         public byte feedbackPin;
-        @FieldOrder(2)
-        public short calibrationDelay;
-        @FieldOrder(3)
-        public byte calibrationThreshold;
         @FieldOrder(4)
         public byte calibrationStep;
         @FieldOrder(5)
@@ -99,7 +95,7 @@ public class Configuration {
         @FieldOrder(7)
         public byte modes;
         @FieldOrder(8)
-        @ArraySize(9)
+        @ArraySize(3)
         public short[] angles;
         @FieldOrder(9)
         public byte mode;

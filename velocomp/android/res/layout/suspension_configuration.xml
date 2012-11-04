@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.vol.velocomp.views.SuspensionConfiguration xmlns:android="http://schemas.android.com/apk/res/android"
+<org.vol.velocomp.views.configs.SuspensionConfiguration xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
@@ -19,4 +19,4 @@
 
      </LinearLayout>
 
-</org.vol.velocomp.views.SuspensionConfiguration>
+</org.vol.velocomp.views.configs.SuspensionConfiguration>

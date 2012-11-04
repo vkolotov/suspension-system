@@ -88,6 +88,10 @@ public:
 		//digitalWrite(config->powerSave.servoRelayPin, config->powerSave.isServoPowerOn);
 		//digitalWrite(config->powerSave.i2cRelayPin, config->powerSave.isi2cPowerOn);
 		setSerialPower(config->powerSave.isSerialPowerOn);
+
+		cadenceSystem.setLastActivity(millis());
+		frontButton.reset(millis());
+		delay(config->buttons.debounceDuration);
 	}
 
 	void setSerialPower(bool on) {

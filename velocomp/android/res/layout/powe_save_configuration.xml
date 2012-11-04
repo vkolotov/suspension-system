@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.vol.velocomp.views.PowerSaveSystemConfiguration
+<org.vol.velocomp.views.configs.PowerSaveSystemConfiguration
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
@@ -40,4 +40,4 @@
 
     </LinearLayout>
 
-</org.vol.velocomp.views.PowerSaveSystemConfiguration>
+</org.vol.velocomp.views.configs.PowerSaveSystemConfiguration>

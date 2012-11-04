@@ -50,7 +50,6 @@ public:
 		detachInterrupt(1);
 
 		app->wakeup();
-		app->cadenceSystem.setLastActivity(millis());
 
 		return app->automaton->previous;
 	}

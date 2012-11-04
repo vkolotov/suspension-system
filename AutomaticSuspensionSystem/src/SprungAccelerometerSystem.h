@@ -21,10 +21,11 @@ public:
 	virtual void readAccelerometer() {
 		accel.getAcceleration(&currentX, &currentY, &currentZ);
 		currentX = -currentX;
+		currentZ = -currentZ;
 	}
 
 	bool detectActivity() {
-		return moduleXZ <= accelerometerSystemConfig->severityThreshold;
+		return module <= accelerometerSystemConfig->severityThreshold;
 	}
 
 	void activity(unsigned long currentTime) {
@@ -39,14 +40,13 @@ public:
 	void update(unsigned long currentTime) {
 		AccelerometerSystem::update(currentTime);
 
-		if (currentTime - lastMeasurement > 50) {
+		if (module < 40 && module > 20 && currentTime - lastMeasurement > 100) {
 			averageGradient = filter.next(getInstantGradient(), currentTime - lastMeasurement);
 			lastMeasurement = currentTime;
 			filteredGradients.push(getAverageDegreeGradient());
 			rawGradients.push(getInstantGradient() * 180.0f / PI);
 		}
 	}
-
 
 	int16_t getAverageDegreeGradient() {
 		return averageGradient * 180.0f / PI;
@@ -57,19 +57,23 @@ public:
 	}
 
 	float getRawGradient() {
-		return atan((double)currentZ / -(double)currentX);
+		return atan((double)currentZ / (double)currentX);
 	}
 
 	float getAverageGradient() {
 		return averageGradient;
 	}
 
-	BasicQueue<20, int16_t>* getFilteredGradients() {
+	BasicQueue<10, int16_t>* getFilteredGradients() {
 		return &filteredGradients;
 	}
 
-	BasicQueue<20, int16_t>* getRawGradients() {
+	BasicQueue<10, int16_t>* getRawGradients() {
 		return &rawGradients;
+	}
+
+	int16_t getModule() {
+		return getModuleXZ();
 	}
 
 protected:
@@ -78,8 +82,8 @@ protected:
 	float averageGradient;
 	ComplementaryFilter<float> filter;
 
-	BasicQueue<20, int16_t> rawGradients;
-	BasicQueue<20, int16_t> filteredGradients;
+	BasicQueue<10, int16_t> rawGradients;
+	BasicQueue<10, int16_t> filteredGradients;
 };
 
 #endif /* SPUNGACCELEROMETERSYSTEM_H_ */

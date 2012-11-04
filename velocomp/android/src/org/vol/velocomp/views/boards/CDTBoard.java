@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.boards;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import org.vol.velocomp.R;
@@ -16,19 +15,22 @@ import org.vol.velocomp.graph.Threshold;
 import org.vol.velocomp.messages.CDTBoardMessage;
 import org.vol.velocomp.messages.CDTTelemetry;
 import org.vol.velocomp.service.BikeService;
+import org.vol.velocomp.views.Board;
+import org.vol.velocomp.views.Mode;
+import org.vol.velocomp.views.controls.Indicator;
+import org.vol.velocomp.views.controls.SeekBarConfig;
 
 public class CDTBoard extends RelativeLayout {
 
     private Indicator cpuClockSpeed;
+    private Indicator freeMemory;
     private Indicator speed;
     private Indicator cadence;
     private Indicator gradient;
     private Indicator cdtMode;
 
-    private TextView climbGradient;
-    private SeekBar climbGradientSeekBar;
-    private TextView descendGradient;
-    private SeekBar descendGradientSeekBar;
+    private SeekBarConfig climbGradient;
+    private SeekBarConfig descendGradient;
 
     private SensorGraph gradientGraph;
     private FixedSizeGraphViewSeries filteredGradientSeries;
@@ -50,19 +52,17 @@ public class CDTBoard extends RelativeLayout {
         public void updateTelemetry(CDTTelemetry telemetry) {
             super.updateTelemetry(telemetry);
             cpuClockSpeed.setValue(telemetry.clockSpeed);
+            freeMemory.setValue(telemetry.freeMemory);
             speed.setValue(telemetry.speed);
             cadence.setValue(telemetry.cadence);
             gradient.setValue(telemetry.gradient);
             cdtMode.setValue(telemetry.suspensionMode == 0 ? "Climb" : (telemetry.suspensionMode == 1 ? "Trail" : "Descend"));
 
-            descendGradient.setText(String.valueOf(telemetry.descendGradient));
-            climbGradient.setText(String.valueOf(telemetry.climbGradient));
+            descendGradient.setValue(telemetry.descendGradient);
+            climbGradient.setValue(telemetry.climbGradient);
 
-            descendGradientSeekBar.setProgress(Math.abs(telemetry.descendGradient));
-            climbGradientSeekBar.setProgress(telemetry.climbGradient);
-
-            descendGradientSeekBar.setSecondaryProgress(-telemetry.gradient);
-            climbGradientSeekBar.setSecondaryProgress(telemetry.gradient);
+            descendGradient.setSecondaryProgress(-telemetry.gradient);
+            climbGradient.setSecondaryProgress(telemetry.gradient);
 
             climbThreshold.setValue(telemetry.climbGradient);
             descentThreshold.setValue(telemetry.descendGradient);
@@ -87,41 +87,28 @@ public class CDTBoard extends RelativeLayout {
 
         @Override
         public void onConnected() {
-            descendGradientSeekBar.setEnabled(true);
-            climbGradientSeekBar.setEnabled(true);
+            descendGradient.setEnabled(true);
+            climbGradient.setEnabled(true);
         }
 
         @Override
         public void onDisconnected() {
-            descendGradientSeekBar.setEnabled(false);
-            climbGradientSeekBar.setEnabled(false);
+            descendGradient.setEnabled(false);
+            climbGradient.setEnabled(false);
         }
     };
 
-    private class GradientSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+    private class GradientSeekBarListener extends SeekBarConfig.AbstractOnSeekBarChangeListener {
 
-        private TextView label;
         private Threshold threshold;
 
-        private GradientSeekBarListener(TextView label, Threshold threshold) {
-            this.label = label;
+        private GradientSeekBarListener(Threshold threshold) {
             this.threshold = threshold;
         }
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
-            if (seekBar == descendGradientSeekBar) {
-                i = -i;
-            }
-
-            label.setText(String.valueOf(i));
             threshold.setValue(i);
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
         }
 
         @Override
@@ -148,20 +135,21 @@ public class CDTBoard extends RelativeLayout {
         super.onFinishInflate();
 
         cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        freeMemory = (Indicator) findViewById(R.id.freeMemory);
         speed = (Indicator) findViewById(R.id.speed);
         cadence = (Indicator) findViewById(R.id.cadence);
         gradient = (Indicator) findViewById(R.id.gradient);
         cdtMode = (Indicator) findViewById(R.id.cdtMode);
 
-        climbGradient = (TextView) findViewById(R.id.climbGradient);
-        climbGradientSeekBar = (SeekBar) findViewById(R.id.climbGradientSeekBar);
-        if (climbGradientSeekBar != null) {
-            climbGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(climbGradient, climbThreshold));
+        climbGradient = (SeekBarConfig) findViewById(R.id.climbGradient);
+
+        if (climbGradient != null) {
+            climbGradient.setOnSeekBarChangeListener(new GradientSeekBarListener(climbThreshold));
         }
-        descendGradient = (TextView) findViewById(R.id.descendGradient);
-        descendGradientSeekBar = (SeekBar) findViewById(R.id.descendGradientSeekBar);
-        if (descendGradientSeekBar != null) {
-            descendGradientSeekBar.setOnSeekBarChangeListener(new GradientSeekBarListener(descendGradient, descentThreshold));
+        descendGradient = (SeekBarConfig) findViewById(R.id.descentGradient);
+
+        if (descendGradient != null) {
+            descendGradient.setOnSeekBarChangeListener(new GradientSeekBarListener(descentThreshold));
         }
 
         if (gradient != null) {
@@ -192,9 +180,9 @@ public class CDTBoard extends RelativeLayout {
         layout.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick(View view) {
-                int visibility = findViewById(R.id.climbGradientGroup).getVisibility();
-                findViewById(R.id.climbGradientGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
-                findViewById(R.id.descendGradientGroup).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+                int visibility = findViewById(R.id.configs).getVisibility();
+                findViewById(R.id.configs).setVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+                findViewById(R.id.indicators).setVisibility(View.VISIBLE != visibility ? View.GONE : View.VISIBLE);
             }
         });
 
@@ -204,8 +192,8 @@ public class CDTBoard extends RelativeLayout {
 
     private CDTBoardMessage getCdtBoardMessage() {
         CDTBoardMessage cdtBoardMessage = new CDTBoardMessage();
-        cdtBoardMessage.climbGradient = (byte) climbGradientSeekBar.getProgress();
-        cdtBoardMessage.descendGradient = (byte) -descendGradientSeekBar.getProgress();
+        cdtBoardMessage.climbGradient = (byte) climbGradient.getValue();
+        cdtBoardMessage.descendGradient = (byte) descendGradient.getValue();
         return cdtBoardMessage;
     }
 

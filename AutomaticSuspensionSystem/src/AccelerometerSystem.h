@@ -16,7 +16,8 @@ public:
 			  accel(accelerometerSystemConfig->address),
 			  active(false),
 			  currentX(0), currentY(0), currentZ(0),
-			  lastActivity(0), timeout(0), instantActivity(false), readingsX(), lastReadingTime(0), moduleXZ(0) {
+			  lastActivity(0), timeout(0), instantActivity(false), readings(), lastReadingTime(0),
+			  module(0), maxModule(0), minModule(0), maxTime(0), minTime(0) {
 	}
 
 	virtual ~AccelerometerSystem() {};
@@ -24,16 +25,16 @@ public:
 	void init() {
 		accel.initialize();
 		accel.setRange(accelerometerSystemConfig->range);
-		accel.setRate(12);
+		accel.setRate(15);
+		accel.setFullResolution(0);
+		accel.setFIFOMode(0);
 	}
 
 	void update(unsigned long currentTime) {
 		readAccelerometer();
-		moduleXZ = getModuleXZ();
-		if (currentTime - lastReadingTime > 50) {
-			readingsX.push(moduleXZ);
-			lastReadingTime = currentTime;
-		}
+
+		updateReadings(currentTime);
+
 		if (detectActivity()) {
 			if (!instantActivity) {
 				activity(currentTime);
@@ -53,10 +54,6 @@ public:
 
 	virtual void readAccelerometer() {
 		accel.getAcceleration(&currentX, &currentY, &currentZ);
-	}
-
-	void calibrate() {
-
 	}
 
 	bool isActive() {
@@ -86,15 +83,57 @@ public:
 	virtual void activity(unsigned long currentTime) = 0;
 
 
-	BasicQueue<20, int16_t>* getReadingsX() {
-		return &readingsX;
+	BasicQueue<20, int16_t>* getReadings() {
+		return &readings;
 	}
 
 	int16_t getModuleXZ() {
-		return (currentX >= 0 ? 1 : -1) * sqrt(currentX * currentX + currentZ * currentZ);
+		return (currentX >= 0 ? 1 : -1) * sqrt((double)currentX * (double)currentX + (double)currentZ * (double)currentZ);
+	}
+
+	int16_t getModuleXY() {
+		return (currentX >= 0 ? 1 : -1) * sqrt((double)currentX * (double)currentX + (double)currentY * (double)currentY);
+	}
+
+	virtual int16_t getModule() = 0;
+
+
+protected:
+
+	void updateReadings(unsigned long currentTime) {
+
+		module = getModule();
+
+		if (module < minModule) {
+			minModule = module;
+			minTime = currentTime;
+		}
+
+		if (module > maxModule) {
+			maxModule = module;
+			maxTime = currentTime;
+		}
+
+		if (currentTime - lastReadingTime > 100) {
+			lastReadingTime = currentTime;
+			addMinMaxReadings();
+			minModule = module;
+			maxModule = module;
+		}
+	}
+
+	void addMinMaxReadings() {
+		if (maxTime >= minTime) {
+			readings.push(minModule);
+			readings.push(maxModule);
+		} else {
+			readings.push(maxModule);
+			readings.push(minModule);
+		}
 	}
 
 protected:
+
 	Configuration* config;
 	AccelerometerSystemConfig* accelerometerSystemConfig;
 	ADXL345 accel;
@@ -108,10 +147,15 @@ protected:
 	uint16_t timeout;
 	bool instantActivity;
 
-	BasicQueue<20, int16_t> readingsX;
+	BasicQueue<20, int16_t> readings;
 	unsigned long lastReadingTime;
 
-	int16_t moduleXZ;
+	int16_t module;
+	int16_t maxModule;
+	int16_t minModule;
+
+	unsigned long maxTime;
+	unsigned long minTime;
 
 };
 

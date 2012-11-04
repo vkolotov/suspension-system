@@ -26,7 +26,7 @@ public:
 	}
 
 	bool detectActivity() {
-		return moduleXZ >= accelerometerSystemConfig->severityThreshold;
+		return module >= accelerometerSystemConfig->severityThreshold;
 	}
 
 	void activity(unsigned long currentTime) {
@@ -49,11 +49,15 @@ public:
 		return timing.getSum();
 	}
 
+	int16_t getModule() {
+		return getModuleXY();
+	}
+
 protected:
 
 	UnsprungAccelerometerSystemConfig* unsprungAccelerometerSystemConfig;
 	SpeedSystem* speedSystem;
-	FrequencyQueue<20> timing;
+	FrequencyQueue<20, uint8_t> timing;
 
 };
 

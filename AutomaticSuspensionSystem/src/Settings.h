@@ -1,56 +1,54 @@
 #ifndef SUSPENSION_SYSTEM_SETTINGS_H_
 #define SUSPENSION_SYSTEM_SETTINGS_H_
 
-
 // pins
-static const unsigned char FRONT_BUTTON_PIN = 3;
-static const unsigned char MODE_BUTTON_PIN = 12;
-static const unsigned char REAR_BUTTON_PIN = 11;
-static const unsigned char CADENCE_PIN = 2;
-static const unsigned char SPEED_PIN = 10;
-static const unsigned char FRONT_SUSPENSION_CONTROL_PIN = 8;
-static const unsigned char FRONT_SUSPENSION_FEADBACK_PIN = 1;
-static const unsigned char REAR_SUSPENSION_CONTROL_PIN = A2;
-static const unsigned char REAR_SUSPENSION_FEADBACK_PIN = 0;
-static const unsigned char HEART_RATE_PIN = 9;
+#define FRONT_BUTTON_PIN 3
+#define MODE_BUTTON_PIN 12
+#define REAR_BUTTON_PIN 11
+#define CADENCE_PIN 2
+#define SPEED_PIN 10
+#define FRONT_SUSPENSION_CONTROL_PIN 8
+#define FRONT_SUSPENSION_FEADBACK_PIN 1
+#define REAR_SUSPENSION_CONTROL_PIN A2
+#define REAR_SUSPENSION_FEADBACK_PIN 0
+#define HEART_RATE_PIN 9
 
 // cadence system
-static const unsigned short MINIMUM_CADENCE_TIME = (60.0f / 180.0f) * 1000; // 180 revolutions per minute
-static const unsigned short MAXIMUM_CADENCE_TIME = (60.0f / 40.0f) * 1000; // 40 revolutions per minute
-static const unsigned short AVERAGE_CADENCE_TIME = (60.0f / 70.0f) * 1000; // 70 revolutions per minute
+#define MINIMUM_CADENCE_TIME (60.0f / 180.0f) * 1000 // 180 revolutions per minute
+#define MAXIMUM_CADENCE_TIME (60.0f / 40.0f) * 1000 // 40 revolutions per minute
+#define AVERAGE_CADENCE_TIME (60.0f / 70.0f) * 1000 // 70 revolutions per minute
 
 // speed system
-static const unsigned short WHEEL_LENGTH = 2133;
-static const unsigned short MINIMUM_SPEED_TIME = 96;//((float)(WHEEL_LENGTH * 36)) / ((float)(80 * 10)); // 80 km/h
-static const unsigned short MAXIMUM_SPEED_TIME = 3839;//((float)(WHEEL_LENGTH * 36)) / ((float)(2 * 10)); // 2 km/h
-static const unsigned short AVERAGE_SPEED_TIME = 512;//((float)(WHEEL_LENGTH * 36)) / ((float)(15 * 10)); // 15 km/h
+#define WHEEL_LENGTH 2133
+#define MINIMUM_SPEED_TIME 96//((float)(WHEEL_LENGTH * 36)) / ((float)(80 * 10)); // 80 km/h
+#define MAXIMUM_SPEED_TIME 3839//((float)(WHEEL_LENGTH * 36)) / ((float)(2 * 10)); // 2 km/h
+#define AVERAGE_SPEED_TIME 512//((float)(WHEEL_LENGTH * 36)) / ((float)(15 * 10)); // 15 km/h
 
 // buttons
-static const unsigned short BUTTON_DEBOUNCE_DURATION = 500;
+#define BUTTON_DEBOUNCE_DURATION 500
 
 // suspension
-static const unsigned short CALIBRATION_DELAY = 200;
-static const unsigned char CALIBRATION_THRESHOLD = 3;
-static const unsigned char CALIBRATION_STEP = 10;
-static const unsigned char MIN_ANGLE = 0;
-static const unsigned char MAX_ANGLE = 180;
+#define CALIBRATION_DELAY 200
+#define CALIBRATION_THRESHOLD 3
+#define CALIBRATION_STEP 10
+#define MIN_ANGLE 0
+#define MAX_ANGLE 180
 
 // modes
-static const uint8_t MODE_MANUAL = 0;
-static const uint8_t MODE_SEMIAUTOMATIC = 1;
-static const uint8_t MODE_AUTOMATIC = 2;
+#define MODE_MANUAL 0
+#define MODE_SEMIAUTOMATIC 1
+#define MODE_AUTOMATIC 2
 
 // power save
-static const uint8_t SERVO_RELAY_PIN = 6;
-static const uint8_t SERIAL_RELAY_PIN = 7;
-static const uint8_t I2C_RELAY_PIN = 13;
-static const uint8_t SLEEP_INTERRUPTION_NUMBER = 0;
-static const uint16_t SERO_STANDBY_TIMEOUT = 500;
-static const uint32_t SLEEP_TIMEOUT = 300000;
-
+#define SERVO_RELAY_PIN 6
+#define SERIAL_RELAY_PIN 7
+#define I2C_RELAY_PIN 13
+#define SLEEP_INTERRUPTION_NUMBER 0
+#define SERO_STANDBY_TIMEOUT 500
+#define SLEEP_TIMEOUT 300000
 
 // system
-static const uint16_t WHEEL_BASE = 1051;
+#define WHEEL_BASE 1051
 
 
 struct ButtonsSystem {
@@ -117,13 +115,11 @@ struct SprungAccelerometerSystemConfig {
 struct SuspensionSystemConfig {
 	uint8_t controlPin;
 	uint8_t feedbackPin;
-	uint16_t calibrationDelay;
-	uint8_t calibrationThreshold;
 	uint8_t calibrationStep;
 	uint16_t minAngle;
 	uint16_t maxAngle;
 	uint8_t modes;
-	uint16_t angles[9];
+	uint16_t angles[3];
 	uint8_t mode;
 };
 
@@ -168,7 +164,7 @@ Configuration EEMEM cfg = {
 		// reference
 		true,
 		// SystemConfig
-		{WHEEL_BASE, 4000, 0.164, 2.0},
+		{WHEEL_BASE, 4000, 0.38, 2.0},
 		// ButtonsSystem
 		{FRONT_BUTTON_PIN, MODE_BUTTON_PIN, REAR_BUTTON_PIN, BUTTON_DEBOUNCE_DURATION, LOW, LOW, LOW},
 		// SpeedSystemConfig
@@ -176,9 +172,9 @@ Configuration EEMEM cfg = {
 		// CadenceSystemConfig
 		{{CADENCE_PIN, MINIMUM_CADENCE_TIME, MAXIMUM_CADENCE_TIME, LOW}, 300},
 		// SuspensionSystemConfig frontSuspension
-		{FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 3, {20, 80, 170}, 0},
+		{FRONT_SUSPENSION_CONTROL_PIN, FRONT_SUSPENSION_FEADBACK_PIN, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 3, {2, 80, 176}, 0},
 		// SuspensionSystemConfig rearSuspension
-		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_DELAY, CALIBRATION_THRESHOLD, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {20, 170}, 0},
+		{REAR_SUSPENSION_CONTROL_PIN, REAR_SUSPENSION_FEADBACK_PIN, CALIBRATION_STEP, MIN_ANGLE, MAX_ANGLE, 2, {7, 100}, 0},
 		// AccelerometerSystemConfig sprungAccelerometerSystem
 		{{ADXL345_ADDRESS_ALT_LOW, 0x3, -30, 15}, /*alpha*/0.02, /*beta*/ 0.00001},
 		// AccelerometerSystemConfig unsprungAccelerometerSystem

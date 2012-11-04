@@ -34,14 +34,15 @@ void setup() {
 	Serial.begin(9600);
 	//delay(2000);
 	Serial.println("Starting...");
-	initConfiguration();
+	//initConfiguration();
 }
 
 
 void testConfiguration() {
+	Serial.println("Conf test --");
+	initConfiguration();
 	Configuration* config = loadConfiguration();
 	resetConfiguration(config);
-	Serial.println("Conf test --");
 	assertEquals<uint16_t>(WHEEL_BASE, config->system.wheelBase);
 	assertEquals<uint16_t>(2000, config->semiautomaticStateConfig.averageDegreeMeasuringPeriod);
 
@@ -70,6 +71,7 @@ void testConfiguration() {
 
 void testSpeedSystem() {
 	Serial.println("Speed test --");
+	initConfiguration();
 	Configuration* config = loadConfiguration();
 	resetConfiguration(config);
 	SpeedSystemMock mock(&(config->speed));
@@ -106,6 +108,7 @@ void testSpeedSystem() {
 
 void testCadenceSystem() {
 	Serial.println("Cadence test --");
+	initConfiguration();
 	Configuration* config = loadConfiguration();
 	resetConfiguration(config);
 	CadenceSystemMock mock(&(config->cadence));
@@ -154,7 +157,7 @@ void testCadenceSystem() {
 
 void testButtons() {
 	Serial.println("Buttons test --");
-
+	initConfiguration();
 	ButtonMock mock(FRONT_BUTTON_PIN, false, BUTTON_DEBOUNCE_DURATION);
 	assertTrue(!mock.isPushed());
 	assertTrue(!mock.isPushed(1000));
@@ -195,6 +198,7 @@ void testButtons() {
 
 void testUnsprungAccelerometerSystem() {
 	Serial.println("UnsprungAccelerometerSystem test --");
+	initConfiguration();
 	Configuration* config = loadConfiguration();
 	resetConfiguration(config);
 	SpeedSystemMock speed(&(config->speed));
@@ -209,20 +213,20 @@ void testUnsprungAccelerometerSystem() {
 	uint16_t idleValue = 100;
 
 	accel.setAccelerationX(idleValue);
-	accel.calibrate();
 	accel.update(600);
+	assertEquals<uint16_t>(idleValue, accel.getModule());
 	assertTrue(!accel.isActive());
 	assertEquals<uint16_t>(idleValue, accel.getAccelerationX());
 
-	accel.setAccelerationX(idleValue + threshold - 1);
+	accel.setAccelerationX(threshold - 1);
 	accel.update(700);
 	assertTrue(!accel.isActive());
 	assertEquals<uint16_t>(0, accel.getTimeout());
 
-
-	accel.setAccelerationX(idleValue + threshold);
+	accel.setAccelerationX(threshold);
 	accel.update(800);
-	assertTrue(accel.isActive());
+	assertEquals<uint16_t>(threshold, accel.getModule());
+	assertTrue(accel.isActive()); //----
 
 	assertTrue(speed.getAverageSpeed() < 0.5f);
 
@@ -237,7 +241,7 @@ void testUnsprungAccelerometerSystem() {
 	assertEquals<uint16_t>(0, accel.getNumberOfBumps());
 
 	speed.speed = 2.0f;
-	accel.setAccelerationX(idleValue + threshold);
+	accel.setAccelerationX(threshold);
 	accel.update(11000);
 	accel.setAccelerationX(0);
 	assertTrue(accel.isActive());
@@ -258,7 +262,7 @@ void testUnsprungAccelerometerSystem() {
 	for (uint8_t i = 1; i <= 20; i++) {
 		accel.setAccelerationX(0);
 		accel.update(updateTime);
-		accel.setAccelerationX(idleValue + threshold);
+		accel.setAccelerationX(threshold);
 		accel.update(updateTime + 50);
 		updateTime += 100;
 		assertEquals<uint16_t>(i, accel.getNumberOfBumps());
@@ -276,7 +280,8 @@ void testUnsprungAccelerometerSystem() {
 }
 void testFrequencyQueue() {
 	Serial.println("testFrequencyQueue --");
-	FrequencyQueue<20> timing(4000);
+	initConfiguration();
+	FrequencyQueue<20, uint8_t> timing(4000);
 
 	uint16_t segment = 4000 / 20;
 
@@ -324,6 +329,7 @@ void testFrequencyQueue() {
 
 void testBasicQueue() {
 	Serial.println("testBasicQueue --");
+
 	BasicQueue<2, uint16_t> queue;
 	assertEquals<uint16_t>(0, queue.size());
 
@@ -348,6 +354,25 @@ void testBasicQueue() {
 	Serial.println("Done --");
 }
 
+void testMemory() {
+	Serial.println("testMemory --");
+	testIndex++;
+	Serial.println(getFreeMemory());
+	initConfiguration();
+	Serial.println(getFreeMemory());
+	Configuration* config = loadConfiguration();
+	Serial.println(getFreeMemory());
+	//delete config;
+	Serial.println(getFreeMemory());
+
+	config = loadConfiguration();
+	Serial.println(getFreeMemory());
+	delete config;
+	Serial.println(getFreeMemory());
+
+	Serial.println("Done --");
+}
+
 void loop() {
 
 	if (testIndex != 0) {
@@ -361,5 +386,7 @@ void loop() {
 	testUnsprungAccelerometerSystem();
 	testFrequencyQueue();
 	testBasicQueue();
+
+	testMemory();
 
 }

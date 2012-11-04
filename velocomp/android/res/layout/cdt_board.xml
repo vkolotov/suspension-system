@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.vol.velocomp.views.CDTBoard xmlns:android="http://schemas.android.com/apk/res/android"
-                                 xmlns:indicator= "http://schemas.android.com/apk/res/org.vol.velocomp"
+<org.vol.velocomp.views.boards.CDTBoard xmlns:android="http://schemas.android.com/apk/res/android"
+                                 xmlns:velocomp= "http://schemas.android.com/apk/res/org.vol.velocomp"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:id="@+id/cdt_board">
@@ -10,7 +10,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:id="@+id/indicators">
-        <org.vol.velocomp.views.Indicator
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/clockSpeed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -19,8 +19,18 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
-                indicator:label="CPU Speed"/>
-        <org.vol.velocomp.views.Indicator
+                velocomp:label="CPU Speed"/>
+        <org.vol.velocomp.views.controls.Indicator
+                android:id="@+id/freeMemory"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/indicatorAreaHeight"
+                android:background="#F0F0F0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingRight="5dp"
+                velocomp:label="Free Memory"/>
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/cadence"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -29,8 +39,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
-                indicator:label="Cadence" />
-        <org.vol.velocomp.views.Indicator
+                velocomp:label="Cadence" />
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/speed"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -39,8 +49,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
-                indicator:label="Speed" />
-        <org.vol.velocomp.views.Indicator
+                velocomp:label="Speed" />
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/gradient"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -49,8 +59,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
-                indicator:label="@string/gradient_underlined"/>
-        <org.vol.velocomp.views.Indicator
+                velocomp:label="@string/gradient_underlined"/>
+        <org.vol.velocomp.views.controls.Indicator
                 android:id="@+id/cdtMode"
                 android:layout_width="fill_parent"
                 android:layout_height="@dimen/indicatorAreaHeight"
@@ -59,7 +69,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:paddingRight="5dp"
-                indicator:label="Mode"/>
+                velocomp:label="Mode"/>
 
 
     </LinearLayout>
@@ -68,98 +78,36 @@
                   android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
                   android:layout_below="@+id/indicators"
-                  android:layout_above="@+id/climbGradientGroup"
+                  android:layout_above="@+id/configs"
                   android:layout_margin="10dp"
                   android:background="#C0C0C0"
                   android:id="@+id/gradientGraph"/>
 
-    <RelativeLayout
-            android:id="@+id/climbGradientGroup"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_above="@+id/descendGradientGroup"
-            android:baselineAligned="false"
-            android:visibility="gone">
-        <TextView
-                android:id="@+id/climbGradientLabel"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Climb gradient"
-                android:textSize="10dp"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/configs"
+                  android:orientation="vertical"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentBottom="true"
+                  android:baselineAligned="false"
+                  android:visibility="gone">
 
-        <TextView
+        <org.vol.velocomp.views.controls.SeekBarConfig
                 android:id="@+id/climbGradient"
-                android:layout_width="30dip"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="0"
-
-                android:textSize="20dp"
-                android:textColor="#000000"
-                android:layout_below="@id/climbGradientLabel"
-                android:layout_alignParentLeft="true"/>
-
-        <SeekBar android:id="@+id/climbGradientSeekBar"
-                 android:layout_below="@id/climbGradientLabel"
-                 android:layout_alignParentRight="true"
-                 android:layout_toRightOf="@+id/climbGradient"
-                 android:paddingLeft="5dp"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:max="50"
-                 android:progress="0"
-                 android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="0" />
-    </RelativeLayout>
-
-
-
-    <RelativeLayout
-            android:id="@+id/descendGradientGroup"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="5dp"
-            android:background="#F0F0F0"
-            android:layout_alignParentBottom="true"
-            android:baselineAligned="false"
-            android:visibility="gone">
-        <TextView
-                android:id="@+id/descendGradientLabel"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Descend gradient"
-                android:textSize="10dp"
-                android:textColor="#000000"
-                android:layout_alignParentLeft="true" />
-
-        <TextView
-                android:id="@+id/descendGradient"
-                android:layout_width="30dip"
+                android:layout_marginRight="10dp"
+                velocomp:maxValue="45"
+                velocomp:title="Climb Gradient Threshold"/>
+        <org.vol.velocomp.views.controls.SeekBarConfig
+                android:id="@+id/descentGradient"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="0"
-                android:textSize="20dp"
-                android:textColor="#000000"
-                android:layout_below="@id/descendGradientLabel"
-                android:layout_alignParentLeft="true"/>
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="10dp"
+                velocomp:maxValue="45"
+                velocomp:title="Descent Gradient Threshold"/>
 
-        <SeekBar android:id="@+id/descendGradientSeekBar"
-                 android:layout_below="@id/descendGradientLabel"
-                 android:layout_alignParentRight="true"
-                 android:layout_toRightOf="@+id/descendGradient"
-                 android:paddingLeft="5dp"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:max="50"
-                 android:progress="0"
-                 android:progressDrawable="@drawable/seekbar_bg"
-                 android:secondaryProgress="0" />
-    </RelativeLayout>
+    </LinearLayout>
 
-</org.vol.velocomp.views.CDTBoard>
+</org.vol.velocomp.views.boards.CDTBoard>

@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.controls;
 
 import android.content.Context;
 import android.util.AttributeSet;

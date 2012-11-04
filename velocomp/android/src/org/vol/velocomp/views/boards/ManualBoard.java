@@ -1,4 +1,4 @@
-package org.vol.velocomp.views;
+package org.vol.velocomp.views.boards;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -8,6 +8,9 @@ import android.widget.ToggleButton;
 import org.vol.velocomp.R;
 import org.vol.velocomp.messages.ManualTelemetry;
 import org.vol.velocomp.service.BikeService;
+import org.vol.velocomp.views.Board;
+import org.vol.velocomp.views.controls.Indicator;
+import org.vol.velocomp.views.Mode;
 
 public class ManualBoard extends RelativeLayout {
 
@@ -16,6 +19,7 @@ public class ManualBoard extends RelativeLayout {
     private ToggleButton descendButton;
 
     private Indicator cpuClockSpeed;
+    private Indicator freeMemory;
     private Indicator speed;
     private Indicator cadence;
 
@@ -33,6 +37,7 @@ public class ManualBoard extends RelativeLayout {
             super.updateTelemetry(telemetry);
 
             cpuClockSpeed.setValue(telemetry.clockSpeed);
+            freeMemory.setValue(telemetry.freeMemory);
             speed.setValue(telemetry.speed);
             cadence.setValue(telemetry.cadence);
             updateButtons(telemetry.suspensionMode);
@@ -97,6 +102,7 @@ public class ManualBoard extends RelativeLayout {
         }
 
         cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
+        freeMemory = (Indicator) findViewById(R.id.freeMemory);
         cadence = (Indicator) findViewById(R.id.cadence);
         speed = (Indicator) findViewById(R.id.speed);
 
