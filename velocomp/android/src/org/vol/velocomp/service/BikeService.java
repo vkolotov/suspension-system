@@ -1,7 +1,7 @@
 package org.vol.velocomp.service;
 
 
-import org.vol.velocomp.ConnectionException;
+import org.vol.velocomp.exceptions.*;
 import org.vol.velocomp.messages.*;
 
 import java.util.HashSet;
@@ -47,13 +47,76 @@ public class BikeService {
         }
     }
 
+    abstract class InvocationHandler<T> {
+
+        abstract T invoke() throws BikeCommunicationException, InterruptedException, TimeoutException;
+
+        T handle() {
+            if (!isConnected) {
+                return null;
+            }
+            try {
+                return invoke();
+            } catch (BikeCommunicationException e) {
+                disconnect(false);
+                for (BikeServiceListener bikeServiceListener : listeners) {
+                    bikeServiceListener.exception(e);
+                }
+            } catch (InterruptedException e) {
+                disconnect(false);
+                for (BikeServiceListener bikeServiceListener : listeners) {
+                    bikeServiceListener.exception(e);
+                }
+            } catch (TimeoutException e) {
+                disconnect(false);
+                for (BikeServiceListener bikeServiceListener : listeners) {
+                    bikeServiceListener.exception(e);
+                }
+            }
+            return null;
+        }
+
+    }
+
+    abstract class BooleanInvocationHandler extends InvocationHandler<Boolean> {
+        @Override
+        Boolean handle() {
+            if (!isConnected) {
+                return false;
+            }
+            Boolean result = super.handle();
+            return result != null ? result : false;
+        }
+    }
+
     private static BikeService instance;
     private Set<BikeServiceListener> listeners = new HashSet<BikeServiceListener>(5);
     private boolean isConnected;
 
-    public interface BikeServiceListener {
-        void onDisconnected(Exception ex);
-        void onConnected();
+    public static class BikeServiceListener {
+        public void exception(BikeCommunicationException ex) {}
+        public void exception(BikeNotFoundException ex) {}
+        public void exception(BikeNotPairedException ex) {}
+        public void exception(BluetoothNotReadyException ex) {}
+        public void exception(SocketAcquiringException ex) {}
+        public void exception(SocketConnectionException ex) {}
+        public void exception(StreamConnectionException ex) {}
+        public void exception(TimeoutException ex) {}
+        public void exception(InterruptedException ex) {}
+        public void connect() {}
+        public void disconnect() {}
+    }
+
+    public static class BasicBikeServiceListener extends BikeServiceListener {
+        public void exception(BikeCommunicationException ex) { disconnect();}
+        public void exception(BikeNotFoundException ex) { disconnect();}
+        public void exception(BikeNotPairedException ex) { disconnect();}
+        public void exception(BluetoothNotReadyException ex) { disconnect();}
+        public void exception(SocketAcquiringException ex) { disconnect();}
+        public void exception(SocketConnectionException ex) { disconnect();}
+        public void exception(StreamConnectionException ex) { disconnect();}
+        public void exception(TimeoutException ex) { disconnect();}
+        public void exception(InterruptedException ex) { disconnect();}
     }
 
     private BikeService() {
@@ -71,61 +134,77 @@ public class BikeService {
         listeners.add(listener);
     }
 
-    private void notifyListeners(boolean isConnected, Exception ex) {
-        for (BikeServiceListener bikeServiceListener : listeners) {
-            if (isConnected) {
-                bikeServiceListener.onConnected();
-            } else {
-                bikeServiceListener.onDisconnected(ex);
-            }
-        }
-    }
-
     synchronized public void connect() {
         try {
             BikeConnection.getInstance().connect(TIMEOUT);
             BikeConnection.getInstance().testConnection(TIMEOUT);
             isConnected = true;
-            notifyListeners(true, null);
-        } catch (ConnectionException e) {
-            disconnect();
-            notifyListeners(false, e);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.connect();
+            }
+        } catch (BikeCommunicationException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (BikeNotFoundException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (BikeNotPairedException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (BluetoothNotReadyException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (SocketAcquiringException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (SocketConnectionException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (StreamConnectionException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
         } catch (TimeoutException e) {
-            disconnect();
-            notifyListeners(false, e);
-        }
-    }
-
-    synchronized public void disconnect() {
-        try {
-            BikeConnection.getInstance().disconnect();
-            notifyListeners(false, null);
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
+        } catch (InterruptedException e) {
+            disconnect(false);
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.exception(e);
+            }
         } catch (ConnectionException e) {
-            notifyListeners(false, e);
+            disconnect(false);
+            throw new IllegalStateException(e);
         }
-        isConnected = false;
     }
 
-    synchronized public boolean isDeviceFound() {
-        return BikeConnection.getInstance().isConnected();
+    synchronized public void disconnect(boolean notifyListeners) {
+        BikeConnection.getInstance().disconnect();
+        isConnected = false;
+        if (notifyListeners) {
+            for (BikeServiceListener bikeServiceListener : listeners) {
+                bikeServiceListener.disconnect();
+            }
+        }
     }
 
     public boolean isConnected() {
         return isConnected;
-    }
-
-    synchronized public void testConnection() {
-        try {
-            BikeConnection.getInstance().testConnection(TIMEOUT);
-            isConnected = true;
-            notifyListeners(true, null);
-        } catch (TimeoutException e) {
-            disconnect();
-            notifyListeners(false, e);
-        } catch (ConnectionException e) {
-            disconnect();
-            notifyListeners(false, e);
-        }
     }
 
     public boolean setTrailModeAll() {
@@ -204,58 +283,43 @@ public class BikeService {
         return getMessage(AutomaticTelemetry.class, RequestCode.GET_AUTOMATIC_TELEMETRY);
     }
 
-    synchronized private <Message> boolean sendMessage(RequestCode requestCode, Message message) {
-        if (!isConnected) {
-            return false;
-        }
-        try {
-            BikeConnection.getInstance().send(requestCode.code, message, TIMEOUT);
-            notifyListeners(true, null);
-            this.isConnected = true;
-            return true;
-        } catch (TimeoutException e) {
-            disconnect();
-            notifyListeners(false, e);
-        } catch (ConnectionException e) {
-            disconnect();
-            notifyListeners(false, e);
-        }
-        return false;
+    synchronized public boolean testConnection() {
+        return new BooleanInvocationHandler() {
+            @Override
+            Boolean invoke() throws BikeCommunicationException, InterruptedException, TimeoutException {
+                BikeConnection.getInstance().testConnection(TIMEOUT);
+                return true;
+            }
+        }.handle();
     }
 
-    synchronized private <Message> Message getMessage(Class<Message> clazz, RequestCode requestCode) {
-        if (!isConnected) {
-            return null;
-        }
-        try {
-            Message result = BikeConnection.getInstance().request(clazz, requestCode.code, TIMEOUT);
-            notifyListeners(true, null);
-            isConnected = true;
-            return result;
-        } catch (TimeoutException e) {
-            disconnect();
-            notifyListeners(false, e);
-        } catch (ConnectionException e) {
-            disconnect();
-            notifyListeners(false, e);
-        }
-        return null;
+    synchronized private <Message> boolean sendMessage(final RequestCode requestCode, final Message message) {
+        return new BooleanInvocationHandler() {
+            @Override
+            Boolean invoke() throws BikeCommunicationException, InterruptedException, TimeoutException {
+                BikeConnection.getInstance().send(requestCode.code, message, TIMEOUT);
+                return true;
+            }
+        }.handle();
     }
 
-    synchronized private boolean sendMessage(RequestCode requestCode) {
-        if (!isConnected) {
-            return false;
-        }
-        try {
-            BikeConnection.getInstance().sendMessageId(requestCode.code);
-            isConnected = true;
-            notifyListeners(true, null);
-            return true;
-        } catch (ConnectionException e) {
-            disconnect();
-            notifyListeners(false, e);
-            return false;
-        }
+    synchronized private <Message> Message getMessage(final Class<Message> clazz, final RequestCode requestCode) {
+        return new InvocationHandler<Message>() {
+            @Override
+            Message invoke() throws BikeCommunicationException, InterruptedException, TimeoutException {
+                return BikeConnection.getInstance().request(clazz, requestCode.code, TIMEOUT);
+            }
+        }.handle();
+    }
+
+    synchronized private boolean sendMessage(final RequestCode requestCode) {
+        return new BooleanInvocationHandler() {
+            @Override
+            Boolean invoke() throws BikeCommunicationException, InterruptedException, TimeoutException {
+                BikeConnection.getInstance().sendMessageId(requestCode.code);
+                return true;
+            }
+        }.handle();
     }
 
 }

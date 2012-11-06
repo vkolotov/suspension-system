@@ -1,6 +1,6 @@
 package org.vol.velocomp.threads;
 
-import org.vol.velocomp.ConnectionException;
+import org.vol.velocomp.exceptions.ConnectionException;
 import org.vol.velocomp.messages.Telemetry;
 import org.vol.velocomp.views.Board;
 

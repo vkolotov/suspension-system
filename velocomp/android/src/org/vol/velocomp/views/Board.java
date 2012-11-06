@@ -18,34 +18,32 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
     private Dashboard dashboard;
 
     protected Board(V boardView, int updateTime) {
-        BikeService.getInstance().addListener(bikeServiceListener);
+        BikeService.getInstance().addListener( new BikeService.BasicBikeServiceListener() {
+            @Override
+            public void connect() {
+                startTelemetryThread();
+                runOnUi( new Runnable() {
+                    @Override
+                    public void run() {
+                        Board.this.onConnected();
+                    }
+                });
+            }
+
+            @Override
+            public void disconnect() {
+                stopTelemetryThread();
+                runOnUi( new Runnable() {
+                    @Override
+                    public void run() {
+                        Board.this.onDisconnected();
+                    }
+                });
+            }
+        });
         this.boardView = boardView;
         this.updateTime = updateTime;
     }
-
-    private BikeService.BikeServiceListener bikeServiceListener = new BikeService.BikeServiceListener() {
-        @Override
-        public void onDisconnected(Exception ex) {
-            stopTelemetryThread();
-            runOnUi( new Runnable() {
-                @Override
-                public void run() {
-                    Board.this.onDisconnected();
-                }
-            });
-        }
-
-        @Override
-        public void onConnected() {
-            startTelemetryThread();
-            runOnUi( new Runnable() {
-                @Override
-                public void run() {
-                    Board.this.onConnected();
-                }
-            });
-        }
-    };
 
     public void startTelemetryThread() {
         if (isShown && BikeService.getInstance().isConnected()

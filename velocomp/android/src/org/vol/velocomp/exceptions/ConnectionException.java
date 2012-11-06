@@ -1,6 +1,6 @@
-package org.vol.velocomp;
+package org.vol.velocomp.exceptions;
 
-public class ConnectionException extends Exception {
+public abstract class ConnectionException extends Exception {
 
     public ConnectionException() {
     }
@@ -16,4 +16,5 @@ public class ConnectionException extends Exception {
     public ConnectionException(Throwable throwable) {
         super(throwable);
     }
+
 }

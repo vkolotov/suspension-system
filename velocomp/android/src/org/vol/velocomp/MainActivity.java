@@ -11,6 +11,7 @@ import greendroid.widget.ActionBarItem;
 import org.vol.velocomp.service.BikeService;
 import org.vol.velocomp.threads.BikeConnectionThread;
 import org.vol.velocomp.views.ConfigurationView;
+import org.vol.velocomp.views.ConnectionDialog;
 import org.vol.velocomp.views.Dashboard;
 
 public class MainActivity extends GDActivity {
@@ -24,64 +25,37 @@ public class MainActivity extends GDActivity {
     private Dashboard dashboard;
     private ConfigurationView configurationView;
 
+    private ConnectionDialog connectionDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarContentView(R.layout.main);
         getActionBar().setType(ActionBar.Type.Empty);
         getActionBar().setTitle(getString(R.string.app_name));
+
         sleepActionBarItem = addActionBarItem(ActionBarItem.Type.Eye, R.id.action_bar_sleep);
         resetActionBarItem = addActionBarItem(ActionBarItem.Type.Star, R.id.action_bar_reset);
         settingsActionBarItem = addActionBarItem(ActionBarItem.Type.Settings, R.id.action_bar_settings);
         viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         dashboard = (Dashboard) findViewById(R.id.dashboard);
         configurationView = (ConfigurationView) findViewById(R.id.configuration_view);
-        BikeService.getInstance().addListener(new BikeService.BikeServiceListener() {
-            @Override
-            public void onDisconnected(Exception ex) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (settingsActionBarItem != null) {
-                            settingsActionBarItem.getItemView().setVisibility(View.GONE);
-                        }
-                        if (sleepActionBarItem != null) {
-                            sleepActionBarItem.getItemView().setVisibility(View.GONE);
-                        }
+        connectionDialog = new ConnectionDialog(this);
+        //connectionDialog.show();
 
-                        if (resetActionBarItem != null) {
-                            resetActionBarItem.getItemView().setVisibility(View.GONE);
-                        }
-                        getActionBar().setTitle(getString(R.string.app_name) + " disconnected");
-                        for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
-                            dashboard.getSegmentedBar().getChildAt(i).setEnabled(false);
-                        }
-                    }
-                });
+        BikeService.getInstance().addListener( new BikeService.BasicBikeServiceListener() {
+            @Override
+            public void connect() {
+                setEnabled(true);
             }
 
             @Override
-            public void onConnected() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (settingsActionBarItem != null) {
-                            settingsActionBarItem.getItemView().setVisibility(View.VISIBLE);
-                        }
-                        if (sleepActionBarItem != null) {
-                            sleepActionBarItem.getItemView().setVisibility(View.VISIBLE);
-                        }
-                        if (resetActionBarItem != null) {
-                            resetActionBarItem.getItemView().setVisibility(View.VISIBLE);
-                        }
-                        getActionBar().setTitle(getString(R.string.app_name) + " connected");
-                        for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
-                            dashboard.getSegmentedBar().getChildAt(i).setEnabled(true);
-                        }
-                    }
-                });
+            public void disconnect() {
+                setEnabled(false);
             }
         });
+
+
         getActionBar().setOnActionBarListener( new ActionBar.OnActionBarListener() {
             @Override
             public void onActionBarItemClicked(int position) {
@@ -96,6 +70,7 @@ public class MainActivity extends GDActivity {
                 }
             }
         });
+
     }
 
     @Override
@@ -156,8 +131,36 @@ public class MainActivity extends GDActivity {
         if (viewFlipper.getCurrentView() != dashboard && KeyEvent.KEYCODE_BACK == keyCode) {
             showDashboard();
             return false;
+        } else if (viewFlipper.getCurrentView() == dashboard && KeyEvent.KEYCODE_BACK == keyCode) {
+            this.connectionThread.cancel();
+            try {
+                this.connectionThread.join();
+            } catch (InterruptedException e) {}
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void setEnabled(final boolean isEnabled) {
+        runOnUiThread( new Runnable() {
+            @Override
+            public void run() {
+                if (settingsActionBarItem != null) {
+                    settingsActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+                }
+                if (sleepActionBarItem != null) {
+                    sleepActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+                }
+
+                if (resetActionBarItem != null) {
+                    resetActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+                }
+                getActionBar().setTitle(getString(R.string.app_name) + (isEnabled ? " connected " : " disconnected"));
+                for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
+                    dashboard.getSegmentedBar().getChildAt(i).setEnabled(isEnabled);
+                }
+            }
+        });
+
     }
 
 }

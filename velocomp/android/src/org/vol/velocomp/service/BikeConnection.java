@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-import org.vol.velocomp.ConnectionException;
+import org.vol.velocomp.exceptions.*;
 import org.vol.velocomp.messages.BikeMessageSerializer;
 import org.vol.velocomp.messages.ReceivedSize;
 import org.vol.velocomp.messages.StatusMessage;
@@ -45,7 +45,8 @@ public class BikeConnection {
     private BikeConnection() {
     }
 
-    public void connect(long timeout) throws ConnectionException {
+    public void connect(long timeout)
+            throws ConnectionException, InterruptedException, TimeoutException {
 
         if (isConnected()) {
             disconnect();
@@ -53,53 +54,60 @@ public class BikeConnection {
 
         this.executorService = Executors.newSingleThreadExecutor();
 
-        Future future = executorService.submit( new Callable() {
-            @Override
-            public Object call() throws ConnectionException {
+//        Future future = executorService.submit( new Callable() {
+//            @Override
+//            public Object call() throws ConnectionException {
+                checkBluetoothAdapter();
                 bikeBluetooth = getBikeDevice();
+                checkBluetoothDevice();
                 bluetoothSocket = getBluetoothSocket();
 
                 try {
                     bluetoothSocket.connect();
                 } catch (IOException e) {
+                    disconnect();
                     Log.e(TAG, e.getMessage(), e);
-                    throw new ConnectionException("Could not open socket with bike");
+                    throw new SocketConnectionException("Could not open socket with bike: " + e.getMessage());
                 }
                 try {
                     inputStream = new DataInputStream(bluetoothSocket.getInputStream());
                     outputStream = new DataOutputStream(bluetoothSocket.getOutputStream());
                 } catch (IOException e) {
+                    disconnect();
                     Log.e(TAG, e.getMessage(), e);
-                    throw new ConnectionException("Could not get input/output stream");
+                    throw new StreamConnectionException("Could not get input/output stream: " + e.getMessage());
                 }
-                return null;
-            }
-        });
-
-        try {
-            future.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            Log.e(TAG, e.getMessage(), e);
-            disconnect();
-            throw new ConnectionException("Interrupted", e);
-        } catch (ExecutionException e) {
-            Log.e(TAG, e.getMessage(), e);
-            disconnect();
-            throw new ConnectionException("Execution", e);
-        } catch (TimeoutException e) {
-            Log.e(TAG, e.getMessage(), e);
-            disconnect();
-            throw new ConnectionException("Timeout", e);
-        }
+//                return null;
+//            }
+//        });
+//
+//        try {
+//            future.get(timeout, TimeUnit.MILLISECONDS);
+//        } catch (InterruptedException e) {
+//            Log.e(TAG, e.getMessage(), e);
+//            disconnect();
+//            throw e;
+//        } catch (ExecutionException e) {
+//            Log.e(TAG, e.getMessage(), e);
+//            disconnect();
+//            Throwable cause = e.getCause();
+//            if (cause instanceof ConnectionException) {
+//                throw (ConnectionException) cause;
+//            } else {
+//                throw new IllegalStateException(cause);
+//            }
+//        } catch (TimeoutException e) {
+//            Log.e(TAG, e.getMessage(), e);
+//            disconnect();
+//            throw new TimeoutException("Connection timeout");
+//        }
     }
 
-    public void disconnect() throws ConnectionException {
+    public void disconnect() {
 
-        if (!isConnected()) {
-            return;
+        if (this.executorService != null) {
+            this.executorService.shutdownNow();
         }
-
-        this.executorService.shutdownNow();
 
         try {
             if (this.outputStream != null) {
@@ -116,42 +124,42 @@ public class BikeConnection {
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException(e);
+            throw new IllegalStateException(e);
         }
     }
 
-    public void testConnection(long timeout) throws TimeoutException, ConnectionException {
+    public void testConnection(long timeout) throws TimeoutException, BikeCommunicationException, InterruptedException {
         if (!isConnected()) {
-            throw new ConnectionException("Is not connected");
+            throw new IllegalStateException("Is not connected");
         }
         sendMessageId((byte) 0);
         StatusMessage statusMessage = receive(StatusMessage.class, timeout);
         if (!statusMessage.isOk()) {
-            throw new ConnectionException("Device is not ready");
+            throw new BikeCommunicationException("Bike reported error: " + statusMessage.status);
         }
     }
 
     public <Request> void send(byte requestId, final Request message, long timeout)
-            throws TimeoutException, ConnectionException {
+            throws TimeoutException, BikeCommunicationException, InterruptedException {
         try {
             this.inputStream.skipBytes(this.inputStream.available());
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException(e.getMessage());
+            throw new IllegalStateException(e);
         }
         sendMessageId(requestId);
         checkStatus(timeout);
         int messageSize = BikeMessageSerializer.getSizeOf(message.getClass());
         int writtenSize = sendMessage(message);
         if (writtenSize != messageSize) {
-            throw new ConnectionException("Written size is wrong: expected " + messageSize + " but written " + writtenSize);
+            throw new BikeCommunicationException("Written size is wrong: expected " + messageSize + " but written " + writtenSize);
         }
         checkReceivedSize((short) messageSize, timeout);
     }
 
     public <Response> Response request(
             final Class<Response> clazz, byte requestId, long timeout)
-            throws TimeoutException, ConnectionException {
+            throws TimeoutException, BikeCommunicationException, InterruptedException {
         sendMessageId(requestId);
         Response result = receive(clazz, timeout);
         checkExcessiveBytes();
@@ -159,7 +167,7 @@ public class BikeConnection {
     }
 
     public <Response> Response receive(final Class<Response> clazz, long timeout)
-            throws TimeoutException, ConnectionException {
+            throws TimeoutException, InterruptedException, BikeCommunicationException {
 
         Future<Response> future = executorService.submit( new Callable<Response>() {
             @Override
@@ -168,47 +176,52 @@ public class BikeConnection {
             }
         });
 
-
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             disconnect();
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException("Interrupted", e);
+            throw e;
         } catch (ExecutionException e) {
             disconnect();
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException("Execution", e);
+            Throwable cause = e.getCause();
+            if (cause instanceof BikeCommunicationException) {
+                throw (BikeCommunicationException) cause;
+            } else {
+                throw new IllegalStateException(cause);
+            }
         }
     }
 
-    private void checkStatus(long timeout) throws TimeoutException, ConnectionException {
+    private void checkStatus(long timeout) throws TimeoutException, BikeCommunicationException, InterruptedException {
         StatusMessage statusMessage = receive(StatusMessage.class, timeout);
         if (statusMessage.status != StatusMessage.OK) {
-            throw new ConnectionException("Reported error: " + statusMessage.status);
+            throw new BikeCommunicationException("Reported error: " + statusMessage.status);
         }
     }
 
-    private void checkReceivedSize(short expected, long timeout) throws TimeoutException, ConnectionException {
+    private void checkReceivedSize(short expected, long timeout)
+            throws TimeoutException, InterruptedException, BikeCommunicationException, BikeCommunicationException {
         ReceivedSize receivedSize = receive(ReceivedSize.class, timeout);
         if (receivedSize.bytes != expected) {
-            throw new ConnectionException("Received size is wrong: expected "
+            throw new BikeCommunicationException("Received size is wrong: expected "
                     + expected + " but received: " + receivedSize.bytes);
         }
     }
 
-    public void sendMessageId(byte messageId) throws ConnectionException {
+    public void sendMessageId(byte messageId) throws BikeCommunicationException {
         checkConnection();
         try {
             this.outputStream.write(messageId);
             this.outputStream.flush();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException("Was unable to send message ID", e);
+            throw new BikeCommunicationException("Was unable to send message ID", e);
         }
     }
 
-    private <Request> int sendMessage(Request request) throws ConnectionException {
+    private <Request> int sendMessage(Request request) throws BikeCommunicationException {
         checkConnection();
         try {
             int writtenSize = this.outputStream.size();
@@ -217,35 +230,62 @@ public class BikeConnection {
             return this.outputStream.size() - writtenSize;
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException("Could not send message", e);
+            throw new BikeCommunicationException("Could not send message", e);
         }
     }
 
-    private <Response> Response receiveMessage(final Class<Response> clazz) throws ConnectionException {
+    private <Response> Response receiveMessage(final Class<Response> clazz) throws BikeCommunicationException {
         checkConnection();
         try {
             return BikeMessageSerializer.deserialize(clazz, this.inputStream);
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException("Could not receive message", e);
+            throw new BikeCommunicationException("Could not receive message", e);
         }
     }
 
-    private BluetoothDevice getBikeDevice() throws ConnectionException {
+    private void checkBluetoothAdapter() throws BluetoothNotReadyException {
+        switch (bluetoothAdapter.getState()) {
+            case BluetoothAdapter.STATE_OFF:
+                throw new BluetoothNotReadyException("Bluetooth adapter is off");
+            case BluetoothAdapter.STATE_TURNING_OFF:
+                throw new BluetoothNotReadyException("Bluetooth adapter is  turning off");
+            case BluetoothAdapter.STATE_TURNING_ON:
+                throw new BluetoothNotReadyException("Bluetooth adapter is turning on");
+        }
+    }
+
+    private void checkBluetoothDevice() throws BikeNotPairedException {
+        switch (bikeBluetooth.getBondState()) {
+            case BluetoothDevice.BOND_NONE:
+                throw new BikeNotPairedException("Bike is not paired");
+            case BluetoothDevice.BOND_BONDING:
+                throw new BikeNotPairedException("Bike is being paired");
+        }
+    }
+
+    private BluetoothDevice getBikeDevice() throws BikeNotFoundException, BluetoothNotReadyException {
+
+        String bikeName = "HC-05";
+
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                if (device.getName().equals("HC-05")) {
+                if (device.getName().equals(bikeName)) {
                     return device;
                 }
             }
         }
-        throw new ConnectionException("Could not find bike bluetooth device");
+        throw new BikeNotFoundException("Could not find bike bluetooth device: " + bikeName);
     }
 
-    private BluetoothSocket getBluetoothSocket() throws ConnectionException {
-        if (this.bikeBluetooth == null || this.bikeBluetooth.getBondState() != BluetoothDevice.BOND_BONDED) {
-            throw new ConnectionException("Bike device is not initialized");
+    private BluetoothSocket getBluetoothSocket() throws BikeNotPairedException, SocketAcquiringException {
+        if (this.bikeBluetooth == null) {
+            throw new IllegalStateException("Bike device is not initialized");
+        }
+
+        if (this.bikeBluetooth.getBondState() != BluetoothDevice.BOND_BONDED) {
+            throw new BikeNotPairedException("Bike device is not paired");
         }
 
         try {
@@ -256,7 +296,7 @@ public class BikeConnection {
             throw new IllegalStateException(e);
         } catch (InvocationTargetException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException(e);
+            throw new SocketAcquiringException(e.getCause());
         } catch (IllegalAccessException e) {
             Log.e(TAG, e.getMessage(), e);
             throw new IllegalStateException(e);
@@ -268,21 +308,21 @@ public class BikeConnection {
         return bluetoothSocket != null && outputStream != null && inputStream != null;
     }
 
-    private void checkConnection() throws ConnectionException {
+    private void checkConnection() {
         if (!isConnected()) {
-            throw new ConnectionException("Is not connected");
+            throw new IllegalStateException("Is not connected");
         }
     }
 
-    private void checkExcessiveBytes() throws ConnectionException {
+    private void checkExcessiveBytes() throws BikeCommunicationException {
         try {
             if (this.inputStream.available() > 0) {
                 this.inputStream.skipBytes(this.inputStream.available());
-                throw new ConnectionException("Something is available after reading");
+                throw new BikeCommunicationException("Something is available after reading");
             }
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-            throw new ConnectionException(e);
+            throw new BikeCommunicationException(e);
         }
     }
 

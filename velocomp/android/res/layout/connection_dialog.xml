@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/bluetoothButton">
+        <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:id="@+id/messages">
+            <TextView
+                    android:id="@+id/seekBarLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Connecting to the bike"
+                    android:textSize="15dp"/>
+        </LinearLayout>
+    </ScrollView>
+    <Button
+            android:id="@+id/bluetoothButton"
+            android:layout_width="fill_parent"
+            android:layout_height="70dp"
+            android:text="Toggle Bluetooth Adapter"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
