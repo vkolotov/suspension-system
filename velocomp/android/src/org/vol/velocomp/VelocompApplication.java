@@ -6,6 +6,8 @@ import greendroid.app.GDApplication;
 
 public class VelocompApplication extends GDApplication {
 
+    private static final String TAG = VelocompApplication.class.getSimpleName();
+
     @Override
     public Class<?> getHomeActivityClass() {
         return MainActivity.class;

@@ -14,7 +14,7 @@ public class BikeConnectionThread extends GenericThread {
 
     @Override
     public void kill() {
-        BikeService.getInstance().disconnect(true);
+        //BikeService.getInstance().disconnect(true);
     }
 
     @Override

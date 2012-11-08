@@ -130,8 +130,21 @@ public class BikeService {
         return instance;
     }
 
-    public void addListener(BikeServiceListener listener) {
+    synchronized public void init() {
+
+    }
+
+    synchronized public void tearDown() {
+        listeners.clear();
+        disconnect(false);
+    }
+
+    synchronized public void addListener(BikeServiceListener listener) {
         listeners.add(listener);
+    }
+
+    synchronized public void removeListener(BikeServiceListener listener) {
+        listeners.remove(listener);
     }
 
     synchronized public void connect() {

@@ -8,6 +8,7 @@ import android.widget.ViewFlipper;
 import greendroid.app.GDActivity;
 import greendroid.widget.ActionBar;
 import greendroid.widget.ActionBarItem;
+import org.vol.velocomp.service.BikeConnection;
 import org.vol.velocomp.service.BikeService;
 import org.vol.velocomp.threads.BikeConnectionThread;
 import org.vol.velocomp.views.ConfigurationView;
@@ -27,9 +28,24 @@ public class MainActivity extends GDActivity {
 
     private ConnectionDialog connectionDialog;
 
+    private BikeService.BasicBikeServiceListener serviceListener = new BikeService.BasicBikeServiceListener() {
+        @Override
+        public void connect() {
+            setEnabled(true);
+            stopConnectionThread();
+        }
+
+        @Override
+        public void disconnect() {
+            setEnabled(false);
+            startConnectionThread();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setActionBarContentView(R.layout.main);
         getActionBar().setType(ActionBar.Type.Empty);
         getActionBar().setTitle(getString(R.string.app_name));
@@ -41,20 +57,8 @@ public class MainActivity extends GDActivity {
         dashboard = (Dashboard) findViewById(R.id.dashboard);
         configurationView = (ConfigurationView) findViewById(R.id.configuration_view);
         connectionDialog = new ConnectionDialog(this);
-        //connectionDialog.show();
 
-        BikeService.getInstance().addListener( new BikeService.BasicBikeServiceListener() {
-            @Override
-            public void connect() {
-                setEnabled(true);
-            }
-
-            @Override
-            public void disconnect() {
-                setEnabled(false);
-            }
-        });
-
+        connectionDialog.show();
 
         getActionBar().setOnActionBarListener( new ActionBar.OnActionBarListener() {
             @Override
@@ -77,20 +81,28 @@ public class MainActivity extends GDActivity {
     public void onStart() {
         super.onStart();
         connectBike();
+        BikeService.getInstance().addListener(serviceListener);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         connectBike();
+        BikeService.getInstance().addListener(serviceListener);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (this.connectionThread != null) {
-            this.connectionThread.cancel();
+            BikeService.getInstance().removeListener(serviceListener);
+            stopConnectionThread();
+            try {
+                this.connectionThread.join();
+            } catch (InterruptedException e) {}
         }
+        BikeService.getInstance().tearDown();
+        BikeConnection.getInstance().tearDown();
+        super.onDestroy();
     }
 
     private void connectBike() {
@@ -101,6 +113,13 @@ public class MainActivity extends GDActivity {
         if (this.connectionThread == null || this.connectionThread.isKilled()) {
             this.connectionThread = new BikeConnectionThread();
             this.connectionThread.start();
+        }
+    }
+
+    private void stopConnectionThread() {
+        if (this.connectionThread != null) {
+            this.connectionThread.cancel();
+            this.connectionThread.interrupt();
         }
     }
 
@@ -132,10 +151,7 @@ public class MainActivity extends GDActivity {
             showDashboard();
             return false;
         } else if (viewFlipper.getCurrentView() == dashboard && KeyEvent.KEYCODE_BACK == keyCode) {
-            this.connectionThread.cancel();
-            try {
-                this.connectionThread.join();
-            } catch (InterruptedException e) {}
+
         }
         return super.onKeyDown(keyCode, event);
     }

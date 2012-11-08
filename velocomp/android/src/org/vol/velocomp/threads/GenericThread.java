@@ -1,11 +1,14 @@
 package org.vol.velocomp.threads;
 
 
+import android.util.Log;
 import org.vol.velocomp.exceptions.ConnectionException;
 
 import java.util.concurrent.TimeoutException;
 
 public abstract class GenericThread extends Thread {
+
+    private static final String TAG = GenericThread.class.getSimpleName();
 
     private boolean run = true;
     private long sleepTime;
@@ -17,13 +20,13 @@ public abstract class GenericThread extends Thread {
     @Override
     public void run() {
         while (run) {
-
+            Log.d(TAG, "Thread run: " + this.getClass());
             try {
                 perform();
             } catch (TimeoutException e) {
-                //TODO logging
+
             } catch (ConnectionException e) {
-                //TODO logging
+
             }
 
 
@@ -34,6 +37,7 @@ public abstract class GenericThread extends Thread {
             }
 
             if (!run) {
+                Log.d(TAG, "Killing thread: " + this.getClass());
                 kill();
             }
         }

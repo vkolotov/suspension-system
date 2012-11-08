@@ -17,30 +17,31 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
     private V boardView;
     private Dashboard dashboard;
 
-    protected Board(V boardView, int updateTime) {
-        BikeService.getInstance().addListener( new BikeService.BasicBikeServiceListener() {
-            @Override
-            public void connect() {
-                startTelemetryThread();
-                runOnUi( new Runnable() {
-                    @Override
-                    public void run() {
-                        Board.this.onConnected();
-                    }
-                });
-            }
+    private BikeService.BasicBikeServiceListener serviceListener = new BikeService.BasicBikeServiceListener() {
+        @Override
+        public void connect() {
+            startTelemetryThread();
+            runOnUi( new Runnable() {
+                @Override
+                public void run() {
+                    Board.this.onConnected();
+                }
+            });
+        }
 
-            @Override
-            public void disconnect() {
-                stopTelemetryThread();
-                runOnUi( new Runnable() {
-                    @Override
-                    public void run() {
-                        Board.this.onDisconnected();
-                    }
-                });
-            }
-        });
+        @Override
+        public void disconnect() {
+            stopTelemetryThread();
+            runOnUi( new Runnable() {
+                @Override
+                public void run() {
+                    Board.this.onDisconnected();
+                }
+            });
+        }
+    };
+
+    protected Board(V boardView, int updateTime) {
         this.boardView = boardView;
         this.updateTime = updateTime;
     }
@@ -48,7 +49,6 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
     public void startTelemetryThread() {
         if (isShown && BikeService.getInstance().isConnected()
                 && (telemetryThread == null || telemetryThread.isKilled())) {
-
             telemetryThread = new TelemetryThread(this, updateTime);
             telemetryThread.start();
         }
@@ -57,17 +57,20 @@ public abstract class Board<T extends Telemetry, V extends View & ViewParent> {
     public void stopTelemetryThread() {
         if (telemetryThread != null) {
             telemetryThread.cancel();
+            telemetryThread.interrupt();
             telemetryThread = null;
         }
     }
 
     public void onShow(Mode mode) {
+        BikeService.getInstance().addListener(serviceListener);
         this.currentMode = mode;
         isShown = true;
         startTelemetryThread();
     }
 
     public void onHide() {
+        BikeService.getInstance().removeListener(serviceListener);
         isShown = false;
         stopTelemetryThread();
     }

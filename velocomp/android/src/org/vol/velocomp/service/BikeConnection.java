@@ -35,6 +35,12 @@ public class BikeConnection {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
+    public void tearDown() {
+        disconnect();
+        bluetoothAdapter = null;
+        instance = null;
+    }
+
     public static BikeConnection getInstance() {
         if (instance == null) {
             instance = new BikeConnection();

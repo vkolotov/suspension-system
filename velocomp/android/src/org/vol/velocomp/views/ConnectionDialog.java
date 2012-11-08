@@ -35,8 +35,66 @@ public class ConnectionDialog extends Dialog {
     private WeakReference<MainActivity> mainActivity;
     private LinkedList<Message> history = new LinkedList<Message>();
 
+    private BikeService.BikeServiceListener serviceListener = new BikeService.BikeServiceListener() {
+        @Override
+        public void exception(BikeCommunicationException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(BikeNotFoundException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(BikeNotPairedException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(BluetoothNotReadyException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(SocketAcquiringException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(SocketConnectionException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(StreamConnectionException ex) {
+            showDialog(ex, ex.getMessage());
+        }
+
+        @Override
+        public void exception(TimeoutException ex) {
+            showDialog(ex, ex.getMessage() != null ? ex.getMessage() : "Timeout");
+        }
+
+        @Override
+        public void exception(InterruptedException ex) {
+            //showDialog(ex, "");
+        }
+
+        @Override
+        public void connect() {
+            hideDialog();
+        }
+
+        @Override
+        public void disconnect() {
+            hideDialog();
+        }
+    };
+
     public ConnectionDialog(MainActivity mainActivity) {
         super(mainActivity);
+        BikeService.getInstance().addListener(serviceListener);
         this.mainActivity = new WeakReference<MainActivity>(mainActivity);
         setContentView(R.layout.connection_dialog);
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -44,13 +102,12 @@ public class ConnectionDialog extends Dialog {
         init();
     }
 
-    void init () {
+    void init() {
 
         final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         final Button bluetoothButton = (Button) findViewById(R.id.bluetoothButton);
 
-
-        bluetoothButton.setOnClickListener( new View.OnClickListener() {
+        bluetoothButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (bluetoothAdapter.isEnabled()) {
@@ -61,63 +118,6 @@ public class ConnectionDialog extends Dialog {
             }
         });
 
-
-        BikeService.getInstance().addListener(new BikeService.BikeServiceListener() {
-            @Override
-            public void exception(BikeCommunicationException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(BikeNotFoundException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(BikeNotPairedException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(BluetoothNotReadyException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(SocketAcquiringException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(SocketConnectionException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(StreamConnectionException ex) {
-                showDialog(ex, ex.getMessage());
-            }
-
-            @Override
-            public void exception(TimeoutException ex) {
-                showDialog(ex, ex.getMessage() != null ? ex.getMessage() : "Timeout");
-            }
-
-            @Override
-            public void exception(InterruptedException ex) {
-                //showDialog(ex, "");
-            }
-
-            @Override
-            public void connect() {
-                hideDialog();
-            }
-
-            @Override
-            public void disconnect() {
-                hideDialog();
-            }
-        });
     }
 
     private void showDialog(final Exception ex, String message) {
@@ -135,8 +135,8 @@ public class ConnectionDialog extends Dialog {
         } else {
             history.add(new Message(ex, message, 1));
         }
-
-        mainActivity.get().runOnUiThread( new Runnable() {
+        Log.d(TAG, "Showing dialog (showDialog): " + mainActivity.get());
+        mainActivity.get().runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
@@ -157,7 +157,7 @@ public class ConnectionDialog extends Dialog {
                     setTitle("Connection tryings: " + history.getLast().count);
                 }
 
-                Log.d(TAG, "Showing dialog: " + mainActivity.get());
+                Log.d(TAG, "Showing dialog (runOnUiThread): " + mainActivity.get());
                 show();
 
             }
