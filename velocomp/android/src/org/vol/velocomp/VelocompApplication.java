@@ -6,6 +6,8 @@ import greendroid.app.GDApplication;
 
 public class VelocompApplication extends GDApplication {
 
+    public static boolean isDebug = false;
+
     private static final String TAG = VelocompApplication.class.getSimpleName();
 
     @Override

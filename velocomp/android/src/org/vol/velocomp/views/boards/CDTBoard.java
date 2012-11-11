@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import org.vol.velocomp.R;
+import org.vol.velocomp.VelocompApplication;
 import org.vol.velocomp.graph.FixedSizeGraphViewSeries;
 import org.vol.velocomp.graph.SensorGraph;
 import org.vol.velocomp.graph.Threshold;
@@ -140,6 +141,11 @@ public class CDTBoard extends RelativeLayout {
         cadence = (Indicator) findViewById(R.id.cadence);
         gradient = (Indicator) findViewById(R.id.gradient);
         cdtMode = (Indicator) findViewById(R.id.cdtMode);
+
+        if (!VelocompApplication.isDebug) {
+            cpuClockSpeed.setVisibility(View.GONE);
+            freeMemory.setVisibility(View.GONE);
+        }
 
         climbGradient = (SeekBarConfig) findViewById(R.id.climbGradient);
 

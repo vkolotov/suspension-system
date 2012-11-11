@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import org.vol.velocomp.R;
+import org.vol.velocomp.VelocompApplication;
 import org.vol.velocomp.graph.FixedSizeGraphViewSeries;
 import org.vol.velocomp.graph.SensorGraph;
 import org.vol.velocomp.graph.Threshold;
@@ -31,13 +32,16 @@ public class AutomaticBoard extends RelativeLayout {
 
     private SeekBarConfig unsprungSeverityThreshold;
     private SeekBarConfig sprungSeverityThreshold;
+    private SeekBarConfig perpendicularSeverityThreshold;
 
     private SensorGraph accelerometerReadingsGraph;
     private FixedSizeGraphViewSeries sprungSeries;
     private FixedSizeGraphViewSeries unsprungSeries;
+    private FixedSizeGraphViewSeries perpendicularSeries;
 
     private Threshold sprungThreshold = new Threshold(0xff0077cc, 1, 50);
     private Threshold unsprungThreshold = new Threshold(0xffff0000, 1, 50);
+    private Threshold perpendicularThreshold = new Threshold(0xff70c656, 1, 50);
 
 
     private long time;
@@ -145,6 +149,11 @@ public class AutomaticBoard extends RelativeLayout {
         mode = (Indicator) findViewById(R.id.mode);
         timeout = (Indicator) findViewById(R.id.timeout);
 
+        if (!VelocompApplication.isDebug) {
+            cpuClockSpeed.setVisibility(View.GONE);
+            freeMemory.setVisibility(View.GONE);
+        }
+
         unsprungSeverityThreshold = (SeekBarConfig) findViewById(R.id.unsprungSeverityThreshold);
         if (unsprungSeverityThreshold != null) {
             unsprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(unsprungThreshold));
@@ -155,13 +164,20 @@ public class AutomaticBoard extends RelativeLayout {
             sprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(sprungThreshold));
         }
 
+        perpendicularSeverityThreshold = (SeekBarConfig) findViewById(R.id.perpendicularSeverityThreshold);
+        if (perpendicularSeverityThreshold != null) {
+            perpendicularSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(perpendicularThreshold));
+        }
+
         sprungSeries = new FixedSizeGraphViewSeries("Sprung", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8 * 10);
         unsprungSeries = new FixedSizeGraphViewSeries("Unsprung", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8 * 10);
+        perpendicularSeries = new FixedSizeGraphViewSeries("Perpendicular", new GraphViewSeries.GraphViewStyle(0xff70c656, 3), 20 * 8 * 10);
 
         accelerometerReadingsGraph = new SensorGraph(this.getContext(), "Accelerometers");
 
         accelerometerReadingsGraph.addSeries(unsprungSeries);
         accelerometerReadingsGraph.addSeries(sprungSeries);
+        accelerometerReadingsGraph.addSeries(perpendicularSeries);
 
         accelerometerReadingsGraph.setViewPort(0, 4000);
         accelerometerReadingsGraph.setManualYAxis(true);
@@ -170,7 +186,7 @@ public class AutomaticBoard extends RelativeLayout {
 
         accelerometerReadingsGraph.addThreshold(sprungThreshold);
         accelerometerReadingsGraph.addThreshold(unsprungThreshold);
-
+        accelerometerReadingsGraph.addThreshold(perpendicularThreshold);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.accelerometersReadings);
         layout.addView(accelerometerReadingsGraph);

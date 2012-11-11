@@ -46,12 +46,16 @@ public class MainActivity extends GDActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        BikeService.getInstance().init();
+        BikeConnection.getInstance().init();
+
         setActionBarContentView(R.layout.main);
         getActionBar().setType(ActionBar.Type.Empty);
         getActionBar().setTitle(getString(R.string.app_name));
 
         sleepActionBarItem = addActionBarItem(ActionBarItem.Type.Eye, R.id.action_bar_sleep);
         resetActionBarItem = addActionBarItem(ActionBarItem.Type.Star, R.id.action_bar_reset);
+
         settingsActionBarItem = addActionBarItem(ActionBarItem.Type.Settings, R.id.action_bar_settings);
         viewFlipper = (ViewFlipper) findViewById(R.id.flipper);
         dashboard = (Dashboard) findViewById(R.id.dashboard);
@@ -93,6 +97,7 @@ public class MainActivity extends GDActivity {
 
     @Override
     protected void onDestroy() {
+        this.connectionDialog.dismiss();
         if (this.connectionThread != null) {
             BikeService.getInstance().removeListener(serviceListener);
             stopConnectionThread();
@@ -160,16 +165,22 @@ public class MainActivity extends GDActivity {
         runOnUiThread( new Runnable() {
             @Override
             public void run() {
-                if (settingsActionBarItem != null) {
-                    settingsActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-                }
-                if (sleepActionBarItem != null) {
-                    sleepActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+
+
+                for (int i = 0; getActionBar().getItem(i) != null; i++) {
+                    getActionBar().getItem(i).getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
                 }
 
-                if (resetActionBarItem != null) {
-                    resetActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-                }
+//                if (settingsActionBarItem != null) {
+//                    settingsActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+//                }
+//                if (sleepActionBarItem != null) {
+//                    sleepActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+//                }
+//
+//                if (resetActionBarItem != null) {
+//                    resetActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
+//                }
                 getActionBar().setTitle(getString(R.string.app_name) + (isEnabled ? " connected " : " disconnected"));
                 for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
                     dashboard.getSegmentedBar().getChildAt(i).setEnabled(isEnabled);

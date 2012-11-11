@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 import org.vol.velocomp.R;
+import org.vol.velocomp.VelocompApplication;
 import org.vol.velocomp.messages.ManualTelemetry;
 import org.vol.velocomp.service.BikeService;
 import org.vol.velocomp.views.Board;
@@ -103,6 +104,12 @@ public class ManualBoard extends RelativeLayout {
 
         cpuClockSpeed = (Indicator) findViewById(R.id.clockSpeed);
         freeMemory = (Indicator) findViewById(R.id.freeMemory);
+
+        if (!VelocompApplication.isDebug) {
+            cpuClockSpeed.setVisibility(View.GONE);
+            freeMemory.setVisibility(View.GONE);
+        }
+
         cadence = (Indicator) findViewById(R.id.cadence);
         speed = (Indicator) findViewById(R.id.speed);
 
