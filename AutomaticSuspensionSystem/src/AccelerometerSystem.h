@@ -46,6 +46,7 @@ public:
 		} else if (currentTime - lastActivity <= timeout) {
 			active = true;
 			instantActivity = false;
+			inactivity();
 		} else {
 			active = false;
 			instantActivity = false;
@@ -56,7 +57,7 @@ public:
 		accel.getAcceleration(&currentX, &currentY, &currentZ);
 	}
 
-	bool isActive() {
+	virtual bool isActive() {
 		return active;
 	}
 
@@ -81,6 +82,8 @@ public:
 	virtual bool detectActivity() = 0;
 
 	virtual void activity(unsigned long currentTime) = 0;
+
+	virtual void inactivity() = 0;
 
 
 	BasicQueue<20, int16_t>* getReadings() {

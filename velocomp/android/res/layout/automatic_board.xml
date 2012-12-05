@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 velocomp:maxValue="400"
-                velocomp:title="Sprung Severity Threshold"/>
+                velocomp:title="Rocking Severity Threshold"/>
         <org.vol.velocomp.views.controls.SeekBarConfig
                 android:id="@+id/unsprungSeverityThreshold"
                 android:layout_width="fill_parent"
@@ -105,15 +105,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginRight="10dp"
                 velocomp:maxValue="400"
-                velocomp:title="Unsprung Severity Threshold"/>
-        <org.vol.velocomp.views.controls.SeekBarConfig
-                android:id="@+id/perpendicularSeverityThreshold"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginRight="10dp"
-                velocomp:maxValue="400"
-                velocomp:title="Perpendicular Severity Threshold"/>
+                velocomp:title="Bumping Severity Threshold"/>
 
     </LinearLayout>
 

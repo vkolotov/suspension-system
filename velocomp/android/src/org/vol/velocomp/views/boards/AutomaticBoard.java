@@ -30,19 +30,15 @@ public class AutomaticBoard extends RelativeLayout {
     private Indicator mode;
     private Indicator timeout;
 
-    private SeekBarConfig unsprungSeverityThreshold;
-    private SeekBarConfig sprungSeverityThreshold;
-    private SeekBarConfig perpendicularSeverityThreshold;
+    private SeekBarConfig bumpingSeverityThreshold;
+    private SeekBarConfig rockingSeverityThreshold;
 
     private SensorGraph accelerometerReadingsGraph;
-    private FixedSizeGraphViewSeries sprungSeries;
-    private FixedSizeGraphViewSeries unsprungSeries;
-    private FixedSizeGraphViewSeries perpendicularSeries;
+    private FixedSizeGraphViewSeries rockingSeries;
+    private FixedSizeGraphViewSeries bumpingSeries;
 
-    private Threshold sprungThreshold = new Threshold(0xff0077cc, 1, 50);
-    private Threshold unsprungThreshold = new Threshold(0xffff0000, 1, 50);
-    private Threshold perpendicularThreshold = new Threshold(0xff70c656, 1, 50);
-
+    private Threshold rockingThreshold = new Threshold(0xff0077cc, 1, 50);
+    private Threshold bumpingThreshold = new Threshold(0xffff0000, 1, 50);
 
     private long time;
 
@@ -63,20 +59,20 @@ public class AutomaticBoard extends RelativeLayout {
             mode.setValue(geMode(telemetry.state));
             timeout.setValue(telemetry.timeout);
 
-            unsprungSeverityThreshold.setValue(telemetry.unsprungSeverityThreshold);
-            unsprungThreshold.setValue(telemetry.unsprungSeverityThreshold);
+            bumpingSeverityThreshold.setValue(telemetry.bumpingSeverityThreshold);
+            bumpingThreshold.setValue(telemetry.bumpingSeverityThreshold);
 
-            sprungSeverityThreshold.setValue(telemetry.sprungSeverityThreshold);
-            sprungThreshold.setValue(telemetry.sprungSeverityThreshold);
+            rockingSeverityThreshold.setValue(telemetry.rockingSeverityThreshold);
+            rockingThreshold.setValue(telemetry.rockingSeverityThreshold);
 
 
             for (int i = 0; i < telemetry.dataLength; i++) {
-                sprungSeries.appendData(new GraphView.GraphViewData(time, telemetry.sprungReadingsX[i]), false);
-                unsprungSeries.appendData(new GraphView.GraphViewData(time, telemetry.unsprungReadingsX[i]), false);
+                rockingSeries.appendData(new GraphView.GraphViewData(time, telemetry.rockingReadings[i]), false);
+                bumpingSeries.appendData(new GraphView.GraphViewData(time, telemetry.bumpingReadings[i]), false);
                 time += 50;
             }
-            sprungSeries.prepare();
-            unsprungSeries.prepare();
+            rockingSeries.prepare();
+            bumpingSeries.prepare();
             if (telemetry.dataLength > 0) {
                 accelerometerReadingsGraph.scrollToEnd();
             }
@@ -90,14 +86,14 @@ public class AutomaticBoard extends RelativeLayout {
 
         @Override
         public void onConnected() {
-            unsprungSeverityThreshold.setEnabled(true);
-            sprungSeverityThreshold.setEnabled(true);
+            bumpingSeverityThreshold.setEnabled(true);
+            rockingSeverityThreshold.setEnabled(true);
         }
 
         @Override
         public void onDisconnected() {
-            unsprungSeverityThreshold.setEnabled(false);
-            sprungSeverityThreshold.setEnabled(false);
+            bumpingSeverityThreshold.setEnabled(false);
+            rockingSeverityThreshold.setEnabled(false);
         }
     };
 
@@ -154,39 +150,31 @@ public class AutomaticBoard extends RelativeLayout {
             freeMemory.setVisibility(View.GONE);
         }
 
-        unsprungSeverityThreshold = (SeekBarConfig) findViewById(R.id.unsprungSeverityThreshold);
-        if (unsprungSeverityThreshold != null) {
-            unsprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(unsprungThreshold));
+        bumpingSeverityThreshold = (SeekBarConfig) findViewById(R.id.unsprungSeverityThreshold);
+        if (bumpingSeverityThreshold != null) {
+            bumpingSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(bumpingThreshold));
         }
 
-        sprungSeverityThreshold = (SeekBarConfig) findViewById(R.id.sprungSeverityThreshold);
-        if (sprungSeverityThreshold != null) {
-            sprungSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(sprungThreshold));
+        rockingSeverityThreshold = (SeekBarConfig) findViewById(R.id.sprungSeverityThreshold);
+        if (rockingSeverityThreshold != null) {
+            rockingSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(rockingThreshold));
         }
 
-        perpendicularSeverityThreshold = (SeekBarConfig) findViewById(R.id.perpendicularSeverityThreshold);
-        if (perpendicularSeverityThreshold != null) {
-            perpendicularSeverityThreshold.setOnSeekBarChangeListener(new SeverityThresholdSeekBarListener(perpendicularThreshold));
-        }
-
-        sprungSeries = new FixedSizeGraphViewSeries("Sprung", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8 * 10);
-        unsprungSeries = new FixedSizeGraphViewSeries("Unsprung", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8 * 10);
-        perpendicularSeries = new FixedSizeGraphViewSeries("Perpendicular", new GraphViewSeries.GraphViewStyle(0xff70c656, 3), 20 * 8 * 10);
+        rockingSeries = new FixedSizeGraphViewSeries("Rocking", new GraphViewSeries.GraphViewStyle(0xff0077cc, 3), 20 * 8 * 10);
+        bumpingSeries = new FixedSizeGraphViewSeries("Bumping", new GraphViewSeries.GraphViewStyle(0xffff0000, 3), 20 * 8 * 10);
 
         accelerometerReadingsGraph = new SensorGraph(this.getContext(), "Accelerometers");
 
-        accelerometerReadingsGraph.addSeries(unsprungSeries);
-        accelerometerReadingsGraph.addSeries(sprungSeries);
-        accelerometerReadingsGraph.addSeries(perpendicularSeries);
+        accelerometerReadingsGraph.addSeries(bumpingSeries);
+        accelerometerReadingsGraph.addSeries(rockingSeries);
 
         accelerometerReadingsGraph.setViewPort(0, 4000);
         accelerometerReadingsGraph.setManualYAxis(true);
         accelerometerReadingsGraph.setManualYAxisBounds(400, -400);
         accelerometerReadingsGraph.setVerticalLabels(new String[]{"400", "0", "-400"});
 
-        accelerometerReadingsGraph.addThreshold(sprungThreshold);
-        accelerometerReadingsGraph.addThreshold(unsprungThreshold);
-        accelerometerReadingsGraph.addThreshold(perpendicularThreshold);
+        accelerometerReadingsGraph.addThreshold(rockingThreshold);
+        accelerometerReadingsGraph.addThreshold(bumpingThreshold);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.accelerometersReadings);
         layout.addView(accelerometerReadingsGraph);
@@ -204,8 +192,8 @@ public class AutomaticBoard extends RelativeLayout {
 
     private AutomaticBoardMessage getAutomaticBoardMessage() {
         AutomaticBoardMessage automaticBoardMessage = new AutomaticBoardMessage();
-        automaticBoardMessage.unsprungSeverityThreshold = (short) unsprungSeverityThreshold.getValue();
-        automaticBoardMessage.sprungSeverityThreshold = (short) sprungSeverityThreshold.getValue();
+        automaticBoardMessage.unsprungSeverityThreshold = (short) bumpingSeverityThreshold.getValue();
+        automaticBoardMessage.sprungSeverityThreshold = (short) rockingSeverityThreshold.getValue();
         return automaticBoardMessage;
     }
 

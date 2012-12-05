@@ -15,7 +15,7 @@ public:
 		: AccelerometerSystem(config, &sprungAccelerometerSystemConfig->accelerometerSystemConfig),
 		  lastMeasurement(0), averageGradient(0.0f),
 		  filter(sprungAccelerometerSystemConfig->angleFilterAlpha, sprungAccelerometerSystemConfig->angleFilterBeta),
-		  rawGradients(), filteredGradients() {
+		  rawGradients(), filteredGradients(), rockingTiming() {
 	}
 
 	virtual void readAccelerometer() {
@@ -25,16 +25,24 @@ public:
 	}
 
 	bool detectActivity() {
-		return module <= accelerometerSystemConfig->severityThreshold;
+		return abs(module) >= abs(accelerometerSystemConfig->severityThreshold);
 	}
 
 	void activity(unsigned long currentTime) {
+		//rockingTiming.push(currentTime - lastActivity);
+	}
 
+	void inactivity() {
+		//rockingTiming.clear();
 	}
 
 	unsigned long getTimeout() {
 		// TODO return cadence / 2
-		return 1000;
+		return MAXIMUM_CADENCE_TIME;
+	}
+
+	bool isActive() {
+		return active;// && rockingTiming.size() == 3;
 	}
 
 	void update(unsigned long currentTime) {
@@ -73,7 +81,7 @@ public:
 	}
 
 	int16_t getModule() {
-		return getModuleXZ();
+		return currentY;
 	}
 
 protected:
@@ -84,6 +92,8 @@ protected:
 
 	BasicQueue<10, int16_t> rawGradients;
 	BasicQueue<10, int16_t> filteredGradients;
+
+	NumericQueue<3> rockingTiming;
 };
 
 #endif /* SPUNGACCELEROMETERSYSTEM_H_ */

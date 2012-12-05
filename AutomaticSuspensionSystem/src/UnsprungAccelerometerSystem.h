@@ -33,6 +33,10 @@ public:
 		timing.event();
 	}
 
+	void inactivity() {
+
+	}
+
 	unsigned long getTimeout() {
 		if (speedSystem->getAverageSpeed() < 0.01 || timing.getSum() == 0) {
 			return 0;

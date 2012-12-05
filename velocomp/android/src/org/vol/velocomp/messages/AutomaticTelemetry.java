@@ -2,17 +2,17 @@ package org.vol.velocomp.messages;
 
 public class AutomaticTelemetry extends Telemetry {
     @FieldOrder(201)
-    public short sprungSeverityThreshold;
+    public short rockingSeverityThreshold;
     @FieldOrder(202)
-    public short unsprungSeverityThreshold;
+    public short bumpingSeverityThreshold;
     @FieldOrder(203)
     public short timeout;
     @ArraySize(20)
     @FieldOrder(204)
-    public short sprungReadingsX[];
+    public short rockingReadings[];
     @ArraySize(20)
     @FieldOrder(205)
-    public short  unsprungReadingsX[];
+    public short bumpingReadings[];
     @FieldOrder(206)
     public byte dataLength;
 }

@@ -1,6 +1,8 @@
 package org.vol.velocomp;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -27,6 +29,7 @@ public class MainActivity extends GDActivity {
     private ConfigurationView configurationView;
 
     private ConnectionDialog connectionDialog;
+    private PowerManager.WakeLock wakeLock;
 
     private BikeService.BasicBikeServiceListener serviceListener = new BikeService.BasicBikeServiceListener() {
         @Override
@@ -79,6 +82,9 @@ public class MainActivity extends GDActivity {
             }
         });
 
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+
     }
 
     @Override
@@ -86,6 +92,7 @@ public class MainActivity extends GDActivity {
         super.onStart();
         connectBike();
         BikeService.getInstance().addListener(serviceListener);
+        wakeLock.acquire();
     }
 
     @Override
@@ -93,6 +100,7 @@ public class MainActivity extends GDActivity {
         super.onResume();
         connectBike();
         BikeService.getInstance().addListener(serviceListener);
+        wakeLock.acquire();
     }
 
     @Override
@@ -108,6 +116,7 @@ public class MainActivity extends GDActivity {
         BikeService.getInstance().tearDown();
         BikeConnection.getInstance().tearDown();
         super.onDestroy();
+        wakeLock.release();
     }
 
     private void connectBike() {
@@ -165,22 +174,9 @@ public class MainActivity extends GDActivity {
         runOnUiThread( new Runnable() {
             @Override
             public void run() {
-
-
                 for (int i = 0; getActionBar().getItem(i) != null; i++) {
                     getActionBar().getItem(i).getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
                 }
-
-//                if (settingsActionBarItem != null) {
-//                    settingsActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-//                }
-//                if (sleepActionBarItem != null) {
-//                    sleepActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-//                }
-//
-//                if (resetActionBarItem != null) {
-//                    resetActionBarItem.getItemView().setVisibility(isEnabled ? View.VISIBLE : View.GONE);
-//                }
                 getActionBar().setTitle(getString(R.string.app_name) + (isEnabled ? " connected " : " disconnected"));
                 for (int i = 0; i < dashboard.getSegmentedBar().getChildCount(); i++) {
                     dashboard.getSegmentedBar().getChildAt(i).setEnabled(isEnabled);
